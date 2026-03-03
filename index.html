@@ -4,16 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Add this inside <head> -->
+    <!-- PWA essentials -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#333333">
     <link rel="icon" href="favicon.png">
 
-
-
-
     <title>VHF Radio Simulator - MARPRO</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -51,21 +49,52 @@
             background-color: #000;
             color: #0f0;
             font-family: 'Orbitron', monospace;
-            font-size: 22px;
             padding: 15px;
             margin-bottom: 10px;
             height: 160px;
-            overflow-y: auto;
             border: 2px solid #444;
             border-radius: 8px;
             box-shadow: inset 0 0 10px rgba(0,255,0,0.3);
             text-shadow: 0 0 5px #0f0;
             position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+        #channel-display {
+            font-size: 72px;
+            font-weight: bold;
+            color: #0f0;
+            text-shadow: 0 0 20px #0f0, 0 0 40px #0f0;
+            margin: 0;
+            line-height: 1;
+        }
+        .status-info {
+            font-size: 18px;
+            margin-top: 8px;
+            text-align: center;
+        }
+        .softkey-message {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 16px;
+            color: #ffcc00;
+            background: rgba(0,0,0,0.6);
+            padding: 4px 12px;
+            border-radius: 6px;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+            white-space: nowrap;
         }
         .icons {
             position: absolute;
-            top: 5px;
-            right: 5px;
+            top: 8px;
+            right: 8px;
             font-size: 14px;
             color: #0f0;
         }
@@ -91,158 +120,43 @@
             transition: width 0.1s linear;
             border-radius: 0 0 8px 8px;
         }
-        .softkeys {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-        }
-        .softkey {
-            flex: 1;
-            margin: 0 5px;
-            padding: 8px;
-            font-size: 14px;
-        }
-        .controls {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-        }
-        button {
-            background-color: #555;
-            color: #fff;
-            border: none;
-            padding: 14px;
-            cursor: pointer;
-            border-radius: 8px;
-            font-size: 16px;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.2);
-            transition: transform 0.1s, box-shadow 0.1s;
-        }
-        button:active {
-            transform: translateY(2px);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.5);
-        }
-        button:hover {
-            background-color: #777;
-        }
-        button.keypad {
-            background-color: #444;
-            font-weight: bold;
-        }
-        button.keypad:hover {
-            background-color: #666;
-        }
+
+        .softkeys { display: flex; justify-content: space-between; margin-bottom: 15px; }
+        .softkey { flex: 1; margin: 0 5px; padding: 8px; font-size: 14px; }
+        .controls { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+        button { background-color: #555; color: #fff; border: none; padding: 14px; cursor: pointer; border-radius: 8px; font-size: 16px; box-shadow: 0 3px 6px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.2); transition: transform 0.1s, box-shadow 0.1s; }
+        button:active { transform: translateY(2px); box-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+        button:hover { background-color: #777; }
+        button.keypad { background-color: #444; font-weight: bold; }
+        button.keypad:hover { background-color: #666; }
         #enter-btn { background-color: #28a745; }
         #enter-btn:hover { background-color: #218838; }
         #clear-btn { background-color: #dc3545; }
         #clear-btn:hover { background-color: #c82333; }
-        #dsc-btn {
-            background-color: #ff0000;
-            grid-column: span 2;
-            font-weight: bold;
-        }
+        #dsc-btn { background-color: #ff0000; grid-column: span 2; font-weight: bold; }
         #dsc-btn:hover { background-color: #cc0000; }
-        #transmit-btn {
-            grid-column: span 4;
-            background-color: #f00;
-            font-size: 18px;
-            padding: 15px;
-        }
+        #transmit-btn { grid-column: span 4; background-color: #f00; font-size: 18px; padding: 15px; }
         #transmit-btn:hover { background-color: #c00; }
-        .dial-container {
-            grid-column: span 4;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            margin: 15px 0;
-        }
-        .dial-group {
-            text-align: center;
-        }
-        .dial {
-            width: 110px;
-            height: 110px;
-            border-radius: 50%;
-            background: radial-gradient(circle at 35% 35%, #888, #555 50%, #333);
-            border: 4px solid #222;
-            position: relative;
-            cursor: grab;
-            box-shadow: 
-                inset 0 6px 12px rgba(0,0,0,0.7),
-                0 6px 15px rgba(0,0,0,0.6),
-                inset 0 -4px 8px rgba(255,255,255,0.15);
-            user-select: none;
-            touch-action: none;
-        }
-        .dial::after {
-            content: '';
-            position: absolute;
-            top: 12px;
-            left: 50%;
-            width: 8px;
-            height: 48px;
-            background: linear-gradient(to bottom, #f0f0f0, #b0b0b0);
-            transform: translateX(-50%) rotate(var(--rotation, -135deg));
-            transform-origin: bottom center;
-            border-radius: 4px;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.5);
-            transition: transform 0.08s ease-out;
-        }
-        .dial-label {
-            margin-top: 10px;
-            font-size: 15px;
-            color: #ddd;
-            font-weight: bold;
-        }
-        .dial-value {
-            font-size: 13px;
-            color: #aaa;
-            margin-top: 3px;
-        }
-        #log {
-            margin-top: 20px;
-            background-color: #222;
-            padding: 10px;
-            height: 140px;
-            overflow-y: auto;
-            border: 1px solid #555;
-            border-radius: 5px;
-            font-size: 14px;
-            box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
-        }
-        .channel-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            grid-column: 4 / 5;
-            grid-row: 3 / 6;
-        }
-        .numpad {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            grid-column: 1 / 4;
-            grid-row: 3 / 7;
-        }
-        .numpad .row4 {
-            grid-column: 1 / 4;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-        }
-        .additional-buttons {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            margin-top: 10px;
-        }
+        .dial-container { grid-column: span 4; display: flex; justify-content: space-around; align-items: center; margin: 15px 0; }
+        .dial-group { text-align: center; }
+        .dial { width: 110px; height: 110px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #888, #555 50%, #333); border: 4px solid #222; position: relative; cursor: grab; box-shadow: inset 0 6px 12px rgba(0,0,0,0.7), 0 6px 15px rgba(0,0,0,0.6), inset 0 -4px 8px rgba(255,255,255,0.15); user-select: none; touch-action: none; }
+        .dial::after { content: ''; position: absolute; top: 12px; left: 50%; width: 8px; height: 48px; background: linear-gradient(to bottom, #f0f0f0, #b0b0b0); transform: translateX(-50%) rotate(var(--rotation, -135deg)); transform-origin: bottom center; border-radius: 4px; box-shadow: 0 3px 6px rgba(0,0,0,0.5); transition: transform 0.08s ease-out; }
+        .dial-label { margin-top: 10px; font-size: 15px; color: #ddd; font-weight: bold; }
+        .dial-value { font-size: 13px; color: #aaa; margin-top: 3px; }
+        #log { margin-top: 20px; background-color: #222; padding: 10px; height: 140px; overflow-y: auto; border: 1px solid #555; border-radius: 5px; font-size: 14px; box-shadow: inset 0 0 5px rgba(0,0,0,0.5); }
+        .channel-buttons { display: flex; flex-direction: column; gap: 10px; grid-column: 4 / 5; grid-row: 3 / 6; }
+        .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; grid-column: 1 / 4; grid-row: 3 / 7; }
+        .numpad .row4 { grid-column: 1 / 4; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .additional-buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 10px; }
     </style>
 </head>
 <body>
     <div class="radio-container">
         <div class="display" id="display">
-            Radio Off<br>CH: --
+            <div id="channel-display">--</div>
+            <span id="status-line" class="status-info"></span>
             <span class="icons" id="icons"></span>
+            <div id="softkey-message" class="softkey-message"></div>
             <div class="countdown" id="countdown">3</div>
             <div class="progress-bar" id="dsc-progress"></div>
         </div>
@@ -255,7 +169,7 @@
         <div class="controls">
             <button id="power-btn">Power On/Off</button>
             <button id="dsc-btn">DSC Distress (Hold 3s)</button>
-            <button id="dual-watch-btn">Dual Watch Off</button>
+            <button id="dual-watch-btn">DW</button>
 
             <div class="dial-container">
                 <div class="dial-group">
@@ -342,14 +256,15 @@
 
         let staticNode = null;
         let staticGain = null;
-
         function startStaticNoise() {
             if (staticNode) return;
             const bufferSize = 4096;
             staticNode = audioCtx.createScriptProcessor(bufferSize, 1, 1);
-            staticNode.onaudioprocess = e => {
+            staticNode.onaudioprocess = (e) => {
                 const output = e.outputBuffer.getChannelData(0);
-                for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
+                for (let i = 0; i < bufferSize; i++) {
+                    output[i] = Math.random() * 2 - 1;
+                }
             };
             staticGain = audioCtx.createGain();
             updateStaticVolume();
@@ -367,17 +282,25 @@
         }
 
         function updateStaticVolume() {
-            if (staticGain) staticGain.gain.value = (volume / 10) * 0.3;
+            if (staticGain) {
+                staticGain.gain.value = (volume / 10) * 0.3;
+            }
         }
 
         function updateStaticNoise() {
-            if (isPoweredOn && squelch < 4) startStaticNoise();
-            else stopStaticNoise();
+            if (isPoweredOn && squelch < 4) {
+                startStaticNoise();
+            } else {
+                stopStaticNoise();
+            }
         }
 
         const display = document.getElementById('display');
+        const channelDisplay = document.getElementById('channel-display');
+        const statusLine = document.getElementById('status-line');
         const iconsEl = document.getElementById('icons');
         const countdownEl = document.getElementById('countdown');
+        const softkeyMessage = document.getElementById('softkey-message');
         const log = document.getElementById('log');
         const powerBtn = document.getElementById('power-btn');
         const dscBtn = document.getElementById('dsc-btn');
@@ -410,7 +333,7 @@
         let volume = 5;
         let squelch = 3;
         let enteredDigits = '';
-        let isHighPower = true;
+        let isHighPower = true;          // true = 25W, false = 5W
         let isAttenuatorOn = false;
         let isWeatherMode = false;
         let isBusy = false;
@@ -443,19 +366,25 @@
 
         function updateDisplay(extra = '') {
             if (!isPoweredOn) {
-                display.innerHTML = 'Radio Off<br>CH: --<span class="icons" id="icons"></span><div class="countdown" id="countdown">3</div><div class="progress-bar" id="dsc-progress"></div>';
-                countdownEl.style.display = 'none';
+                channelDisplay.textContent = '--';
+                statusLine.innerHTML = '';
                 iconsEl.textContent = '';
+                countdownEl.style.display = 'none';
                 return;
             }
-            let status = `CH: ${String(currentChannel).padStart(2, '0')} | VOL: ${volume} | SQ: ${squelch}`;
-            if (isDualWatch) status += ' | Dual';
+
+            channelDisplay.textContent = String(currentChannel).padStart(2, '0');
+
+            let status = `VOL: ${volume} | SQ: ${squelch}`;
+            if (isDualWatch) status += ' | DW';
             if (enteredDigits) status += `<br>→ ${enteredDigits}`;
             if (extra) status += `<br>${extra}`;
+            statusLine.innerHTML = status;
+
             let iconText = '';
             if (isBusy) iconText += ' BUSY';
             if (isTransmitting) iconText += ' TX';
-            iconText += isHighPower ? ' 25W' : ' 1W';
+            iconText += isHighPower ? ' 25W' : ' 5W';
             if (isAttenuatorOn) iconText += ' LOC';
             if (isWeatherMode) iconText += ' WX';
             if (hasGps) iconText += ' GPS';
@@ -463,7 +392,14 @@
             if (isCallChannel) iconText += ' CALL';
             if (hasMessage) iconText += ' MSG';
             iconsEl.textContent = iconText;
-            display.innerHTML = status + '<span class="icons" id="icons">' + iconText + '</span><div class="countdown" id="countdown">3</div><div class="progress-bar" id="dsc-progress"></div>';
+        }
+
+        function showSoftkeyMessage(text) {
+            softkeyMessage.textContent = text;
+            softkeyMessage.style.opacity = '1';
+            setTimeout(() => {
+                softkeyMessage.style.opacity = '0';
+            }, 3000);
         }
 
         function appendToDisplay(message) {
@@ -489,6 +425,7 @@
             updateDisplay();
         }
 
+        // Dial functionality
         function makeDialInteractive(dialEl, valueEl, initialValue, min = 0, max = 10, onChange) {
             let value = initialValue;
             let isDragging = false;
@@ -554,6 +491,7 @@
             updateDisplay();
         });
 
+        // Event Listeners
         powerBtn.addEventListener('click', () => {
             playBeep();
             isPoweredOn = !isPoweredOn;
@@ -562,18 +500,22 @@
             updateStaticNoise();
         });
 
+        // Chan Up – wrap from 88 → 01
         chanUp.addEventListener('click', () => {
-            if (isPoweredOn) {
-                playBeep();
-                setChannel(currentChannel + 1);
-            }
+            if (!isPoweredOn) return;
+            playBeep();
+            let next = currentChannel + 1;
+            if (next > 88) next = 1;
+            setChannel(next);
         });
 
+        // Chan Down – wrap from 01 → 88
         chanDown.addEventListener('click', () => {
-            if (isPoweredOn) {
-                playBeep();
-                setChannel(currentChannel - 1);
-            }
+            if (!isPoweredOn) return;
+            playBeep();
+            let prev = currentChannel - 1;
+            if (prev < 1) prev = 88;
+            setChannel(prev);
         });
 
         document.querySelectorAll('button[data-digit]').forEach(btn => {
@@ -603,7 +545,8 @@
             if (isPoweredOn) {
                 playBeep();
                 isDualWatch = !isDualWatch;
-                dualWatchBtn.textContent = isDualWatch ? 'Dual Watch On' : 'Dual Watch Off';
+                dualWatchBtn.textContent = isDualWatch ? 'DW' : 'DW';
+                showSoftkeyMessage(isDualWatch ? 'Dual Watch On' : 'Dual Watch Off');
                 updateDisplay();
                 appendToLog(`Dual watch ${isDualWatch ? 'enabled' : 'disabled'}`);
             }
@@ -715,7 +658,27 @@
 
         menuBtn.addEventListener('click', () => {
             playBeep();
-            appendToDisplay('Menu opened (simulated)');
+            showSoftkeyMessage('Menu opened (simulated)');
+        });
+
+        soft1.addEventListener('click', () => {
+            playBeep();
+            showSoftkeyMessage('DSC menu opened');
+        });
+
+        soft2.addEventListener('click', () => {
+            playBeep();
+            showSoftkeyMessage('Scan started');
+        });
+
+        soft3.addEventListener('click', () => {
+            playBeep();
+            showSoftkeyMessage('Dual watch toggled');
+        });
+
+        soft4.addEventListener('click', () => {
+            playBeep();
+            showSoftkeyMessage('AIS menu opened');
         });
 
         entBtn.addEventListener('click', () => {
@@ -726,11 +689,13 @@
         ch16Btn.addEventListener('click', () => {
             playBeep();
             setChannel(16);
+            showSoftkeyMessage('Channel 16 selected');
         });
 
         chWxBtn.addEventListener('click', () => {
             playBeep();
             isWeatherMode = !isWeatherMode;
+            showSoftkeyMessage(`Weather mode ${isWeatherMode ? 'on' : 'off'}`);
             appendToLog(`Weather mode ${isWeatherMode ? 'on' : 'off'}`);
             updateDisplay();
         });
@@ -738,36 +703,17 @@
         hiLoBtn.addEventListener('click', () => {
             playBeep();
             isHighPower = !isHighPower;
-            appendToLog(`Power set to ${isHighPower ? 'High (25W)' : 'Low (1W)'}`);
+            showSoftkeyMessage(`Power: ${isHighPower ? '25W' : '5W'}`);
+            appendToLog(`Power set to ${isHighPower ? 'High (25W)' : 'Low (5W)'}`);
             updateDisplay();
         });
 
         loDxBtn.addEventListener('click', () => {
             playBeep();
             isAttenuatorOn = !isAttenuatorOn;
+            showSoftkeyMessage(`Attenuator ${isAttenuatorOn ? 'on' : 'off'}`);
             appendToLog(`Attenuator ${isAttenuatorOn ? 'on' : 'off'}`);
             updateDisplay();
-        });
-
-        soft1.addEventListener('click', () => {
-            playBeep();
-            appendToDisplay('DSC menu opened');
-        });
-
-        soft2.addEventListener('click', () => {
-            playBeep();
-            appendToDisplay('Scan started');
-        });
-
-        soft3.addEventListener('click', () => {
-            playBeep();
-            isDualWatch = !isDualWatch;
-            updateDisplay();
-        });
-
-        soft4.addEventListener('click', () => {
-            playBeep();
-            appendToDisplay('AIS menu opened');
         });
 
         // Initial state
