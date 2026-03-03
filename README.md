@@ -5,7 +5,7 @@ Built for **LROCP (Long Range Operator Certificate of Proficiency)** marine radi
 
 This is a fully functional, browser-based simulator designed by MARPRO to help students practise real VHF radio operations without needing physical equipment.
 
-Start the simulator: [bit.ly/vhf-sim]
+Start the simulator: [https://www.bit.ly/vhf-sim]
 
 ### Features
 
