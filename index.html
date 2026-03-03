@@ -1,723 +1,1800 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VHF Radio Simulator — MARPRO LROCP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ===== RESET & ROOT ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    <!-- PWA essentials -->
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#333333">
-    <link rel="icon" href="favicon.png">
+  :root {
+    --green:      #00ff88;
+    --green-dim:  #00cc66;
+    --green-glow: rgba(0,255,136,0.35);
+    --amber:      #ffaa00;
+    --red:        #ff3333;
+    --red-glow:   rgba(255,51,51,0.5);
+    --body-top:   #2a2a2a;
+    --body-mid:   #1e1e1e;
+    --body-bot:   #141414;
+    --panel:      #252525;
+    --btn-base:   #333;
+    --btn-hover:  #444;
+    --btn-act:    #222;
+    --screen-bg:  #040d06;
+    --border:     #111;
+    --label:      #888;
+  }
 
-    <title>VHF Radio Simulator - MARPRO</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+  body {
+    font-family: 'Rajdhani', sans-serif;
+    background: #0d0d0d;
+    background-image:
+      radial-gradient(ellipse at 20% 50%, rgba(0,80,40,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(0,40,80,0.06) 0%, transparent 50%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 20px 10px 40px;
+    color: #ccc;
+  }
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #e6e6e6;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-        }
-        .radio-container {
-            background: linear-gradient(to bottom, #4d4d4d, #333);
-            color: #fff;
-            padding: 25px;
-            border-radius: 15px;
-            width: 480px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.6), inset 0 2px 5px rgba(255,255,255,0.2);
-            border: 2px solid #222;
-            position: relative;
-        }
-        .radio-container::before {
-            content: '';
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 20px;
-            height: 20px;
-            background: radial-gradient(circle, #ff0000, #cc0000);
-            border-radius: 50%;
-            box-shadow: 0 0 10px #ff0000;
-            opacity: 0.5;
-        }
-        .display {
-            background-color: #000;
-            color: #0f0;
-            font-family: 'Orbitron', monospace;
-            padding: 15px;
-            margin-bottom: 10px;
-            height: 160px;
-            border: 2px solid #444;
-            border-radius: 8px;
-            box-shadow: inset 0 0 10px rgba(0,255,0,0.3);
-            text-shadow: 0 0 5px #0f0;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
-        #channel-display {
-            font-size: 72px;
-            font-weight: bold;
-            color: #0f0;
-            text-shadow: 0 0 20px #0f0, 0 0 40px #0f0;
-            margin: 0;
-            line-height: 1;
-        }
-        .status-info {
-            font-size: 18px;
-            margin-top: 8px;
-            text-align: center;
-        }
-        .softkey-message {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 16px;
-            color: #ffcc00;
-            background: rgba(0,0,0,0.6);
-            padding: 4px 12px;
-            border-radius: 6px;
-            opacity: 0;
-            transition: opacity 0.4s ease;
-            pointer-events: none;
-            white-space: nowrap;
-        }
-        .icons {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            font-size: 14px;
-            color: #0f0;
-        }
-        .countdown {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 60px;
-            color: #ff4444;
-            font-weight: bold;
-            text-shadow: 0 0 15px #ff0000;
-            pointer-events: none;
-            display: none;
-        }
-        .progress-bar {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            height: 8px;
-            background-color: #ff4444;
-            width: 0%;
-            transition: width 0.1s linear;
-            border-radius: 0 0 8px 8px;
-        }
+  /* ===== PAGE HEADER ===== */
+  .page-header {
+    text-align: center;
+    margin-bottom: 18px;
+  }
+  .page-header .brand {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 6px;
+    color: #555;
+    text-transform: uppercase;
+  }
+  .page-header h1 {
+    font-family: 'Orbitron', monospace;
+    font-size: 18px;
+    font-weight: 600;
+    color: #888;
+    letter-spacing: 3px;
+    margin-top: 2px;
+  }
 
-        .softkeys { display: flex; justify-content: space-between; margin-bottom: 15px; }
-        .softkey { flex: 1; margin: 0 5px; padding: 8px; font-size: 14px; }
-        .controls { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-        button { background-color: #555; color: #fff; border: none; padding: 14px; cursor: pointer; border-radius: 8px; font-size: 16px; box-shadow: 0 3px 6px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.2); transition: transform 0.1s, box-shadow 0.1s; }
-        button:active { transform: translateY(2px); box-shadow: 0 1px 3px rgba(0,0,0,0.5); }
-        button:hover { background-color: #777; }
-        button.keypad { background-color: #444; font-weight: bold; }
-        button.keypad:hover { background-color: #666; }
-        #enter-btn { background-color: #28a745; }
-        #enter-btn:hover { background-color: #218838; }
-        #clear-btn { background-color: #dc3545; }
-        #clear-btn:hover { background-color: #c82333; }
-        #dsc-btn { background-color: #ff0000; grid-column: span 2; font-weight: bold; }
-        #dsc-btn:hover { background-color: #cc0000; }
-        #transmit-btn { grid-column: span 4; background-color: #f00; font-size: 18px; padding: 15px; }
-        #transmit-btn:hover { background-color: #c00; }
-        .dial-container { grid-column: span 4; display: flex; justify-content: space-around; align-items: center; margin: 15px 0; }
-        .dial-group { text-align: center; }
-        .dial { width: 110px; height: 110px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #888, #555 50%, #333); border: 4px solid #222; position: relative; cursor: grab; box-shadow: inset 0 6px 12px rgba(0,0,0,0.7), 0 6px 15px rgba(0,0,0,0.6), inset 0 -4px 8px rgba(255,255,255,0.15); user-select: none; touch-action: none; }
-        .dial::after { content: ''; position: absolute; top: 12px; left: 50%; width: 8px; height: 48px; background: linear-gradient(to bottom, #f0f0f0, #b0b0b0); transform: translateX(-50%) rotate(var(--rotation, -135deg)); transform-origin: bottom center; border-radius: 4px; box-shadow: 0 3px 6px rgba(0,0,0,0.5); transition: transform 0.08s ease-out; }
-        .dial-label { margin-top: 10px; font-size: 15px; color: #ddd; font-weight: bold; }
-        .dial-value { font-size: 13px; color: #aaa; margin-top: 3px; }
-        #log { margin-top: 20px; background-color: #222; padding: 10px; height: 140px; overflow-y: auto; border: 1px solid #555; border-radius: 5px; font-size: 14px; box-shadow: inset 0 0 5px rgba(0,0,0,0.5); }
-        .channel-buttons { display: flex; flex-direction: column; gap: 10px; grid-column: 4 / 5; grid-row: 3 / 6; }
-        .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; grid-column: 1 / 4; grid-row: 3 / 7; }
-        .numpad .row4 { grid-column: 1 / 4; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .additional-buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 10px; }
-    </style>
+  /* ===== MODE SWITCHER ===== */
+  .mode-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .mode-btn {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 8px 22px;
+    border: 1px solid #333;
+    background: #111;
+    color: #555;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .mode-btn.active {
+    background: #0a1a10;
+    border-color: var(--green-dim);
+    color: var(--green);
+    box-shadow: 0 0 12px rgba(0,204,102,0.2);
+  }
+  .mode-btn:hover:not(.active) { color: #888; border-color: #444; }
+
+  /* ===== MAIN LAYOUT ===== */
+  .sim-wrapper {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    width: 100%;
+    max-width: 1000px;
+  }
+
+  /* ===== TRAINING PANEL ===== */
+  .training-panel {
+    width: 300px;
+    flex-shrink: 0;
+    display: none;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .training-panel.visible { display: flex; }
+
+  .training-card {
+    background: #0e0e0e;
+    border: 1px solid #222;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .training-card-header {
+    background: #161616;
+    padding: 10px 14px;
+    font-family: 'Orbitron', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: #555;
+    border-bottom: 1px solid #1a1a1a;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .training-card-header .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--green-dim);
+    box-shadow: 0 0 6px var(--green-dim);
+    animation: blink 2s infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  .scenario-list { padding: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .scenario-btn {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    padding: 10px 12px;
+    background: #111;
+    border: 1px solid #222;
+    border-left: 3px solid #333;
+    color: #666;
+    text-align: left;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.5px;
+  }
+  .scenario-btn:hover { background: #161616; color: #aaa; border-left-color: var(--green-dim); }
+  .scenario-btn.active { background: #0a160e; color: var(--green); border-left-color: var(--green); }
+  .scenario-btn .tag {
+    font-size: 10px;
+    color: #444;
+    display: block;
+    margin-top: 2px;
+    font-weight: 500;
+    letter-spacing: 1px;
+  }
+  .scenario-btn.active .tag { color: var(--green-dim); }
+
+  /* Step panel */
+  .step-panel { padding: 14px; }
+  .step-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 10px;
+    color: var(--amber);
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+  }
+  .step-item {
+    display: flex;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid #181818;
+    align-items: flex-start;
+    transition: all 0.3s;
+  }
+  .step-item:last-child { border-bottom: none; }
+  .step-num {
+    font-family: 'Orbitron', monospace;
+    font-size: 10px;
+    color: #333;
+    min-width: 20px;
+    margin-top: 2px;
+  }
+  .step-text {
+    font-size: 13px;
+    color: #555;
+    line-height: 1.4;
+    flex: 1;
+  }
+  .step-item.current .step-num { color: var(--amber); }
+  .step-item.current .step-text { color: #ccc; }
+  .step-item.done .step-num { color: var(--green-dim); }
+  .step-item.done .step-text { color: #444; text-decoration: line-through; }
+  .step-check {
+    font-size: 14px;
+    min-width: 16px;
+    color: #222;
+  }
+  .step-item.done .step-check { color: var(--green-dim); }
+  .step-item.current .step-check { color: var(--amber); }
+
+  .step-hint {
+    background: #0a1208;
+    border: 1px solid #1a2a1a;
+    border-radius: 4px;
+    padding: 10px 12px;
+    font-size: 12px;
+    color: var(--green-dim);
+    margin-top: 12px;
+    line-height: 1.5;
+    font-style: italic;
+  }
+
+  .progress-track {
+    height: 3px;
+    background: #1a1a1a;
+    border-radius: 2px;
+    margin: 12px 0 4px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--green-dim), var(--green));
+    border-radius: 2px;
+    transition: width 0.4s ease;
+    box-shadow: 0 0 8px var(--green-glow);
+  }
+  .progress-label {
+    font-size: 11px;
+    color: #444;
+    text-align: right;
+    letter-spacing: 1px;
+  }
+
+  .feedback-box {
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    display: none;
+  }
+  .feedback-box.success {
+    display: block;
+    background: #0a1a0d;
+    border: 1px solid var(--green-dim);
+    color: var(--green);
+  }
+  .feedback-box.warning {
+    display: block;
+    background: #1a1200;
+    border: 1px solid var(--amber);
+    color: var(--amber);
+  }
+  .feedback-box.error {
+    display: block;
+    background: #1a0505;
+    border: 1px solid var(--red);
+    color: var(--red);
+  }
+
+  /* Procedure script */
+  .script-box {
+    padding: 12px 14px;
+    background: #0a0a0a;
+    border-top: 1px solid #1a1a1a;
+  }
+  .script-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: #444;
+    font-family: 'Orbitron', monospace;
+    margin-bottom: 8px;
+  }
+  .script-text {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: #555;
+    line-height: 1.7;
+    white-space: pre-wrap;
+  }
+  .script-text .highlight { color: var(--amber); }
+
+  /* ===== RADIO BODY ===== */
+  .radio-body {
+    flex: 1;
+    max-width: 440px;
+    background: linear-gradient(170deg, var(--body-top) 0%, var(--body-mid) 40%, var(--body-bot) 100%);
+    border-radius: 16px 16px 20px 20px;
+    border: 1px solid #111;
+    box-shadow:
+      0 25px 60px rgba(0,0,0,0.8),
+      0 0 0 1px rgba(255,255,255,0.04),
+      inset 0 1px 0 rgba(255,255,255,0.08);
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Subtle texture overlay */
+  .radio-body::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='3' height='3' viewBox='0 0 3 3' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0' y='0' width='1' height='1' fill='rgba(255,255,255,0.012)'/%3E%3C/svg%3E");
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
+  /* Brand strip */
+  .radio-brand {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 4px 12px;
+  }
+  .brand-name {
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: 4px;
+    color: #555;
+  }
+  .brand-model {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: #333;
+  }
+
+  /* Power LED */
+  .power-led {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #111;
+    border: 1px solid #222;
+    transition: all 0.3s;
+  }
+  .power-led.on {
+    background: var(--green);
+    box-shadow: 0 0 10px var(--green), 0 0 20px var(--green-glow);
+  }
+
+  /* ===== DISPLAY SCREEN ===== */
+  .screen-wrap {
+    background: #0a0a0a;
+    border-radius: 8px;
+    padding: 3px;
+    border: 1px solid #111;
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.8);
+    margin-bottom: 14px;
+  }
+  .screen {
+    background: var(--screen-bg);
+    border-radius: 6px;
+    padding: 14px;
+    height: 200px;
+    position: relative;
+    overflow: hidden;
+    font-family: 'Share Tech Mono', monospace;
+    box-shadow: inset 0 0 30px rgba(0,30,15,0.5);
+  }
+  /* Screen scanline effect */
+  .screen::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.08) 2px,
+      rgba(0,0,0,0.08) 4px
+    );
+    pointer-events: none;
+    border-radius: inherit;
+  }
+
+  /* Main channel number */
+  .ch-main {
+    font-family: 'Orbitron', monospace;
+    font-size: 64px;
+    font-weight: 900;
+    color: var(--green);
+    text-shadow: 0 0 15px var(--green), 0 0 30px var(--green-glow);
+    line-height: 1;
+    text-align: center;
+    letter-spacing: 4px;
+    transition: color 0.2s;
+  }
+  .ch-main.ch16 { color: var(--green); }
+  .ch-main.ch70 { color: var(--amber); text-shadow: 0 0 15px var(--amber), 0 0 30px rgba(255,170,0,0.3); }
+  .ch-main.transmitting { color: var(--red); text-shadow: 0 0 15px var(--red), 0 0 30px var(--red-glow); }
+  .ch-main.off { color: #111; text-shadow: none; }
+
+  /* Status row */
+  .status-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 6px;
+  }
+  .status-tag {
+    font-family: 'Orbitron', monospace;
+    font-size: 8px;
+    letter-spacing: 1.5px;
+    padding: 2px 6px;
+    border-radius: 2px;
+    background: rgba(0,255,136,0.08);
+    border: 1px solid rgba(0,255,136,0.15);
+    color: var(--green-dim);
+    transition: all 0.2s;
+  }
+  .status-tag.hidden { opacity: 0; }
+  .status-tag.tx {
+    background: rgba(255,51,51,0.15);
+    border-color: rgba(255,51,51,0.3);
+    color: var(--red);
+    animation: pulse-red 0.6s infinite alternate;
+  }
+  @keyframes pulse-red { from{opacity:1} to{opacity:0.4} }
+  .status-tag.dw {
+    background: rgba(255,170,0,0.1);
+    border-color: rgba(255,170,0,0.25);
+    color: var(--amber);
+  }
+
+  /* Power row */
+  .power-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 5px;
+  }
+  .pwr-indicator {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    color: #222;
+    transition: color 0.2s;
+  }
+  .pwr-indicator.active { color: var(--green-dim); }
+
+  /* Message ticker */
+  .msg-ticker {
+    position: absolute;
+    bottom: 10px;
+    left: 14px;
+    right: 14px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--amber);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .msg-ticker.show { opacity: 1; }
+
+  /* Input entry display */
+  .entry-display {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    font-family: 'Orbitron', monospace;
+    font-size: 18px;
+    color: var(--amber);
+    text-shadow: 0 0 8px var(--amber);
+    letter-spacing: 3px;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .entry-display.show { opacity: 1; }
+
+  /* DSC countdown overlay */
+  .dsc-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    z-index: 10;
+  }
+  .dsc-overlay.active { display: flex; }
+  .dsc-count {
+    font-family: 'Orbitron', monospace;
+    font-size: 72px;
+    font-weight: 900;
+    color: var(--red);
+    text-shadow: 0 0 30px var(--red), 0 0 60px var(--red-glow);
+    animation: count-pulse 1s infinite;
+  }
+  @keyframes count-pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
+  .dsc-label {
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--red);
+    margin-top: 6px;
+    opacity: 0.8;
+  }
+  .dsc-bar-wrap {
+    width: 80%;
+    height: 4px;
+    background: #1a0505;
+    border-radius: 2px;
+    margin-top: 12px;
+    overflow: hidden;
+  }
+  .dsc-bar-fill {
+    height: 100%;
+    background: var(--red);
+    width: 0%;
+    box-shadow: 0 0 8px var(--red);
+    transition: width 0.05s linear;
+  }
+
+  /* ===== SOFTKEYS ===== */
+  .softkey-row {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+  .sk {
+    background: #1a1a1a;
+    border: 1px solid #282828;
+    border-radius: 4px;
+    color: #555;
+    font-family: 'Orbitron', monospace;
+    font-size: 8px;
+    letter-spacing: 1px;
+    padding: 7px 4px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .sk:hover { background: #222; color: #888; border-color: #333; }
+  .sk:active { background: #111; transform: translateY(1px); }
+  .sk.active { color: var(--green); border-color: var(--green-dim); background: #0a1a0e; }
+
+  /* ===== BUTTON ZONES ===== */
+  .zone {
+    margin-bottom: 10px;
+  }
+  .zone-label {
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: #333;
+    font-family: 'Orbitron', monospace;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    padding-left: 2px;
+  }
+
+  /* Main controls row */
+  .main-controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  /* Dial row */
+  .dial-row {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px 0 4px;
+    margin-bottom: 8px;
+  }
+  .dial-unit { text-align: center; }
+  .dial-ring {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 38% 32%, #555 0%, #3a3a3a 25%, #252525 55%, #111 100%);
+    border: 3px solid #111;
+    position: relative;
+    cursor: grab;
+    box-shadow:
+      inset 0 4px 8px rgba(0,0,0,0.7),
+      inset 0 -2px 4px rgba(255,255,255,0.06),
+      0 6px 16px rgba(0,0,0,0.6);
+    user-select: none;
+    touch-action: none;
+    transition: box-shadow 0.15s;
+  }
+  .dial-ring:hover {
+    box-shadow:
+      inset 0 4px 8px rgba(0,0,0,0.7),
+      inset 0 -2px 4px rgba(255,255,255,0.08),
+      0 6px 16px rgba(0,0,0,0.6),
+      0 0 0 1px rgba(0,255,136,0.15);
+  }
+  .dial-ring::after {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    width: 5px;
+    height: 34px;
+    background: linear-gradient(to bottom, #eee, #999);
+    transform: translateX(-50%) rotate(var(--rot, -135deg));
+    transform-origin: bottom center;
+    border-radius: 3px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.6);
+    transition: transform 0.07s ease-out;
+  }
+  .dial-label-text {
+    font-family: 'Orbitron', monospace;
+    font-size: 8px;
+    letter-spacing: 2px;
+    color: #444;
+    margin-top: 7px;
+  }
+  .dial-val {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    color: var(--green-dim);
+    margin-top: 2px;
+  }
+
+  /* Nav buttons */
+  .nav-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+
+  /* Numpad */
+  .numpad-grid {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+
+  /* Generic button */
+  .btn {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    background: linear-gradient(180deg, var(--btn-base) 0%, #282828 100%);
+    border: 1px solid #1a1a1a;
+    border-bottom: 2px solid #111;
+    color: #999;
+    padding: 10px 8px;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    user-select: none;
+    transition: all 0.1s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn:hover { background: linear-gradient(180deg, #3a3a3a 0%, #2e2e2e 100%); color: #bbb; }
+  .btn:active, .btn.pressed {
+    background: linear-gradient(180deg, #1e1e1e 0%, #252525 100%);
+    border-bottom-width: 1px;
+    transform: translateY(1px);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.4);
+    color: #777;
+  }
+
+  /* Variant buttons */
+  .btn-green {
+    background: linear-gradient(180deg, #0d2a18 0%, #091a10 100%);
+    border-color: #0d2a18;
+    border-bottom-color: #061208;
+    color: var(--green-dim);
+  }
+  .btn-green:hover { background: linear-gradient(180deg, #102e1c 0%, #0c1f14 100%); color: var(--green); }
+
+  .btn-red {
+    background: linear-gradient(180deg, #2a0d0d 0%, #1a0909 100%);
+    border-color: #2a0d0d;
+    border-bottom-color: #120606;
+    color: #cc4444;
+  }
+  .btn-red:hover { background: linear-gradient(180deg, #330f0f 0%, #200a0a 100%); color: var(--red); }
+
+  .btn-amber {
+    background: linear-gradient(180deg, #2a1d00 0%, #1a1200 100%);
+    border-color: #2a1d00;
+    border-bottom-color: #120e00;
+    color: #cc8800;
+  }
+  .btn-amber:hover { color: var(--amber); }
+
+  .btn-ptt {
+    background: linear-gradient(180deg, #3a0000 0%, #220000 100%);
+    border: 1px solid #440000;
+    border-bottom: 3px solid #110000;
+    color: var(--red);
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    padding: 14px;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(180,0,0,0.3);
+    width: 100%;
+    font-weight: 700;
+  }
+  .btn-ptt:hover { background: linear-gradient(180deg, #440000 0%, #2a0000 100%); box-shadow: 0 4px 16px rgba(255,0,0,0.25); }
+  .btn-ptt:active, .btn-ptt.pressed {
+    background: linear-gradient(180deg, #220000 0%, #1a0000 100%);
+    border-bottom-width: 1px;
+    transform: translateY(2px);
+    box-shadow: 0 2px 6px rgba(180,0,0,0.3);
+  }
+  .btn-ptt.active {
+    background: linear-gradient(180deg, #550000 0%, #3a0000 100%);
+    color: #ff6666;
+    box-shadow: 0 0 20px rgba(255,0,0,0.4), 0 4px 12px rgba(180,0,0,0.5);
+    animation: ptt-pulse 0.8s infinite alternate;
+  }
+  @keyframes ptt-pulse { from{box-shadow:0 0 15px rgba(255,0,0,0.3)} to{box-shadow:0 0 25px rgba(255,0,0,0.6)} }
+
+  .btn-dsc {
+    background: linear-gradient(180deg, #3a0000 0%, #220000 100%);
+    border: 1px solid #550000;
+    border-bottom: 2px solid #110000;
+    color: #ff4444;
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+    grid-column: span 2;
+    padding: 11px;
+    box-shadow: 0 3px 10px rgba(180,0,0,0.25);
+  }
+  .btn-dsc:hover { background: linear-gradient(180deg, #440000 0%, #2a0000 100%); }
+
+  .btn-ch16 {
+    background: linear-gradient(180deg, #002a1a 0%, #001a10 100%);
+    border-color: #003a22;
+    color: var(--green);
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .btn-ch16:hover { box-shadow: 0 0 10px rgba(0,255,136,0.15); }
+
+  /* Row layouts */
+  .row { display: flex; gap: 6px; margin-bottom: 8px; }
+  .row .btn { flex: 1; }
+  .row-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; margin-bottom: 8px; }
+
+  /* PTT row */
+  .ptt-row { margin-top: 10px; }
+
+  /* ===== COMMS LOG ===== */
+  .comms-log {
+    margin-top: 14px;
+    background: #050505;
+    border: 1px solid #181818;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .log-header {
+    background: #0d0d0d;
+    padding: 6px 12px;
+    font-family: 'Orbitron', monospace;
+    font-size: 8px;
+    letter-spacing: 2px;
+    color: #333;
+    border-bottom: 1px solid #181818;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .log-clear {
+    font-size: 8px;
+    color: #2a2a2a;
+    cursor: pointer;
+    padding: 2px 6px;
+    border: 1px solid #1a1a1a;
+    border-radius: 2px;
+    background: none;
+    font-family: 'Rajdhani', sans-serif;
+    letter-spacing: 1px;
+    transition: all 0.15s;
+  }
+  .log-clear:hover { color: #555; border-color: #2a2a2a; }
+  .log-body {
+    height: 100px;
+    overflow-y: auto;
+    padding: 8px 12px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    line-height: 1.7;
+    color: #3a3a3a;
+    scrollbar-width: thin;
+    scrollbar-color: #222 #0a0a0a;
+  }
+  .log-body::-webkit-scrollbar { width: 4px; }
+  .log-body::-webkit-scrollbar-track { background: #0a0a0a; }
+  .log-body::-webkit-scrollbar-thumb { background: #222; border-radius: 2px; }
+
+  .log-entry { padding: 1px 0; }
+  .log-entry .ts { color: #252525; }
+  .log-entry .sys { color: #2a4a2a; }
+  .log-entry .tx  { color: #4a3010; }
+  .log-entry .rx  { color: #1a3a4a; }
+  .log-entry .warn { color: #4a3000; }
+  .log-entry .ok  { color: #1a4a1a; }
+  .log-entry .alert { color: #4a1010; font-weight: bold; }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 780px) {
+    .sim-wrapper { flex-direction: column; align-items: center; }
+    .training-panel { width: 100%; max-width: 440px; }
+  }
+
+  /* ===== OFF STATE ===== */
+  .radio-body.powered-off .screen { filter: brightness(0.2); }
+  .radio-body.powered-off .btn:not(#power-btn) { opacity: 0.4; cursor: not-allowed; }
+  .radio-body.powered-off .btn-ptt { opacity: 0.3; cursor: not-allowed; }
+  .radio-body.powered-off .dial-ring { opacity: 0.4; cursor: not-allowed; }
+  .radio-body.powered-off .sk { opacity: 0.3; cursor: not-allowed; }
+
+  /* Boot animation */
+  @keyframes boot-flicker {
+    0%{opacity:0} 10%{opacity:0.8} 20%{opacity:0.2} 30%{opacity:1} 40%{opacity:0.6}
+    50%{opacity:1} 60%{opacity:0.9} 70%{opacity:1} 100%{opacity:1}
+  }
+  .booting .ch-main { animation: boot-flicker 0.8s ease forwards; }
+</style>
 </head>
 <body>
-    <div class="radio-container">
-        <div class="display" id="display">
-            <div id="channel-display">--</div>
-            <span id="status-line" class="status-info"></span>
-            <span class="icons" id="icons"></span>
-            <div id="softkey-message" class="softkey-message"></div>
-            <div class="countdown" id="countdown">3</div>
-            <div class="progress-bar" id="dsc-progress"></div>
-        </div>
-        <div class="softkeys">
-            <button class="softkey" id="soft1">DSC</button>
-            <button class="softkey" id="soft2">SCAN</button>
-            <button class="softkey" id="soft3">DUAL</button>
-            <button class="softkey" id="soft4">AIS</button>
-        </div>
-        <div class="controls">
-            <button id="power-btn">Power On/Off</button>
-            <button id="dsc-btn">DSC Distress (Hold 3s)</button>
-            <button id="dual-watch-btn">DW</button>
 
-            <div class="dial-container">
-                <div class="dial-group">
-                    <div class="dial" id="volume-dial"></div>
-                    <div class="dial-label">VOLUME</div>
-                    <div class="dial-value" id="volume-value">5</div>
-                </div>
-                <div class="dial-group">
-                    <div class="dial" id="squelch-dial"></div>
-                    <div class="dial-label">SQUELCH</div>
-                    <div class="dial-value" id="squelch-value">3</div>
-                </div>
-            </div>
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="brand">MARPRO Marine Training</div>
+  <h1>VHF Radio Simulator</h1>
+</div>
 
-            <div class="numpad">
-                <button class="keypad" data-digit="1">1</button>
-                <button class="keypad" data-digit="2">2</button>
-                <button class="keypad" data-digit="3">3</button>
+<!-- MODE SWITCHER -->
+<div class="mode-bar">
+  <button class="mode-btn active" id="btn-freeplay">FREE PLAY</button>
+  <button class="mode-btn" id="btn-training">TRAINING MODE</button>
+</div>
 
-                <button class="keypad" data-digit="4">4</button>
-                <button class="keypad" data-digit="5">5</button>
-                <button class="keypad" data-digit="6">6</button>
+<!-- MAIN WRAPPER -->
+<div class="sim-wrapper">
 
-                <button class="keypad" data-digit="7">7</button>
-                <button class="keypad" data-digit="8">8</button>
-                <button class="keypad" data-digit="9">9</button>
+  <!-- TRAINING PANEL -->
+  <div class="training-panel" id="training-panel">
 
-                <div class="row4">
-                    <button id="clear-btn">Clear</button>
-                    <button class="keypad" data-digit="0">0</button>
-                    <button id="enter-btn">Enter</button>
-                </div>
-            </div>
-
-            <div class="channel-buttons">
-                <button id="chan-up">Chan ↑</button>
-                <button id="chan-down">Chan ↓</button>
-            </div>
-
-            <button id="transmit-btn">Press to Transmit (PTT)</button>
-        </div>
-        <div class="additional-buttons">
-            <button id="menu-btn">MENU</button>
-            <button id="ent-btn">ENT</button>
-            <button id="ch16-btn">16/C</button>
-            <button id="ch-wx-btn">CH/WX</button>
-            <button id="hi-lo-btn">HI/LO</button>
-            <button id="lo-dx-btn">LO/DX</button>
-        </div>
-        <div id="log">Simulation Log:<br></div>
+    <!-- Scenario Select -->
+    <div class="training-card">
+      <div class="training-card-header">
+        <span class="dot"></span>
+        SELECT SCENARIO
+      </div>
+      <div class="scenario-list">
+        <button class="scenario-btn" data-scenario="mayday" id="sc-mayday">
+          Mayday Distress Call
+          <span class="tag">CHANNEL 16 · VOICE PROCEDURE</span>
+        </button>
+        <button class="scenario-btn" data-scenario="dsc" id="sc-dsc">
+          DSC Distress Alert
+          <span class="tag">CHANNEL 70 · DIGITAL SELECTIVE CALLING</span>
+        </button>
+      </div>
     </div>
 
-    <script>
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    <!-- Steps Card (hidden until scenario selected) -->
+    <div class="training-card" id="steps-card" style="display:none">
+      <div class="training-card-header">
+        <span class="dot"></span>
+        <span id="steps-title">PROCEDURE STEPS</span>
+      </div>
+      <div class="step-panel" id="step-panel"></div>
+      <div class="progress-track" style="margin:0 14px 10px;">
+        <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+      </div>
+      <div class="progress-label" style="padding: 0 14px 10px; text-align:right; font-size:11px; color:#333;" id="progress-label">0 / 0</div>
+      <div id="feedback-box" class="feedback-box" style="margin:0 14px 12px;"></div>
+    </div>
 
-        function playBeep() {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.type = 'sine';
-            osc.frequency.value = 800;
-            gain.gain.setValueAtTime((volume / 10) * 0.3, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.1);
-        }
+    <!-- Script Reference -->
+    <div class="training-card" id="script-card" style="display:none">
+      <div class="training-card-header">
+        <span class="dot"></span>
+        VOICE PROCEDURE SCRIPT
+      </div>
+      <div class="script-box">
+        <div class="script-label">SAY EXACTLY</div>
+        <div class="script-text" id="script-content"></div>
+      </div>
+    </div>
 
-        function playSuccessBeep() {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-            osc.frequency.linearRampToValueAtTime(900, audioCtx.currentTime + 0.4);
-            gain.gain.setValueAtTime((volume / 10) * 0.4, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.5);
-        }
+  </div>
 
-        let staticNode = null;
-        let staticGain = null;
-        function startStaticNoise() {
-            if (staticNode) return;
-            const bufferSize = 4096;
-            staticNode = audioCtx.createScriptProcessor(bufferSize, 1, 1);
-            staticNode.onaudioprocess = (e) => {
-                const output = e.outputBuffer.getChannelData(0);
-                for (let i = 0; i < bufferSize; i++) {
-                    output[i] = Math.random() * 2 - 1;
-                }
-            };
-            staticGain = audioCtx.createGain();
-            updateStaticVolume();
-            staticNode.connect(staticGain);
-            staticGain.connect(audioCtx.destination);
-        }
+  <!-- RADIO BODY -->
+  <div class="radio-body powered-off" id="radio-body">
 
-        function stopStaticNoise() {
-            if (staticNode) {
-                staticNode.disconnect();
-                staticGain.disconnect();
-                staticNode = null;
-                staticGain = null;
-            }
-        }
+    <!-- Brand -->
+    <div class="radio-brand">
+      <span class="brand-name">MARPRO</span>
+      <span class="brand-model">VHF-16M · CLASS D DSC</span>
+      <div class="power-led" id="power-led"></div>
+    </div>
 
-        function updateStaticVolume() {
-            if (staticGain) {
-                staticGain.gain.value = (volume / 10) * 0.3;
-            }
-        }
+    <!-- Screen -->
+    <div class="screen-wrap">
+      <div class="screen" id="screen">
+        <div class="entry-display" id="entry-display"></div>
 
-        function updateStaticNoise() {
-            if (isPoweredOn && squelch < 4) {
-                startStaticNoise();
-            } else {
-                stopStaticNoise();
-            }
-        }
+        <div class="ch-main off" id="ch-main">--</div>
+        <div class="status-row" id="status-row">
+          <div class="status-tag hidden" id="tag-dw">DUAL WATCH</div>
+          <div class="status-tag hidden" id="tag-wx">WEATHER</div>
+          <div class="status-tag hidden" id="tag-pwr">25W</div>
+          <div class="status-tag hidden" id="tag-tx">TX</div>
+        </div>
+        <div class="power-row" id="power-row">
+          <div class="pwr-indicator" id="pwr-hi">■■■ 25W</div>
+          <div class="pwr-indicator" id="pwr-lo">5W ■</div>
+        </div>
 
-        const display = document.getElementById('display');
-        const channelDisplay = document.getElementById('channel-display');
-        const statusLine = document.getElementById('status-line');
-        const iconsEl = document.getElementById('icons');
-        const countdownEl = document.getElementById('countdown');
-        const softkeyMessage = document.getElementById('softkey-message');
-        const log = document.getElementById('log');
-        const powerBtn = document.getElementById('power-btn');
-        const dscBtn = document.getElementById('dsc-btn');
-        const dscProgress = document.getElementById('dsc-progress');
-        const dualWatchBtn = document.getElementById('dual-watch-btn');
-        const chanUp = document.getElementById('chan-up');
-        const chanDown = document.getElementById('chan-down');
-        const transmitBtn = document.getElementById('transmit-btn');
-        const clearBtn = document.getElementById('clear-btn');
-        const enterBtn = document.getElementById('enter-btn');
-        const menuBtn = document.getElementById('menu-btn');
-        const entBtn = document.getElementById('ent-btn');
-        const ch16Btn = document.getElementById('ch16-btn');
-        const chWxBtn = document.getElementById('ch-wx-btn');
-        const hiLoBtn = document.getElementById('hi-lo-btn');
-        const loDxBtn = document.getElementById('lo-dx-btn');
-        const soft1 = document.getElementById('soft1');
-        const soft2 = document.getElementById('soft2');
-        const soft3 = document.getElementById('soft3');
-        const soft4 = document.getElementById('soft4');
+        <div class="msg-ticker" id="msg-ticker"></div>
 
-        const volumeDial = document.getElementById('volume-dial');
-        const squelchDial = document.getElementById('squelch-dial');
-        const volumeValue = document.getElementById('volume-value');
-        const squelchValue = document.getElementById('squelch-value');
+        <!-- DSC countdown overlay -->
+        <div class="dsc-overlay" id="dsc-overlay">
+          <div class="dsc-count" id="dsc-count">3</div>
+          <div class="dsc-label">DSC DISTRESS — HOLD TO SEND</div>
+          <div class="dsc-bar-wrap">
+            <div class="dsc-bar-fill" id="dsc-bar-fill"></div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-        let isPoweredOn = false;
-        let currentChannel = 16;
-        let isDualWatch = false;
-        let volume = 5;
-        let squelch = 3;
-        let enteredDigits = '';
-        let isHighPower = true;          // true = 25W, false = 5W
-        let isAttenuatorOn = false;
-        let isWeatherMode = false;
-        let isBusy = false;
-        let isTransmitting = false;
-        let hasGps = true;
-        let isFavorite = false;
-        let isCallChannel = false;
-        let hasMessage = false;
+    <!-- Softkeys -->
+    <div class="softkey-row">
+      <div class="sk" id="sk-dsc">DSC</div>
+      <div class="sk" id="sk-scan">SCAN</div>
+      <div class="sk" id="sk-dw">DUAL</div>
+      <div class="sk" id="sk-ais">AIS</div>
+    </div>
 
-        let dscHoldTimer = null;
-        let dscHoldStart = 0;
-        let countdownInterval = null;
-        let dscTriggered = false;
+    <!-- Volume / Squelch dials -->
+    <div class="dial-row">
+      <div class="dial-unit">
+        <div class="dial-ring" id="vol-dial"></div>
+        <div class="dial-label-text">VOLUME</div>
+        <div class="dial-val" id="vol-val">5</div>
+      </div>
+      <div class="dial-unit">
+        <div class="dial-ring" id="sq-dial"></div>
+        <div class="dial-label-text">SQUELCH</div>
+        <div class="dial-val" id="sq-val">3</div>
+      </div>
+    </div>
 
-        let recognition;
-        if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            recognition = new SpeechRecognition();
-            recognition.continuous = false;
-            recognition.interimResults = false;
-            recognition.lang = 'en-AU';
+    <!-- Main controls -->
+    <div class="zone">
+      <div class="zone-label">MAIN CONTROLS</div>
+      <div class="row">
+        <button class="btn" id="power-btn">POWER</button>
+        <button class="btn btn-ch16" id="ch16-btn">16 / C</button>
+        <button class="btn btn-amber" id="hilo-btn">HI / LO</button>
+      </div>
+      <div class="row">
+        <button class="btn btn-dsc" id="dsc-btn" style="flex:2">▲ DSC DISTRESS — HOLD 3 SECONDS</button>
+      </div>
+    </div>
 
-            recognition.onresult = event => {
-                const transcript = event.results[0][0].transcript.trim();
-                appendToDisplay(`TX: ${transcript}`);
-                appendToLog(`Voice TX: "${transcript}" on CH ${currentChannel}`);
-                simulateResponse(transcript);
-            };
-        }
+    <!-- Channel nav + numpad -->
+    <div class="zone">
+      <div class="zone-label">CHANNEL</div>
+      <div class="row">
+        <button class="btn" id="chan-up">CH ▲</button>
+        <button class="btn" id="chan-dn">CH ▼</button>
+        <button class="btn btn-amber" id="wx-btn">WX</button>
+        <button class="btn" id="dw-btn">D/W</button>
+      </div>
+      <div class="numpad-grid" id="numpad">
+        <button class="btn keypad" data-d="1">1</button>
+        <button class="btn keypad" data-d="2">2</button>
+        <button class="btn keypad" data-d="3">3</button>
+        <button class="btn keypad" data-d="4">4</button>
+        <button class="btn keypad" data-d="5">5</button>
+        <button class="btn keypad" data-d="6">6</button>
+        <button class="btn keypad" data-d="7">7</button>
+        <button class="btn keypad" data-d="8">8</button>
+        <button class="btn keypad" data-d="9">9</button>
+        <button class="btn btn-red" id="clear-btn">CLR</button>
+        <button class="btn keypad" data-d="0">0</button>
+        <button class="btn btn-green" id="enter-btn">ENT</button>
+      </div>
+    </div>
 
-        function updateDisplay(extra = '') {
-            if (!isPoweredOn) {
-                channelDisplay.textContent = '--';
-                statusLine.innerHTML = '';
-                iconsEl.textContent = '';
-                countdownEl.style.display = 'none';
-                return;
-            }
+    <!-- PTT -->
+    <div class="ptt-row">
+      <button class="btn btn-ptt" id="ptt-btn">▶ PRESS TO TRANSMIT (PTT)</button>
+    </div>
 
-            channelDisplay.textContent = String(currentChannel).padStart(2, '0');
+    <!-- Comms Log -->
+    <div class="comms-log">
+      <div class="log-header">
+        <span>COMMS LOG</span>
+        <button class="log-clear" id="log-clear">CLEAR</button>
+      </div>
+      <div class="log-body" id="log-body">
+        <div class="log-entry"><span class="sys">SYS  Radio offline.</span></div>
+      </div>
+    </div>
 
-            let status = `VOL: ${volume} | SQ: ${squelch}`;
-            if (isDualWatch) status += ' | DW';
-            if (enteredDigits) status += `<br>→ ${enteredDigits}`;
-            if (extra) status += `<br>${extra}`;
-            statusLine.innerHTML = status;
+  </div><!-- end radio-body -->
 
-            let iconText = '';
-            if (isBusy) iconText += ' BUSY';
-            if (isTransmitting) iconText += ' TX';
-            iconText += isHighPower ? ' 25W' : ' 5W';
-            if (isAttenuatorOn) iconText += ' LOC';
-            if (isWeatherMode) iconText += ' WX';
-            if (hasGps) iconText += ' GPS';
-            if (isFavorite) iconText += ' FAV';
-            if (isCallChannel) iconText += ' CALL';
-            if (hasMessage) iconText += ' MSG';
-            iconsEl.textContent = iconText;
-        }
+</div><!-- end sim-wrapper -->
 
-        function showSoftkeyMessage(text) {
-            softkeyMessage.textContent = text;
-            softkeyMessage.style.opacity = '1';
-            setTimeout(() => {
-                softkeyMessage.style.opacity = '0';
-            }, 3000);
-        }
+<script>
+/* ================================================================
+   MARPRO VHF RADIO SIMULATOR — Full Logic
+   ================================================================ */
 
-        function appendToDisplay(message) {
-            display.innerHTML += `<br>${message}`;
-            display.scrollTop = display.scrollHeight;
-        }
+// ---- Audio ----
+let audioCtx = null;
+function getAudioCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
 
-        function appendToLog(message) {
-            log.innerHTML += `${message}<br>`;
-            log.scrollTop = log.scrollHeight;
-        }
+function beep(freq = 800, dur = 0.1, vol = 0.25) {
+  try {
+    const ctx = getAudioCtx();
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.type = 'sine'; o.frequency.value = freq;
+    g.gain.setValueAtTime(vol * (state.volume / 10), ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+    o.start(); o.stop(ctx.currentTime + dur);
+  } catch(e){}
+}
 
-        function setChannel(newChan) {
-            const chanNum = parseInt(newChan, 10);
-            if (chanNum >= 1 && chanNum <= 88) {
-                currentChannel = chanNum;
-                appendToLog(`Channel set to ${String(currentChannel).padStart(2, '0')}`);
-                isCallChannel = (currentChannel === 9);
-            } else {
-                appendToLog(`Invalid channel: ${newChan} (01-88 only)`);
-            }
-            enteredDigits = '';
-            updateDisplay();
-        }
+function beepRise() {
+  try {
+    const ctx = getAudioCtx();
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.type = 'sine';
+    o.frequency.setValueAtTime(500, ctx.currentTime);
+    o.frequency.linearRampToValueAtTime(900, ctx.currentTime + 0.5);
+    g.gain.setValueAtTime(0.4 * (state.volume / 10), ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6);
+    o.start(); o.stop(ctx.currentTime + 0.6);
+  } catch(e){}
+}
 
-        // Dial functionality
-        function makeDialInteractive(dialEl, valueEl, initialValue, min = 0, max = 10, onChange) {
-            let value = initialValue;
-            let isDragging = false;
-            let startY = 0;
-            let startValue = 0;
+function beepDSC() {
+  // Three-tone DSC alert sound
+  [0, 0.22, 0.44].forEach((t, i) => {
+    const freqs = [2187.5, 1954.5, 2187.5];
+    try {
+      const ctx = getAudioCtx();
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.type = 'sine'; o.frequency.value = freqs[i];
+      g.gain.setValueAtTime(0.5 * (state.volume / 10), ctx.currentTime + t);
+      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + t + 0.18);
+      o.start(ctx.currentTime + t);
+      o.stop(ctx.currentTime + t + 0.18);
+    } catch(e){}
+  });
+}
 
-            function setRotation(v) {
-                const angle = ((v - min) / (max - min)) * 270 - 135;
-                dialEl.style.setProperty('--rotation', angle + 'deg');
-                valueEl.textContent = v;
-            }
+let staticNode = null, staticGainNode = null;
+function startStatic() {
+  if (staticNode) return;
+  try {
+    const ctx = getAudioCtx();
+    const bufSize = 4096;
+    staticNode = ctx.createScriptProcessor(bufSize, 1, 1);
+    staticNode.onaudioprocess = e => {
+      const out = e.outputBuffer.getChannelData(0);
+      for (let i = 0; i < bufSize; i++) out[i] = (Math.random() * 2 - 1);
+    };
+    staticGainNode = ctx.createGain();
+    staticGainNode.gain.value = (state.volume / 10) * 0.12;
+    staticNode.connect(staticGainNode);
+    staticGainNode.connect(ctx.destination);
+  } catch(e){}
+}
+function stopStatic() {
+  if (!staticNode) return;
+  try { staticNode.disconnect(); staticGainNode.disconnect(); } catch(e){}
+  staticNode = null; staticGainNode = null;
+}
+function updateStatic() {
+  if (state.powered && state.squelch < 4) startStatic();
+  else stopStatic();
+  if (staticGainNode) staticGainNode.gain.value = (state.volume / 10) * 0.12;
+}
 
-            setRotation(value);
+// ---- State ----
+const state = {
+  powered:      false,
+  channel:      16,
+  volume:       5,
+  squelch:      3,
+  highPower:    true,
+  dualWatch:    false,
+  weatherMode:  false,
+  transmitting: false,
+  enteredDigits:'',
+  dscHolding:   false,
+  dscTriggered: false,
+  scanning:     false,
+};
 
-            const start = e => {
-                if (!isPoweredOn) return;
-                isDragging = true;
-                startY = e.clientY || (e.touches && e.touches[0].clientY);
-                startValue = value;
-                dialEl.style.cursor = 'grabbing';
-                if (e.preventDefault) e.preventDefault();
-            };
+// ---- DOM refs ----
+const radioBody    = document.getElementById('radio-body');
+const chMain       = document.getElementById('ch-main');
+const entryDisp    = document.getElementById('entry-display');
+const tagDW        = document.getElementById('tag-dw');
+const tagWX        = document.getElementById('tag-wx');
+const tagPwr       = document.getElementById('tag-pwr');
+const tagTX        = document.getElementById('tag-tx');
+const pwrHi        = document.getElementById('pwr-hi');
+const pwrLo        = document.getElementById('pwr-lo');
+const msgTicker    = document.getElementById('msg-ticker');
+const dscOverlay   = document.getElementById('dsc-overlay');
+const dscCount     = document.getElementById('dsc-count');
+const dscBarFill   = document.getElementById('dsc-bar-fill');
+const powerLed     = document.getElementById('power-led');
+const logBody      = document.getElementById('log-body');
+const volVal       = document.getElementById('vol-val');
+const sqVal        = document.getElementById('sq-val');
+const volDial      = document.getElementById('vol-dial');
+const sqDial       = document.getElementById('sq-dial');
+const pttBtn       = document.getElementById('ptt-btn');
+const dscBtn       = document.getElementById('dsc-btn');
+const feedbackBox  = document.getElementById('feedback-box');
 
-            dialEl.addEventListener('mousedown', start);
-            dialEl.addEventListener('touchstart', start, { passive: false });
+// ---- Logging ----
+let logLines = [];
+function logEntry(text, cls = 'sys') {
+  const now = new Date();
+  const ts = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+  logLines.push({ ts, text, cls });
+  renderLog();
+}
+function renderLog() {
+  logBody.innerHTML = logLines.map(e =>
+    `<div class="log-entry"><span class="ts">${e.ts}  </span><span class="${e.cls}">${e.text}</span></div>`
+  ).join('');
+  logBody.scrollTop = logBody.scrollHeight;
+}
 
-            const move = e => {
-                if (!isDragging) return;
-                const y = e.clientY || (e.touches && e.touches[0].clientY);
-                const deltaY = startY - y;
-                let newValue = Math.round(startValue + deltaY * 0.3);
-                newValue = Math.max(min, Math.min(max, newValue));
+// ---- Display update ----
+function updateDisplay() {
+  if (!state.powered) {
+    chMain.textContent = '--';
+    chMain.className = 'ch-main off';
+    [tagDW, tagWX, tagPwr, tagTX].forEach(t => t.classList.add('hidden'));
+    pwrHi.classList.remove('active'); pwrLo.classList.remove('active');
+    entryDisp.textContent = ''; entryDisp.classList.remove('show');
+    return;
+  }
 
-                if (newValue !== value) {
-                    value = newValue;
-                    setRotation(value);
-                    onChange(value);
-                    playBeep();
-                }
-            };
+  // Channel display
+  let chClass = 'ch-main';
+  if (state.transmitting) chClass += ' transmitting';
+  else if (state.channel === 70) chClass += ' ch70';
+  else chClass += ' ch16'; // green for all normal
+  chMain.className = chClass;
+  chMain.textContent = String(state.channel).padStart(2, '0');
 
-            document.addEventListener('mousemove', move);
-            document.addEventListener('touchmove', move, { passive: false });
+  // Entry overlay
+  if (state.enteredDigits) {
+    entryDisp.textContent = state.enteredDigits;
+    entryDisp.classList.add('show');
+  } else {
+    entryDisp.textContent = '';
+    entryDisp.classList.remove('show');
+  }
 
-            const end = () => {
-                isDragging = false;
-                dialEl.style.cursor = 'grab';
-            };
+  // Status tags
+  tagDW.classList.toggle('hidden', !state.dualWatch);
+  tagDW.classList.toggle('dw', state.dualWatch);
+  tagWX.classList.toggle('hidden', !state.weatherMode);
+  tagTX.classList.toggle('hidden', !state.transmitting);
+  if (state.transmitting) tagTX.classList.add('tx'); else tagTX.classList.remove('tx');
+  tagPwr.classList.toggle('hidden', false);
+  tagPwr.textContent = state.highPower ? '25W' : '5W';
 
-            document.addEventListener('mouseup', end);
-            document.addEventListener('touchend', end);
-        }
+  // Power indicators
+  pwrHi.classList.toggle('active', state.highPower);
+  pwrLo.classList.toggle('active', !state.highPower);
+}
 
-        makeDialInteractive(volumeDial, volumeValue, volume, 0, 10, v => {
-            volume = v;
-            updateStaticVolume();
-            updateDisplay();
-        });
+function ticker(msg, duration = 4000) {
+  msgTicker.textContent = msg;
+  msgTicker.classList.add('show');
+  clearTimeout(ticker._t);
+  ticker._t = setTimeout(() => msgTicker.classList.remove('show'), duration);
+}
 
-        makeDialInteractive(squelchDial, squelchValue, squelch, 0, 10, v => {
-            squelch = v;
-            updateStaticNoise();
-            updateDisplay();
-        });
+// ---- Power ----
+document.getElementById('power-btn').addEventListener('click', () => {
+  beep(600, 0.08);
+  state.powered = !state.powered;
+  radioBody.classList.toggle('powered-off', !state.powered);
+  powerLed.classList.toggle('on', state.powered);
+  if (state.powered) {
+    radioBody.classList.add('booting');
+    setTimeout(() => radioBody.classList.remove('booting'), 1000);
+    state.channel = 16;
+    state.enteredDigits = '';
+    logEntry('Radio powered ON — CH 16 default', 'sys');
+    ticker('MARPRO VHF-16M  READY');
+    updateDisplay();
+    updateStatic();
+  } else {
+    stopStatic();
+    state.transmitting = false;
+    state.dscHolding = false;
+    state.dscTriggered = false;
+    dscOverlay.classList.remove('active');
+    pttBtn.classList.remove('active');
+    logEntry('Radio powered OFF', 'sys');
+    updateDisplay();
+  }
+});
 
-        // Event Listeners
-        powerBtn.addEventListener('click', () => {
-            playBeep();
-            isPoweredOn = !isPoweredOn;
-            updateDisplay();
-            appendToLog(isPoweredOn ? 'Radio powered ON' : 'Radio powered OFF');
-            updateStaticNoise();
-        });
+// ---- Guard: require power ----
+function needsPower() {
+  if (!state.powered) { beep(200, 0.1, 0.1); return true; }
+  return false;
+}
 
-        // Chan Up – wrap from 88 → 01
-        chanUp.addEventListener('click', () => {
-            if (!isPoweredOn) return;
-            playBeep();
-            let next = currentChannel + 1;
-            if (next > 88) next = 1;
-            setChannel(next);
-        });
+// ---- Channel set ----
+function setChannel(n) {
+  n = parseInt(n, 10);
+  if (isNaN(n) || n < 1 || n > 88) {
+    ticker('INVALID CHANNEL — 01 to 88');
+    logEntry(`Invalid channel entry: ${n}`, 'warn');
+    beep(200, 0.15);
+    return;
+  }
+  state.channel = n;
+  state.weatherMode = false;
+  state.enteredDigits = '';
+  beep(800, 0.07);
+  logEntry(`Channel → ${String(n).padStart(2,'0')}`, 'sys');
+  updateDisplay();
+  updateStatic();
+  checkTrainingStep('channel', n);
+}
 
-        // Chan Down – wrap from 01 → 88
-        chanDown.addEventListener('click', () => {
-            if (!isPoweredOn) return;
-            playBeep();
-            let prev = currentChannel - 1;
-            if (prev < 1) prev = 88;
-            setChannel(prev);
-        });
+// ---- CH 16 button ----
+document.getElementById('ch16-btn').addEventListener('click', () => {
+  if (needsPower()) return;
+  setChannel(16);
+  ticker('CHANNEL 16 — DISTRESS / CALLING');
+  checkTrainingStep('ch16');
+});
 
-        document.querySelectorAll('button[data-digit]').forEach(btn => {
-            btn.addEventListener('click', () => {
-                if (!isPoweredOn) return;
-                playBeep();
-                if (enteredDigits.length < 2) {
-                    enteredDigits += btn.dataset.digit;
-                    updateDisplay();
-                }
-            });
-        });
+// ---- Chan Up / Down ----
+document.getElementById('chan-up').addEventListener('click', () => {
+  if (needsPower()) return;
+  let n = state.channel + 1; if (n > 88) n = 1;
+  setChannel(n);
+});
+document.getElementById('chan-dn').addEventListener('click', () => {
+  if (needsPower()) return;
+  let n = state.channel - 1; if (n < 1) n = 88;
+  setChannel(n);
+});
 
-        enterBtn.addEventListener('click', () => {
-            if (!isPoweredOn || !enteredDigits) return;
-            playBeep();
-            setChannel(enteredDigits);
-        });
+// ---- Numpad ----
+document.querySelectorAll('#numpad .keypad').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (needsPower()) return;
+    beep(750, 0.06);
+    if (state.enteredDigits.length < 2) {
+      state.enteredDigits += btn.dataset.d;
+      updateDisplay();
+    }
+  });
+});
+document.getElementById('enter-btn').addEventListener('click', () => {
+  if (needsPower()) return;
+  if (state.enteredDigits) setChannel(state.enteredDigits);
+});
+document.getElementById('clear-btn').addEventListener('click', () => {
+  beep(400, 0.07);
+  state.enteredDigits = '';
+  updateDisplay();
+});
 
-        clearBtn.addEventListener('click', () => {
-            playBeep();
-            enteredDigits = '';
-            updateDisplay();
-        });
+// ---- HI/LO ----
+document.getElementById('hilo-btn').addEventListener('click', () => {
+  if (needsPower()) return;
+  beep(700, 0.07);
+  state.highPower = !state.highPower;
+  ticker(state.highPower ? 'HIGH POWER — 25W' : 'LOW POWER — 5W');
+  logEntry(`Power → ${state.highPower ? '25W' : '5W'}`, 'sys');
+  updateDisplay();
+  checkTrainingStep('power');
+});
 
-        dualWatchBtn.addEventListener('click', () => {
-            if (isPoweredOn) {
-                playBeep();
-                isDualWatch = !isDualWatch;
-                dualWatchBtn.textContent = isDualWatch ? 'DW' : 'DW';
-                showSoftkeyMessage(isDualWatch ? 'Dual Watch On' : 'Dual Watch Off');
-                updateDisplay();
-                appendToLog(`Dual watch ${isDualWatch ? 'enabled' : 'disabled'}`);
-            }
-        });
+// ---- Weather ----
+document.getElementById('wx-btn').addEventListener('click', () => {
+  if (needsPower()) return;
+  beep(700, 0.07);
+  state.weatherMode = !state.weatherMode;
+  ticker(state.weatherMode ? 'WEATHER CHANNEL — WX' : 'WEATHER MODE OFF');
+  logEntry(`Weather mode ${state.weatherMode ? 'ON' : 'OFF'}`, 'sys');
+  updateDisplay();
+});
 
-        dscBtn.addEventListener('mousedown', () => {
-            if (!isPoweredOn || dscTriggered) return;
-            playBeep();
-            dscHoldStart = Date.now();
-            dscProgress.style.width = '0%';
-            countdownEl.textContent = '3';
-            countdownEl.style.display = 'block';
-            dscTriggered = false;
+// ---- Dual Watch ----
+document.getElementById('dw-btn').addEventListener('click', () => {
+  if (needsPower()) return;
+  beep(700, 0.07);
+  state.dualWatch = !state.dualWatch;
+  ticker(state.dualWatch ? 'DUAL WATCH — CH 16 ACTIVE' : 'DUAL WATCH OFF');
+  logEntry(`Dual Watch ${state.dualWatch ? 'enabled' : 'disabled'}`, 'sys');
+  updateDisplay();
+});
 
-            let remaining = 3;
-            countdownInterval = setInterval(() => {
-                remaining--;
-                countdownEl.textContent = remaining;
-                playBeep();
-                if (remaining <= 0) clearInterval(countdownInterval);
-            }, 1000);
+// ---- Softkeys ----
+document.getElementById('sk-dsc').addEventListener('click', () => {
+  if (needsPower()) return;
+  beep(700, 0.07);
+  ticker('DSC MENU — (SIMULATED)');
+  logEntry('DSC menu accessed', 'sys');
+});
+document.getElementById('sk-scan').addEventListener('click', () => {
+  if (needsPower()) return;
+  beep(700, 0.07);
+  ticker('SCANNING CHANNELS...');
+  logEntry('Channel scan started', 'sys');
+});
+document.getElementById('sk-dw').addEventListener('click', () => {
+  if (needsPower()) return;
+  document.getElementById('dw-btn').click();
+});
+document.getElementById('sk-ais').addEventListener('click', () => {
+  if (needsPower()) return;
+  beep(700, 0.07);
+  ticker('AIS — NO TARGETS IN RANGE');
+  logEntry('AIS checked — no targets', 'sys');
+});
 
-            dscHoldTimer = setInterval(() => {
-                const elapsed = Date.now() - dscHoldStart;
-                const percent = Math.min(100, (elapsed / 3000) * 100);
-                dscProgress.style.width = percent + '%';
+// ---- Dials ----
+function makeDial(el, valEl, init, min, max, onChange) {
+  let val = init, dragging = false, startY = 0, startVal = 0;
+  const setRot = v => {
+    const ang = ((v - min) / (max - min)) * 270 - 135;
+    el.style.setProperty('--rot', ang + 'deg');
+    valEl.textContent = v;
+  };
+  setRot(val);
 
-                if (percent >= 100 && !dscTriggered) {
-                    dscTriggered = true;
-                    clearInterval(dscHoldTimer);
-                    triggerDSCDistress();
-                }
-            }, 50);
-        });
+  const onStart = e => {
+    if (!state.powered) return;
+    dragging = true;
+    startY = (e.touches ? e.touches[0].clientY : e.clientY);
+    startVal = val;
+    e.preventDefault();
+  };
+  const onMove = e => {
+    if (!dragging) return;
+    const y = (e.touches ? e.touches[0].clientY : e.clientY);
+    let nv = Math.round(startVal + (startY - y) * 0.25);
+    nv = Math.max(min, Math.min(max, nv));
+    if (nv !== val) { val = nv; setRot(val); onChange(val); beep(500, 0.04, 0.1); }
+    e.preventDefault();
+  };
+  const onEnd = () => { dragging = false; };
 
-        dscBtn.addEventListener('mouseup mouseleave', () => {
-            if (dscTriggered) return;
-            clearInterval(dscHoldTimer);
-            clearInterval(countdownInterval);
-            dscProgress.style.width = '0%';
-            countdownEl.style.display = 'none';
-            const elapsed = Date.now() - dscHoldStart;
-            if (elapsed < 3000) {
-                appendToLog('DSC hold released early - cancelled');
-            }
-            dscTriggered = false;
-        });
+  el.addEventListener('mousedown', onStart);
+  el.addEventListener('touchstart', onStart, { passive: false });
+  document.addEventListener('mousemove', onMove);
+  document.addEventListener('touchmove', onMove, { passive: false });
+  document.addEventListener('mouseup', onEnd);
+  document.addEventListener('touchend', onEnd);
+}
 
-        function triggerDSCDistress() {
-            countdownEl.style.display = 'none';
-            appendToDisplay('DSC Distress Alert Sent (CH 70)');
-            appendToLog('DSC distress alert activated after 3s hold');
-            playSuccessBeep();
-            setTimeout(() => {
-                setChannel(16);
-                appendToDisplay('Auto-switched to CH 16 for voice follow-up');
-            }, 1200);
-        }
+makeDial(volDial, volVal, 5, 0, 10, v => {
+  state.volume = v;
+  if (staticGainNode) staticGainNode.gain.value = (v / 10) * 0.12;
+  logEntry(`Volume → ${v}`, 'sys');
+});
+makeDial(sqDial, sqVal, 3, 0, 10, v => {
+  state.squelch = v;
+  updateStatic();
+  logEntry(`Squelch → ${v}`, 'sys');
+});
 
-        transmitBtn.addEventListener('mousedown', () => {
-            if (!isPoweredOn) return;
-            playBeep();
-            appendToDisplay('Transmitting...');
-            appendToLog('PTT pressed');
-            isTransmitting = true;
-            updateDisplay();
-            if (recognition) {
-                recognition.start();
-            } else {
-                const message = prompt('Enter transmission message:');
-                if (message) {
-                    appendToDisplay(`TX: ${message}`);
-                    appendToLog(`Text TX: "${message}" on CH ${currentChannel}`);
-                    simulateResponse(message);
-                }
-            }
-        });
+// ---- PTT ----
+let pttActive = false;
+let recognition = null;
 
-        transmitBtn.addEventListener('mouseup', () => {
-            if (isPoweredOn && recognition) {
-                recognition.stop();
-                appendToDisplay('Transmission End');
-                appendToLog('PTT released');
-                playBeep();
-                isTransmitting = false;
-                updateDisplay();
-            }
-        });
+if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SR();
+  recognition.continuous = false;
+  recognition.interimResults = false;
+  recognition.lang = 'en-AU';
+  recognition.onresult = e => {
+    const t = e.results[0][0].transcript.trim();
+    logEntry(`TX: "${t}" — CH ${String(state.channel).padStart(2,'0')}`, 'tx');
+    ticker(`TX: ${t}`);
+    handleVoiceInput(t);
+  };
+  recognition.onerror = () => {};
+  recognition.onend = () => {
+    if (pttActive) { pttActive = false; endTransmit(); }
+  };
+}
 
-        function simulateResponse(message) {
-            const lower = message.toLowerCase();
-            setTimeout(() => {
-                if (lower.includes('mayday')) {
-                    if (currentChannel === 16) {
-                        appendToDisplay('Sim ACK: Coast Guard received Mayday');
-                    } else {
-                        appendToDisplay('Sim ACK: Message received (but distress should be on CH 16)');
-                    }
-                } else if (lower.includes('pan pan')) {
-                    appendToDisplay('Sim ACK: Pan-Pan received');
-                } else if (lower.includes('securite')) {
-                    appendToDisplay('Sim Broadcast: Securité noted');
-                } else {
-                    appendToDisplay('Sim ACK: Message received');
-                }
-                playBeep();
-            }, 800);
-        }
+function startTransmit() {
+  if (!state.powered) return;
+  if (state.channel === 70) {
+    ticker('CH 70 — DSC ONLY · NO VOICE TX');
+    logEntry('TX blocked — CH 70 is DSC only, no voice', 'warn');
+    beep(200, 0.2);
+    checkTrainingStep('tx_blocked_ch70');
+    return;
+  }
+  pttActive = true;
+  state.transmitting = true;
+  pttBtn.classList.add('active');
+  beep(1100, 0.08);
+  logEntry(`PTT OPEN — CH ${String(state.channel).padStart(2,'0')} ${state.highPower ? '25W' : '5W'}`, 'tx');
+  updateDisplay();
+  if (recognition) { try { recognition.start(); } catch(e){} }
+  checkTrainingStep('ptt');
+}
 
-        menuBtn.addEventListener('click', () => {
-            playBeep();
-            showSoftkeyMessage('Menu opened (simulated)');
-        });
+function endTransmit() {
+  state.transmitting = false;
+  pttActive = false;
+  pttBtn.classList.remove('active');
+  beep(700, 0.06);
+  logEntry('PTT CLOSED', 'tx');
+  updateDisplay();
+}
 
-        soft1.addEventListener('click', () => {
-            playBeep();
-            showSoftkeyMessage('DSC menu opened');
-        });
+pttBtn.addEventListener('mousedown', e => { e.preventDefault(); startTransmit(); });
+pttBtn.addEventListener('touchstart', e => { e.preventDefault(); startTransmit(); }, { passive: false });
+pttBtn.addEventListener('mouseup', endTransmit);
+pttBtn.addEventListener('touchend', endTransmit);
+pttBtn.addEventListener('mouseleave', () => { if (pttActive) endTransmit(); });
 
-        soft2.addEventListener('click', () => {
-            playBeep();
-            showSoftkeyMessage('Scan started');
-        });
+function handleVoiceInput(text) {
+  const lower = text.toLowerCase();
+  setTimeout(() => {
+    if (lower.includes('mayday')) {
+      if (state.channel === 16) {
+        logEntry('RX: Coast Guard — MAYDAY received, state your position', 'rx');
+        ticker('COAST GUARD: MAYDAY RECEIVED');
+        beepRise();
+        checkTrainingStep('mayday_spoken');
+      } else {
+        logEntry('RX: Mayday heard — should be on CH 16', 'warn');
+        ticker('WARNING: MAYDAY SHOULD BE ON CH 16');
+        checkTrainingStep('wrong_channel_mayday');
+      }
+    } else if (lower.includes('pan pan')) {
+      logEntry('RX: Pan-Pan received — urgency acknowledged', 'rx');
+      ticker('RX: PAN-PAN ACKNOWLEDGED');
+      beepRise();
+    } else if (lower.includes('securite') || lower.includes('sécurité') || lower.includes('security')) {
+      logEntry('RX: Sécurité — navigational safety broadcast noted', 'rx');
+      ticker('RX: SÉCURITÉ NOTED');
+    } else {
+      logEntry(`RX: Message acknowledged on CH ${String(state.channel).padStart(2,'0')}`, 'rx');
+      ticker('RX: MESSAGE ACKNOWLEDGED');
+    }
+    beep(600, 0.08);
+  }, 600);
+}
 
-        soft3.addEventListener('click', () => {
-            playBeep();
-            showSoftkeyMessage('Dual watch toggled');
-        });
+// ---- DSC Distress ----
+let dscHoldTimer = null, dscCountInterval = null;
 
-        soft4.addEventListener('click', () => {
-            playBeep();
-            showSoftkeyMessage('AIS menu opened');
-        });
+function startDSCHold(e) {
+  if (e.cancelable) e.preventDefault();
+  if (!state.powered || state.dscTriggered) return;
+  if (state.dscHolding) return;
 
-        entBtn.addEventListener('click', () => {
-            playBeep();
-            if (enteredDigits) setChannel(enteredDigits);
-        });
+  state.dscHolding = true;
+  const holdStart = Date.now();
+  let sec = 3;
 
-        ch16Btn.addEventListener('click', () => {
-            playBeep();
-            setChannel(16);
-            showSoftkeyMessage('Channel 16 selected');
-        });
+  dscOverlay.classList.add('active');
+  dscCount.textContent = sec;
+  dscBarFill.style.width = '0%';
+  beep(800, 0.1);
 
-        chWxBtn.addEventListener('click', () => {
-            playBeep();
-            isWeatherMode = !isWeatherMode;
-            showSoftkeyMessage(`Weather mode ${isWeatherMode ? 'on' : 'off'}`);
-            appendToLog(`Weather mode ${isWeatherMode ? 'on' : 'off'}`);
-            updateDisplay();
-        });
+  dscCountInterval = setInterval(() => {
+    sec--;
+    dscCount.textContent = Math.max(0, sec);
+    if (sec > 0) beep(800, 0.08);
+  }, 1000);
 
-        hiLoBtn.addEventListener('click', () => {
-            playBeep();
-            isHighPower = !isHighPower;
-            showSoftkeyMessage(`Power: ${isHighPower ? '25W' : '5W'}`);
-            appendToLog(`Power set to ${isHighPower ? 'High (25W)' : 'Low (5W)'}`);
-            updateDisplay();
-        });
+  dscHoldTimer = setInterval(() => {
+    const elapsed = Date.now() - holdStart;
+    const pct = Math.min(100, (elapsed / 3000) * 100);
+    dscBarFill.style.width = pct + '%';
+    if (pct >= 100 && !state.dscTriggered) {
+      state.dscTriggered = true;
+      clearInterval(dscHoldTimer);
+      clearInterval(dscCountInterval);
+      fireDSCDistress();
+    }
+  }, 40);
+}
 
-        loDxBtn.addEventListener('click', () => {
-            playBeep();
-            isAttenuatorOn = !isAttenuatorOn;
-            showSoftkeyMessage(`Attenuator ${isAttenuatorOn ? 'on' : 'off'}`);
-            appendToLog(`Attenuator ${isAttenuatorOn ? 'on' : 'off'}`);
-            updateDisplay();
-        });
+function cancelDSCHold() {
+  if (!state.dscHolding || state.dscTriggered) return;
+  clearInterval(dscHoldTimer);
+  clearInterval(dscCountInterval);
+  dscOverlay.classList.remove('active');
+  dscBarFill.style.width = '0%';
+  state.dscHolding = false;
+  logEntry('DSC hold released early — cancelled', 'warn');
+  checkTrainingStep('dsc_hold_cancelled');
+}
 
-        // Initial state
-        updateDisplay();
-    </script>
+function fireDSCDistress() {
+  dscOverlay.classList.remove('active');
+  beepDSC();
+  logEntry('▲ DSC DISTRESS ALERT TRANSMITTED — CH 70', 'alert');
+  logEntry('DSC: MMSI, position (GPS), time sent to all stations', 'alert');
+  ticker('DSC DISTRESS SENT — SWITCHING TO CH 16');
+  checkTrainingStep('dsc_sent');
+  state.dscHolding = false;
+
+  // Auto-switch to 16 after 1.5s (standard procedure)
+  setTimeout(() => {
+    setChannel(16);
+    logEntry('Auto-switched to CH 16 — await Coast Guard voice response', 'sys');
+    ticker('MONITOR CH 16 FOR COAST GUARD RESPONSE');
+    checkTrainingStep('auto_ch16');
+    state.dscTriggered = false;
+  }, 1500);
+}
+
+dscBtn.addEventListener('mousedown', startDSCHold);
+dscBtn.addEventListener('touchstart', startDSCHold, { passive: false });
+dscBtn.addEventListener('mouseup', cancelDSCHold);
+dscBtn.addEventListener('mouseleave', cancelDSCHold);
+dscBtn.addEventListener('touchend', cancelDSCHold);
+
+// ---- Log clear ----
+document.getElementById('log-clear').addEventListener('click', () => {
+  logLines = []; renderLog();
+});
+
+// ===========================================
+// TRAINING MODE SYSTEM
+// ===========================================
+
+const scenarios = {
+
+  mayday: {
+    title: 'MAYDAY DISTRESS CALL',
+    steps: [
+      { id: 'power',    text: 'Turn the radio on',                           hint: 'Press the POWER button.' },
+      { id: 'ch16',     text: 'Select Channel 16 (distress & calling)',       hint: 'Press the 16/C button, or enter 1-6 and ENT.' },
+      { id: 'power_hi', text: 'Set to HIGH power (25W)',                      hint: 'Press HI/LO until 25W is shown.' },
+      { id: 'ptt',      text: 'Press and hold PTT to begin transmission',     hint: 'Hold the red PTT button at the bottom.' },
+      { id: 'mayday',   text: 'Speak your MAYDAY call (see script below)',    hint: 'Say "MAYDAY MAYDAY MAYDAY, this is [vessel]..."' },
+      { id: 'release',  text: 'Release PTT and await acknowledgement',        hint: 'Release the PTT button and listen on CH 16.' },
+    ],
+    script: `<span class="highlight">MAYDAY  MAYDAY  MAYDAY</span>
+
+This is <span class="highlight">[VESSEL NAME]  [VESSEL NAME]  [VESSEL NAME]</span>
+
+MAYDAY — <span class="highlight">[VESSEL NAME]</span>
+
+My position is <span class="highlight">[LAT/LON or BEARING & DISTANCE]</span>
+
+Nature of distress: <span class="highlight">[SINKING / FIRE / etc.]</span>
+
+Number of persons on board: <span class="highlight">[NUMBER]</span>
+
+Any other useful information: <span class="highlight">[DESCRIPTION / COLOUR]</span>
+
+OVER`,
+    completedMsg: '✓ Mayday procedure complete! Well done. Remember: MAYDAY × 3, vessel name × 3, position, nature of distress, persons on board.',
+  },
+
+  dsc: {
+    title: 'DSC DISTRESS ALERT',
+    steps: [
+      { id: 'power',    text: 'Turn the radio on',                            hint: 'Press the POWER button.' },
+      { id: 'ch16',     text: 'Confirm you are on Channel 16',                hint: 'The radio will start on CH 16 automatically.' },
+      { id: 'dsc_hold', text: 'Press and hold the red DSC DISTRESS button for 3 seconds', hint: 'Hold the DSC button — watch the countdown!' },
+      { id: 'dsc_sent', text: 'DSC alert transmitted on CH 70 automatically', hint: 'The radio transmits your MMSI, GPS position & time.' },
+      { id: 'ch16_mon', text: 'Monitor CH 16 for Coast Guard voice response', hint: 'After DSC, switch to CH 16 and listen for a response.' },
+      { id: 'ptt',      text: 'When called, press PTT and give MAYDAY voice call', hint: 'Follow up with a voice MAYDAY call on CH 16.' },
+    ],
+    script: `DSC DISTRESS ALERT transmits:
+
+• <span class="highlight">MMSI</span> (your vessel identity)
+• <span class="highlight">Nature of distress</span> (undesignated)
+• <span class="highlight">Position & time</span> (from GPS)
+
+After DSC alert — voice MAYDAY on CH 16:
+
+<span class="highlight">MAYDAY  MAYDAY  MAYDAY</span>
+This is <span class="highlight">[VESSEL NAME]  ×3</span>
+MAYDAY — <span class="highlight">[VESSEL NAME]</span>
+Position: <span class="highlight">[LAT/LON]</span>
+Distress: <span class="highlight">[NATURE]</span>
+POB: <span class="highlight">[NUMBER]</span>
+OVER`,
+    completedMsg: '✓ DSC distress procedure complete! Remember: DSC sends on CH 70 automatically, then follow up with voice on CH 16.',
+  },
+};
+
+// Step tracking
+let activeScenario = null;
+let currentStepIndex = 0;
+let completedSteps = new Set();
+let stepCheckMap = {};
+
+function loadScenario(key) {
+  activeScenario = key;
+  currentStepIndex = 0;
+  completedSteps.clear();
+  stepCheckMap = {};
+
+  const sc = scenarios[key];
+
+  // Highlight active scenario button
+  document.querySelectorAll('.scenario-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`[data-scenario="${key}"]`).classList.add('active');
+
+  // Build step-to-index map
+  sc.steps.forEach((s, i) => { stepCheckMap[s.id] = i; });
+
+  // Show cards
+  document.getElementById('steps-card').style.display = 'block';
+  document.getElementById('script-card').style.display = 'block';
+
+  // Render steps
+  renderSteps();
+
+  // Render script
+  document.getElementById('script-content').innerHTML = sc.script;
+  document.getElementById('steps-title').textContent = sc.title;
+
+  // Clear feedback
+  feedbackBox.className = 'feedback-box';
+  feedbackBox.textContent = '';
+
+  logEntry(`— Training scenario loaded: ${sc.title} —`, 'sys');
+}
+
+function renderSteps() {
+  if (!activeScenario) return;
+  const sc = scenarios[activeScenario];
+  const panel = document.getElementById('step-panel');
+  panel.innerHTML = sc.steps.map((s, i) => {
+    let cls = 'step-item';
+    let check = '○';
+    if (completedSteps.has(s.id)) { cls += ' done'; check = '✓'; }
+    else if (i === currentStepIndex) { cls += ' current'; check = '▶'; }
+    const hintHtml = (i === currentStepIndex && s.hint)
+      ? `<div class="step-hint">💡 ${s.hint}</div>` : '';
+    return `<div class="${cls}">
+      <div class="step-num">${String(i+1).padStart(2,'0')}</div>
+      <div class="step-text">${s.text}</div>
+      <div class="step-check">${check}</div>
+    </div>${hintHtml}`;
+  }).join('');
+
+  // Progress
+  const total = sc.steps.length;
+  const done = completedSteps.size;
+  const pct = total ? Math.round((done / total) * 100) : 0;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = `${done} / ${total}`;
+}
+
+function advanceStep(stepId) {
+  if (!activeScenario) return;
+  const sc = scenarios[activeScenario];
+  if (completedSteps.has(stepId)) return;
+  const expectedIdx = stepCheckMap[stepId];
+  if (expectedIdx === undefined) return;
+
+  // Allow completing current or future steps in order
+  if (expectedIdx < currentStepIndex) return; // already past this
+  if (expectedIdx > currentStepIndex) {
+    // Skipped a step
+    showFeedback('warning', `⚠ Step ${currentStepIndex+1} not yet completed — work through steps in order.`);
+    return;
+  }
+
+  completedSteps.add(stepId);
+  currentStepIndex = expectedIdx + 1;
+  beepRise();
+  showFeedback('success', `✓ Step ${expectedIdx+1} complete!`);
+  renderSteps();
+
+  // Check if all steps done
+  if (completedSteps.size === sc.steps.length) {
+    setTimeout(() => showFeedback('success', sc.completedMsg), 500);
+    logEntry(`✓ Scenario "${sc.title}" COMPLETED`, 'ok');
+  }
+}
+
+function checkTrainingStep(action, value) {
+  if (!activeScenario) return;
+  const sc = scenarios[activeScenario];
+  const cur = sc.steps[currentStepIndex];
+  if (!cur) return;
+
+  if (action === 'channel' && cur.id === 'ch16' && value === 16) { advanceStep('ch16'); return; }
+  if (action === 'channel' && cur.id === 'ch16_mon' && value === 16) { advanceStep('ch16_mon'); return; }
+  if (action === 'ch16') { advanceStep('ch16'); return; }
+  if (action === 'power' && state.highPower && cur.id === 'power_hi') { advanceStep('power_hi'); return; }
+  if (action === 'ptt' && cur.id === 'ptt') { advanceStep('ptt'); return; }
+  if (action === 'mayday_spoken' && cur.id === 'mayday') { advanceStep('mayday'); advanceStep('release'); return; }
+  if (action === 'dsc_hold_cancelled' && cur.id === 'dsc_hold') {
+    showFeedback('error', '✗ DSC hold released too early — hold the button for the full 3 seconds.');
+    return;
+  }
+  if (action === 'dsc_sent' && cur.id === 'dsc_hold') { advanceStep('dsc_hold'); advanceStep('dsc_sent'); return; }
+  if (action === 'auto_ch16' && cur.id === 'ch16_mon') { advanceStep('ch16_mon'); return; }
+  if (action === 'tx_blocked_ch70') {
+    showFeedback('error', '✗ CH 70 is DSC-only — voice transmissions are not permitted on this channel.');
+    return;
+  }
+  // Power on
+  if (action === 'power_on' || cur.id === 'power') { advanceStep('power'); return; }
+}
+
+// Intercept power-on for training check
+document.getElementById('power-btn').addEventListener('click', () => {
+  if (state.powered) checkTrainingStep('power_on');
+}, { capture: true });
+
+function showFeedback(type, msg) {
+  feedbackBox.className = `feedback-box ${type}`;
+  feedbackBox.textContent = msg;
+  setTimeout(() => {
+    if (feedbackBox.textContent === msg) feedbackBox.className = 'feedback-box';
+  }, 6000);
+}
+
+// ---- Scenario buttons ----
+document.querySelectorAll('.scenario-btn').forEach(btn => {
+  btn.addEventListener('click', () => loadScenario(btn.dataset.scenario));
+});
+
+// ---- Mode switcher ----
+const btnFP = document.getElementById('btn-freeplay');
+const btnTR = document.getElementById('btn-training');
+const trainingPanel = document.getElementById('training-panel');
+
+btnFP.addEventListener('click', () => {
+  btnFP.classList.add('active'); btnTR.classList.remove('active');
+  trainingPanel.classList.remove('visible');
+  activeScenario = null;
+  logEntry('Mode → Free Play', 'sys');
+});
+btnTR.addEventListener('click', () => {
+  btnTR.classList.add('active'); btnFP.classList.remove('active');
+  trainingPanel.classList.add('visible');
+  logEntry('Mode → Training', 'sys');
+});
+
+// ---- Initial state ----
+updateDisplay();
+</script>
 </body>
 </html>
