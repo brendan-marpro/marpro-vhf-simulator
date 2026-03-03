@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Add this inside <head> -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#333333">
+    <link rel="icon" href="favicon.png">
+
+
+
+
+    <title>VHF Radio Simulator - MARPRO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e6e6e6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .radio-container {
+            background: linear-gradient(to bottom, #4d4d4d, #333);
+            color: #fff;
+            padding: 25px;
+            border-radius: 15px;
+            width: 480px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.6), inset 0 2px 5px rgba(255,255,255,0.2);
+            border: 2px solid #222;
+            position: relative;
+        }
+        .radio-container::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle, #ff0000, #cc0000);
+            border-radius: 50%;
+            box-shadow: 0 0 10px #ff0000;
+            opacity: 0.5;
+        }
+        .display {
+            background-color: #000;
+            color: #0f0;
+            font-family: 'Orbitron', monospace;
+            font-size: 22px;
+            padding: 15px;
+            margin-bottom: 10px;
+            height: 160px;
+            overflow-y: auto;
+            border: 2px solid #444;
+            border-radius: 8px;
+            box-shadow: inset 0 0 10px rgba(0,255,0,0.3);
+            text-shadow: 0 0 5px #0f0;
+            position: relative;
+        }
+        .icons {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            font-size: 14px;
+            color: #0f0;
+        }
+        .countdown {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 60px;
+            color: #ff4444;
+            font-weight: bold;
+            text-shadow: 0 0 15px #ff0000;
+            pointer-events: none;
+            display: none;
+        }
+        .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 8px;
+            background-color: #ff4444;
+            width: 0%;
+            transition: width 0.1s linear;
+            border-radius: 0 0 8px 8px;
+        }
+        .softkeys {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        .softkey {
+            flex: 1;
+            margin: 0 5px;
+            padding: 8px;
+            font-size: 14px;
+        }
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+        button {
+            background-color: #555;
+            color: #fff;
+            border: none;
+            padding: 14px;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 16px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.2);
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+        button:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+        }
+        button:hover {
+            background-color: #777;
+        }
+        button.keypad {
+            background-color: #444;
+            font-weight: bold;
+        }
+        button.keypad:hover {
+            background-color: #666;
+        }
+        #enter-btn { background-color: #28a745; }
+        #enter-btn:hover { background-color: #218838; }
+        #clear-btn { background-color: #dc3545; }
+        #clear-btn:hover { background-color: #c82333; }
+        #dsc-btn {
+            background-color: #ff0000;
+            grid-column: span 2;
+            font-weight: bold;
+        }
+        #dsc-btn:hover { background-color: #cc0000; }
+        #transmit-btn {
+            grid-column: span 4;
+            background-color: #f00;
+            font-size: 18px;
+            padding: 15px;
+        }
+        #transmit-btn:hover { background-color: #c00; }
+        .dial-container {
+            grid-column: span 4;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 15px 0;
+        }
+        .dial-group {
+            text-align: center;
+        }
+        .dial {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, #888, #555 50%, #333);
+            border: 4px solid #222;
+            position: relative;
+            cursor: grab;
+            box-shadow: 
+                inset 0 6px 12px rgba(0,0,0,0.7),
+                0 6px 15px rgba(0,0,0,0.6),
+                inset 0 -4px 8px rgba(255,255,255,0.15);
+            user-select: none;
+            touch-action: none;
+        }
+        .dial::after {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            width: 8px;
+            height: 48px;
+            background: linear-gradient(to bottom, #f0f0f0, #b0b0b0);
+            transform: translateX(-50%) rotate(var(--rotation, -135deg));
+            transform-origin: bottom center;
+            border-radius: 4px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.5);
+            transition: transform 0.08s ease-out;
+        }
+        .dial-label {
+            margin-top: 10px;
+            font-size: 15px;
+            color: #ddd;
+            font-weight: bold;
+        }
+        .dial-value {
+            font-size: 13px;
+            color: #aaa;
+            margin-top: 3px;
+        }
+        #log {
+            margin-top: 20px;
+            background-color: #222;
+            padding: 10px;
+            height: 140px;
+            overflow-y: auto;
+            border: 1px solid #555;
+            border-radius: 5px;
+            font-size: 14px;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
+        }
+        .channel-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            grid-column: 4 / 5;
+            grid-row: 3 / 6;
+        }
+        .numpad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            grid-column: 1 / 4;
+            grid-row: 3 / 7;
+        }
+        .numpad .row4 {
+            grid-column: 1 / 4;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        .additional-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="radio-container">
+        <div class="display" id="display">
+            Radio Off<br>CH: --
+            <span class="icons" id="icons"></span>
+            <div class="countdown" id="countdown">3</div>
+            <div class="progress-bar" id="dsc-progress"></div>
+        </div>
+        <div class="softkeys">
+            <button class="softkey" id="soft1">DSC</button>
+            <button class="softkey" id="soft2">SCAN</button>
+            <button class="softkey" id="soft3">DUAL</button>
+            <button class="softkey" id="soft4">AIS</button>
+        </div>
+        <div class="controls">
+            <button id="power-btn">Power On/Off</button>
+            <button id="dsc-btn">DSC Distress (Hold 3s)</button>
+            <button id="dual-watch-btn">Dual Watch Off</button>
+
+            <div class="dial-container">
+                <div class="dial-group">
+                    <div class="dial" id="volume-dial"></div>
+                    <div class="dial-label">VOLUME</div>
+                    <div class="dial-value" id="volume-value">5</div>
+                </div>
+                <div class="dial-group">
+                    <div class="dial" id="squelch-dial"></div>
+                    <div class="dial-label">SQUELCH</div>
+                    <div class="dial-value" id="squelch-value">3</div>
+                </div>
+            </div>
+
+            <div class="numpad">
+                <button class="keypad" data-digit="1">1</button>
+                <button class="keypad" data-digit="2">2</button>
+                <button class="keypad" data-digit="3">3</button>
+
+                <button class="keypad" data-digit="4">4</button>
+                <button class="keypad" data-digit="5">5</button>
+                <button class="keypad" data-digit="6">6</button>
+
+                <button class="keypad" data-digit="7">7</button>
+                <button class="keypad" data-digit="8">8</button>
+                <button class="keypad" data-digit="9">9</button>
+
+                <div class="row4">
+                    <button id="clear-btn">Clear</button>
+                    <button class="keypad" data-digit="0">0</button>
+                    <button id="enter-btn">Enter</button>
+                </div>
+            </div>
+
+            <div class="channel-buttons">
+                <button id="chan-up">Chan ↑</button>
+                <button id="chan-down">Chan ↓</button>
+            </div>
+
+            <button id="transmit-btn">Press to Transmit (PTT)</button>
+        </div>
+        <div class="additional-buttons">
+            <button id="menu-btn">MENU</button>
+            <button id="ent-btn">ENT</button>
+            <button id="ch16-btn">16/C</button>
+            <button id="ch-wx-btn">CH/WX</button>
+            <button id="hi-lo-btn">HI/LO</button>
+            <button id="lo-dx-btn">LO/DX</button>
+        </div>
+        <div id="log">Simulation Log:<br></div>
+    </div>
+
+    <script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playBeep() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.type = 'sine';
+            osc.frequency.value = 800;
+            gain.gain.setValueAtTime((volume / 10) * 0.3, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.1);
+        }
+
+        function playSuccessBeep() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+            osc.frequency.linearRampToValueAtTime(900, audioCtx.currentTime + 0.4);
+            gain.gain.setValueAtTime((volume / 10) * 0.4, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.5);
+        }
+
+        let staticNode = null;
+        let staticGain = null;
+
+        function startStaticNoise() {
+            if (staticNode) return;
+            const bufferSize = 4096;
+            staticNode = audioCtx.createScriptProcessor(bufferSize, 1, 1);
+            staticNode.onaudioprocess = e => {
+                const output = e.outputBuffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
+            };
+            staticGain = audioCtx.createGain();
+            updateStaticVolume();
+            staticNode.connect(staticGain);
+            staticGain.connect(audioCtx.destination);
+        }
+
+        function stopStaticNoise() {
+            if (staticNode) {
+                staticNode.disconnect();
+                staticGain.disconnect();
+                staticNode = null;
+                staticGain = null;
+            }
+        }
+
+        function updateStaticVolume() {
+            if (staticGain) staticGain.gain.value = (volume / 10) * 0.3;
+        }
+
+        function updateStaticNoise() {
+            if (isPoweredOn && squelch < 4) startStaticNoise();
+            else stopStaticNoise();
+        }
+
+        const display = document.getElementById('display');
+        const iconsEl = document.getElementById('icons');
+        const countdownEl = document.getElementById('countdown');
+        const log = document.getElementById('log');
+        const powerBtn = document.getElementById('power-btn');
+        const dscBtn = document.getElementById('dsc-btn');
+        const dscProgress = document.getElementById('dsc-progress');
+        const dualWatchBtn = document.getElementById('dual-watch-btn');
+        const chanUp = document.getElementById('chan-up');
+        const chanDown = document.getElementById('chan-down');
+        const transmitBtn = document.getElementById('transmit-btn');
+        const clearBtn = document.getElementById('clear-btn');
+        const enterBtn = document.getElementById('enter-btn');
+        const menuBtn = document.getElementById('menu-btn');
+        const entBtn = document.getElementById('ent-btn');
+        const ch16Btn = document.getElementById('ch16-btn');
+        const chWxBtn = document.getElementById('ch-wx-btn');
+        const hiLoBtn = document.getElementById('hi-lo-btn');
+        const loDxBtn = document.getElementById('lo-dx-btn');
+        const soft1 = document.getElementById('soft1');
+        const soft2 = document.getElementById('soft2');
+        const soft3 = document.getElementById('soft3');
+        const soft4 = document.getElementById('soft4');
+
+        const volumeDial = document.getElementById('volume-dial');
+        const squelchDial = document.getElementById('squelch-dial');
+        const volumeValue = document.getElementById('volume-value');
+        const squelchValue = document.getElementById('squelch-value');
+
+        let isPoweredOn = false;
+        let currentChannel = 16;
+        let isDualWatch = false;
+        let volume = 5;
+        let squelch = 3;
+        let enteredDigits = '';
+        let isHighPower = true;
+        let isAttenuatorOn = false;
+        let isWeatherMode = false;
+        let isBusy = false;
+        let isTransmitting = false;
+        let hasGps = true;
+        let isFavorite = false;
+        let isCallChannel = false;
+        let hasMessage = false;
+
+        let dscHoldTimer = null;
+        let dscHoldStart = 0;
+        let countdownInterval = null;
+        let dscTriggered = false;
+
+        let recognition;
+        if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'en-AU';
+
+            recognition.onresult = event => {
+                const transcript = event.results[0][0].transcript.trim();
+                appendToDisplay(`TX: ${transcript}`);
+                appendToLog(`Voice TX: "${transcript}" on CH ${currentChannel}`);
+                simulateResponse(transcript);
+            };
+        }
+
+        function updateDisplay(extra = '') {
+            if (!isPoweredOn) {
+                display.innerHTML = 'Radio Off<br>CH: --<span class="icons" id="icons"></span><div class="countdown" id="countdown">3</div><div class="progress-bar" id="dsc-progress"></div>';
+                countdownEl.style.display = 'none';
+                iconsEl.textContent = '';
+                return;
+            }
+            let status = `CH: ${String(currentChannel).padStart(2, '0')} | VOL: ${volume} | SQ: ${squelch}`;
+            if (isDualWatch) status += ' | Dual';
+            if (enteredDigits) status += `<br>→ ${enteredDigits}`;
+            if (extra) status += `<br>${extra}`;
+            let iconText = '';
+            if (isBusy) iconText += ' BUSY';
+            if (isTransmitting) iconText += ' TX';
+            iconText += isHighPower ? ' 25W' : ' 1W';
+            if (isAttenuatorOn) iconText += ' LOC';
+            if (isWeatherMode) iconText += ' WX';
+            if (hasGps) iconText += ' GPS';
+            if (isFavorite) iconText += ' FAV';
+            if (isCallChannel) iconText += ' CALL';
+            if (hasMessage) iconText += ' MSG';
+            iconsEl.textContent = iconText;
+            display.innerHTML = status + '<span class="icons" id="icons">' + iconText + '</span><div class="countdown" id="countdown">3</div><div class="progress-bar" id="dsc-progress"></div>';
+        }
+
+        function appendToDisplay(message) {
+            display.innerHTML += `<br>${message}`;
+            display.scrollTop = display.scrollHeight;
+        }
+
+        function appendToLog(message) {
+            log.innerHTML += `${message}<br>`;
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function setChannel(newChan) {
+            const chanNum = parseInt(newChan, 10);
+            if (chanNum >= 1 && chanNum <= 88) {
+                currentChannel = chanNum;
+                appendToLog(`Channel set to ${String(currentChannel).padStart(2, '0')}`);
+                isCallChannel = (currentChannel === 9);
+            } else {
+                appendToLog(`Invalid channel: ${newChan} (01-88 only)`);
+            }
+            enteredDigits = '';
+            updateDisplay();
+        }
+
+        function makeDialInteractive(dialEl, valueEl, initialValue, min = 0, max = 10, onChange) {
+            let value = initialValue;
+            let isDragging = false;
+            let startY = 0;
+            let startValue = 0;
+
+            function setRotation(v) {
+                const angle = ((v - min) / (max - min)) * 270 - 135;
+                dialEl.style.setProperty('--rotation', angle + 'deg');
+                valueEl.textContent = v;
+            }
+
+            setRotation(value);
+
+            const start = e => {
+                if (!isPoweredOn) return;
+                isDragging = true;
+                startY = e.clientY || (e.touches && e.touches[0].clientY);
+                startValue = value;
+                dialEl.style.cursor = 'grabbing';
+                if (e.preventDefault) e.preventDefault();
+            };
+
+            dialEl.addEventListener('mousedown', start);
+            dialEl.addEventListener('touchstart', start, { passive: false });
+
+            const move = e => {
+                if (!isDragging) return;
+                const y = e.clientY || (e.touches && e.touches[0].clientY);
+                const deltaY = startY - y;
+                let newValue = Math.round(startValue + deltaY * 0.3);
+                newValue = Math.max(min, Math.min(max, newValue));
+
+                if (newValue !== value) {
+                    value = newValue;
+                    setRotation(value);
+                    onChange(value);
+                    playBeep();
+                }
+            };
+
+            document.addEventListener('mousemove', move);
+            document.addEventListener('touchmove', move, { passive: false });
+
+            const end = () => {
+                isDragging = false;
+                dialEl.style.cursor = 'grab';
+            };
+
+            document.addEventListener('mouseup', end);
+            document.addEventListener('touchend', end);
+        }
+
+        makeDialInteractive(volumeDial, volumeValue, volume, 0, 10, v => {
+            volume = v;
+            updateStaticVolume();
+            updateDisplay();
+        });
+
+        makeDialInteractive(squelchDial, squelchValue, squelch, 0, 10, v => {
+            squelch = v;
+            updateStaticNoise();
+            updateDisplay();
+        });
+
+        powerBtn.addEventListener('click', () => {
+            playBeep();
+            isPoweredOn = !isPoweredOn;
+            updateDisplay();
+            appendToLog(isPoweredOn ? 'Radio powered ON' : 'Radio powered OFF');
+            updateStaticNoise();
+        });
+
+        chanUp.addEventListener('click', () => {
+            if (isPoweredOn) {
+                playBeep();
+                setChannel(currentChannel + 1);
+            }
+        });
+
+        chanDown.addEventListener('click', () => {
+            if (isPoweredOn) {
+                playBeep();
+                setChannel(currentChannel - 1);
+            }
+        });
+
+        document.querySelectorAll('button[data-digit]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (!isPoweredOn) return;
+                playBeep();
+                if (enteredDigits.length < 2) {
+                    enteredDigits += btn.dataset.digit;
+                    updateDisplay();
+                }
+            });
+        });
+
+        enterBtn.addEventListener('click', () => {
+            if (!isPoweredOn || !enteredDigits) return;
+            playBeep();
+            setChannel(enteredDigits);
+        });
+
+        clearBtn.addEventListener('click', () => {
+            playBeep();
+            enteredDigits = '';
+            updateDisplay();
+        });
+
+        dualWatchBtn.addEventListener('click', () => {
+            if (isPoweredOn) {
+                playBeep();
+                isDualWatch = !isDualWatch;
+                dualWatchBtn.textContent = isDualWatch ? 'Dual Watch On' : 'Dual Watch Off';
+                updateDisplay();
+                appendToLog(`Dual watch ${isDualWatch ? 'enabled' : 'disabled'}`);
+            }
+        });
+
+        dscBtn.addEventListener('mousedown', () => {
+            if (!isPoweredOn || dscTriggered) return;
+            playBeep();
+            dscHoldStart = Date.now();
+            dscProgress.style.width = '0%';
+            countdownEl.textContent = '3';
+            countdownEl.style.display = 'block';
+            dscTriggered = false;
+
+            let remaining = 3;
+            countdownInterval = setInterval(() => {
+                remaining--;
+                countdownEl.textContent = remaining;
+                playBeep();
+                if (remaining <= 0) clearInterval(countdownInterval);
+            }, 1000);
+
+            dscHoldTimer = setInterval(() => {
+                const elapsed = Date.now() - dscHoldStart;
+                const percent = Math.min(100, (elapsed / 3000) * 100);
+                dscProgress.style.width = percent + '%';
+
+                if (percent >= 100 && !dscTriggered) {
+                    dscTriggered = true;
+                    clearInterval(dscHoldTimer);
+                    triggerDSCDistress();
+                }
+            }, 50);
+        });
+
+        dscBtn.addEventListener('mouseup mouseleave', () => {
+            if (dscTriggered) return;
+            clearInterval(dscHoldTimer);
+            clearInterval(countdownInterval);
+            dscProgress.style.width = '0%';
+            countdownEl.style.display = 'none';
+            const elapsed = Date.now() - dscHoldStart;
+            if (elapsed < 3000) {
+                appendToLog('DSC hold released early - cancelled');
+            }
+            dscTriggered = false;
+        });
+
+        function triggerDSCDistress() {
+            countdownEl.style.display = 'none';
+            appendToDisplay('DSC Distress Alert Sent (CH 70)');
+            appendToLog('DSC distress alert activated after 3s hold');
+            playSuccessBeep();
+            setTimeout(() => {
+                setChannel(16);
+                appendToDisplay('Auto-switched to CH 16 for voice follow-up');
+            }, 1200);
+        }
+
+        transmitBtn.addEventListener('mousedown', () => {
+            if (!isPoweredOn) return;
+            playBeep();
+            appendToDisplay('Transmitting...');
+            appendToLog('PTT pressed');
+            isTransmitting = true;
+            updateDisplay();
+            if (recognition) {
+                recognition.start();
+            } else {
+                const message = prompt('Enter transmission message:');
+                if (message) {
+                    appendToDisplay(`TX: ${message}`);
+                    appendToLog(`Text TX: "${message}" on CH ${currentChannel}`);
+                    simulateResponse(message);
+                }
+            }
+        });
+
+        transmitBtn.addEventListener('mouseup', () => {
+            if (isPoweredOn && recognition) {
+                recognition.stop();
+                appendToDisplay('Transmission End');
+                appendToLog('PTT released');
+                playBeep();
+                isTransmitting = false;
+                updateDisplay();
+            }
+        });
+
+        function simulateResponse(message) {
+            const lower = message.toLowerCase();
+            setTimeout(() => {
+                if (lower.includes('mayday')) {
+                    if (currentChannel === 16) {
+                        appendToDisplay('Sim ACK: Coast Guard received Mayday');
+                    } else {
+                        appendToDisplay('Sim ACK: Message received (but distress should be on CH 16)');
+                    }
+                } else if (lower.includes('pan pan')) {
+                    appendToDisplay('Sim ACK: Pan-Pan received');
+                } else if (lower.includes('securite')) {
+                    appendToDisplay('Sim Broadcast: Securité noted');
+                } else {
+                    appendToDisplay('Sim ACK: Message received');
+                }
+                playBeep();
+            }, 800);
+        }
+
+        menuBtn.addEventListener('click', () => {
+            playBeep();
+            appendToDisplay('Menu opened (simulated)');
+        });
+
+        entBtn.addEventListener('click', () => {
+            playBeep();
+            if (enteredDigits) setChannel(enteredDigits);
+        });
+
+        ch16Btn.addEventListener('click', () => {
+            playBeep();
+            setChannel(16);
+        });
+
+        chWxBtn.addEventListener('click', () => {
+            playBeep();
+            isWeatherMode = !isWeatherMode;
+            appendToLog(`Weather mode ${isWeatherMode ? 'on' : 'off'}`);
+            updateDisplay();
+        });
+
+        hiLoBtn.addEventListener('click', () => {
+            playBeep();
+            isHighPower = !isHighPower;
+            appendToLog(`Power set to ${isHighPower ? 'High (25W)' : 'Low (1W)'}`);
+            updateDisplay();
+        });
+
+        loDxBtn.addEventListener('click', () => {
+            playBeep();
+            isAttenuatorOn = !isAttenuatorOn;
+            appendToLog(`Attenuator ${isAttenuatorOn ? 'on' : 'off'}`);
+            updateDisplay();
+        });
+
+        soft1.addEventListener('click', () => {
+            playBeep();
+            appendToDisplay('DSC menu opened');
+        });
+
+        soft2.addEventListener('click', () => {
+            playBeep();
+            appendToDisplay('Scan started');
+        });
+
+        soft3.addEventListener('click', () => {
+            playBeep();
+            isDualWatch = !isDualWatch;
+            updateDisplay();
+        });
+
+        soft4.addEventListener('click', () => {
+            playBeep();
+            appendToDisplay('AIS menu opened');
+        });
+
+        // Initial state
+        updateDisplay();
+    </script>
+</body>
+</html>
