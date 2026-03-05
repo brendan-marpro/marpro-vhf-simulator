@@ -7,1793 +7,1320 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  /* ===== RESET & ROOT ===== */
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --green:#00ff88;--green-dim:#00dd70;--green-glow:rgba(0,255,136,.35);
+  --amber:#ffbb00;--amber-dim:#cc9900;
+  --red:#ff3333;--red-glow:rgba(255,51,51,.5);
+  --blue:#44aaff;
+  --body-top:#2a2a2a;--body-mid:#1e1e1e;--body-bot:#141414;
+  --screen-bg:#030c05;
+}
+body{
+  font-family:'Rajdhani',sans-serif;background:#0d0d0d;
+  background-image:radial-gradient(ellipse at 20% 50%,rgba(0,80,40,.08) 0%,transparent 60%),
+    radial-gradient(ellipse at 80% 20%,rgba(0,40,80,.06) 0%,transparent 50%);
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;
+  padding:20px 10px 40px;color:#ccc;
+}
 
-  :root {
-    --green:      #00ff88;
-    --green-dim:  #00cc66;
-    --green-glow: rgba(0,255,136,0.35);
-    --amber:      #ffaa00;
-    --red:        #ff3333;
-    --red-glow:   rgba(255,51,51,0.5);
-    --body-top:   #2a2a2a;
-    --body-mid:   #1e1e1e;
-    --body-bot:   #141414;
-    --panel:      #252525;
-    --btn-base:   #333;
-    --btn-hover:  #444;
-    --btn-act:    #222;
-    --screen-bg:  #040d06;
-    --border:     #111;
-    --label:      #888;
-  }
+/* PAGE HEADER */
+.page-header{text-align:center;margin-bottom:14px;}
+.page-header .brand{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:6px;color:#777;text-transform:uppercase;}
+.page-header h1{font-family:'Orbitron',monospace;font-size:18px;font-weight:600;color:#aaa;letter-spacing:3px;margin-top:2px;}
 
-  body {
-    font-family: 'Rajdhani', sans-serif;
-    background: #0d0d0d;
-    background-image:
-      radial-gradient(ellipse at 20% 50%, rgba(0,80,40,0.08) 0%, transparent 60%),
-      radial-gradient(ellipse at 80% 20%, rgba(0,40,80,0.06) 0%, transparent 50%);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 20px 10px 40px;
-    color: #ccc;
-  }
+/* MODE BAR */
+.mode-bar{display:flex;gap:8px;margin-bottom:16px;}
+.mode-btn{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:2px;text-transform:uppercase;padding:8px 22px;border:1px solid #333;background:#111;color:#666;border-radius:3px;cursor:pointer;transition:all .2s;}
+.mode-btn.active{background:#0a1a10;border-color:var(--green-dim);color:var(--green);box-shadow:0 0 12px rgba(0,204,102,.2);}
+.mode-btn:hover:not(.active){color:#bbb;border-color:#444;}
 
-  /* ===== PAGE HEADER ===== */
-  .page-header {
-    text-align: center;
-    margin-bottom: 18px;
-  }
-  .page-header .brand {
-    font-family: 'Rajdhani', sans-serif;
-    font-weight: 700;
-    font-size: 15px;
-    letter-spacing: 6px;
-    color: #555;
-    text-transform: uppercase;
-  }
-  .page-header h1 {
-    font-family: 'Orbitron', monospace;
-    font-size: 22px;
-    font-weight: 600;
-    color: #888;
-    letter-spacing: 3px;
-    margin-top: 2px;
-  }
+/* ── THREE-COLUMN LAYOUT ── */
+.sim-wrapper{
+  display:grid;
+  grid-template-columns:300px 440px 1fr;
+  grid-template-areas:"left radio script";
+  gap:18px;
+  align-items:start;
+  width:100%;
+  max-width:1200px;
+}
+/* When training panel hidden, collapse left col */
+.sim-wrapper.no-training{
+  grid-template-columns:0 440px 1fr;
+}
+/* Script panel hidden: collapse right col */
+.sim-wrapper.no-script{
+  grid-template-columns:300px 440px 0;
+}
+.sim-wrapper.no-training.no-script{
+  grid-template-columns:0 440px 0;
+  justify-content:center;
+}
 
-  /* ===== MODE SWITCHER ===== */
-  .mode-bar {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 20px;
-  }
-  .mode-btn {
-    font-family: 'Rajdhani', sans-serif;
-    font-weight: 700;
-    font-size: 15px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    padding: 8px 22px;
-    border: 1px solid #333;
-    background: #111;
-    color: #555;
-    border-radius: 3px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .mode-btn.active {
-    background: #0a1a10;
-    border-color: var(--green-dim);
-    color: var(--green);
-    box-shadow: 0 0 12px rgba(0,204,102,0.2);
-  }
-  .mode-btn:hover:not(.active) { color: #888; border-color: #444; }
+/* ── TRAINING PANEL (left) ── */
+.training-panel{
+  grid-area:left;
+  display:none;flex-direction:column;gap:10px;
+  min-width:0;overflow:hidden;
+}
+.training-panel.visible{display:flex;}
 
-  /* ===== MAIN LAYOUT ===== */
-  .sim-wrapper {
-    display: flex;
-    gap: 20px;
-    align-items: flex-start;
-    width: 100%;
-    max-width: 1000px;
-  }
+/* ── RADIO (centre) ── */
+.radio-col{grid-area:radio;}
 
-  /* ===== TRAINING PANEL ===== */
-  .training-panel {
-    width: 300px;
-    flex-shrink: 0;
-    display: none;
-    flex-direction: column;
-    gap: 12px;
-  }
-  .training-panel.visible { display: flex; }
+/* ── SCRIPT PANEL (right, collapsible) ── */
+.script-col{
+  grid-area:script;
+  position:sticky;top:20px;
+  display:flex;flex-direction:column;gap:0;
+  min-width:0;
+}
+.script-col.hidden{display:none;}
 
-  .training-card {
-    background: #0e0e0e;
-    border: 1px solid #222;
-    border-radius: 6px;
-    overflow: hidden;
-  }
-  .training-card-header {
-    background: #161616;
-    padding: 10px 14px;
-    font-family: 'Orbitron', monospace;
-    font-size: 12px;
-    letter-spacing: 2px;
-    color: #555;
-    border-bottom: 1px solid #1a1a1a;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .training-card-header .dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--green-dim);
-    box-shadow: 0 0 6px var(--green-dim);
-    animation: blink 2s infinite;
-  }
-  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+.script-toggle{
+  font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;
+  color:#555;background:#0e0e0e;border:1px solid #2a2a2a;
+  border-radius:4px 4px 0 0;padding:8px 14px;cursor:pointer;
+  display:flex;justify-content:space-between;align-items:center;
+  transition:all .2s;user-select:none;
+}
+.script-toggle:hover{color:#aaa;border-color:#444;}
+.script-toggle .arrow{transition:transform .25s;font-size:11px;}
+.script-toggle.open .arrow{transform:rotate(180deg);}
 
-  .scenario-list { padding: 10px; display: flex; flex-direction: column; gap: 6px; }
-  .scenario-btn {
-    font-family: 'Rajdhani', sans-serif;
-    font-weight: 600;
-    font-size: 15px;
-    padding: 10px 12px;
-    background: #111;
-    border: 1px solid #222;
-    border-left: 3px solid #333;
-    color: #666;
-    text-align: left;
-    border-radius: 3px;
-    cursor: pointer;
-    transition: all 0.15s;
-    letter-spacing: 0.5px;
-  }
-  .scenario-btn:hover { background: #161616; color: #aaa; border-left-color: var(--green-dim); }
-  .scenario-btn.active { background: #0a160e; color: var(--green); border-left-color: var(--green); }
-  .scenario-btn .tag {
-    font-size: 12px;
-    color: #444;
-    display: block;
-    margin-top: 2px;
-    font-weight: 500;
-    letter-spacing: 1px;
-  }
-  .scenario-btn.active .tag { color: var(--green-dim); }
+.script-panel{
+  background:#111;border:1px solid #2a2a2a;border-top:none;
+  border-radius:0 0 6px 6px;overflow:hidden;
+  max-height:0;transition:max-height .35s ease;
+}
+.script-panel.open{max-height:1200px;}
 
-  /* Step panel */
-  .step-panel { padding: 14px; }
-  .step-title {
-    font-family: 'Orbitron', monospace;
-    font-size: 12px;
-    color: var(--amber);
-    letter-spacing: 2px;
-    margin-bottom: 10px;
-  }
-  .step-item {
-    display: flex;
-    gap: 10px;
-    padding: 8px 0;
-    border-bottom: 1px solid #181818;
-    align-items: flex-start;
-    transition: all 0.3s;
-  }
-  .step-item:last-child { border-bottom: none; }
-  .step-num {
-    font-family: 'Orbitron', monospace;
-    font-size: 12px;
-    color: #333;
-    min-width: 20px;
-    margin-top: 2px;
-  }
-  .step-text {
-    font-size: 15px;
-    color: #555;
-    line-height: 1.4;
-    flex: 1;
-  }
-  .step-item.current .step-num { color: var(--amber); }
-  .step-item.current .step-text { color: #ccc; }
-  .step-item.done .step-num { color: var(--green-dim); }
-  .step-item.done .step-text { color: #444; text-decoration: line-through; }
-  .step-check {
-    font-size: 14px;
-    min-width: 16px;
-    color: #222;
-  }
-  .step-item.done .step-check { color: var(--green-dim); }
-  .step-item.current .step-check { color: var(--amber); }
+.script-inner{padding:14px;}
+.script-lbl{font-size:10px;letter-spacing:2px;color:#777;font-family:'Orbitron',monospace;margin-bottom:10px;}
+.script-body{font-family:'Share Tech Mono',monospace;font-size:12px;color:#999;line-height:2;white-space:pre-wrap;}
+.script-body .hl  {color:var(--amber);}
+.script-body .rx  {color:#55ccff;}
+.script-body .note{color:#777;font-style:italic;}
 
-  .step-hint {
-    background: #0a1208;
-    border: 1px solid #1a2a1a;
-    border-radius: 4px;
-    padding: 10px 12px;
-    font-size: 14px;
-    color: var(--green-dim);
-    margin-top: 12px;
-    line-height: 1.5;
-    font-style: italic;
-  }
+/* Script show button — appears near radio when script col is hidden */
+.script-float-btn{
+  display:none;
+  position:fixed;bottom:24px;right:24px;z-index:100;
+  font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;
+  padding:10px 16px;background:#0a1a10;border:1px solid var(--green-dim);
+  color:var(--green);border-radius:4px;cursor:pointer;
+  box-shadow:0 4px 20px rgba(0,0,0,.6);
+}
 
-  .progress-track {
-    height: 3px;
-    background: #1a1a1a;
-    border-radius: 2px;
-    margin: 12px 0 4px;
-    overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--green-dim), var(--green));
-    border-radius: 2px;
-    transition: width 0.4s ease;
-    box-shadow: 0 0 8px var(--green-glow);
-  }
-  .progress-label {
-    font-size: 13px;
-    color: #444;
-    text-align: right;
-    letter-spacing: 1px;
-  }
+/* ── SHARED CARD STYLES ── */
+.t-card{background:#111;border:1px solid #2a2a2a;border-radius:6px;overflow:hidden;}
+.t-card-hdr{background:#1a1a1a;padding:9px 14px;font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;color:#999;border-bottom:1px solid #222;display:flex;align-items:center;gap:8px;}
+.t-card-hdr .dot{width:6px;height:6px;border-radius:50%;background:var(--green-dim);box-shadow:0 0 6px var(--green-dim);animation:blink 2s infinite;flex-shrink:0;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 
-  .feedback-box {
-    padding: 10px 14px;
-    border-radius: 4px;
-    font-size: 15px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    display: none;
-  }
-  .feedback-box.success {
-    display: block;
-    background: #0a1a0d;
-    border: 1px solid var(--green-dim);
-    color: var(--green);
-  }
-  .feedback-box.warning {
-    display: block;
-    background: #1a1200;
-    border: 1px solid var(--amber);
-    color: var(--amber);
-  }
-  .feedback-box.error {
-    display: block;
-    background: #1a0505;
-    border: 1px solid var(--red);
-    color: var(--red);
-  }
+/* scenario list */
+.sc-list{padding:8px;display:flex;flex-direction:column;gap:4px;}
+.sc-btn{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:13px;padding:8px 11px;background:#161616;border:1px solid #2a2a2a;border-left:3px solid #333;color:#aaa;text-align:left;border-radius:3px;cursor:pointer;transition:all .15s;}
+.sc-btn:hover{background:#1e1e1e;color:#ddd;border-left-color:var(--green-dim);}
+.sc-btn.active{background:#0a180e;color:var(--green);border-left-color:var(--green);}
+.sc-btn .tag{font-size:10px;color:#666;display:block;margin-top:1px;font-weight:500;letter-spacing:1px;}
+.sc-btn.active .tag{color:var(--green-dim);}
+.sc-cat{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:#444;padding:7px 11px 2px;}
 
-  /* Procedure script */
-  .script-box {
-    padding: 12px 14px;
-    background: #0a0a0a;
-    border-top: 1px solid #1a1a1a;
-  }
-  .script-label {
-    font-size: 12px;
-    letter-spacing: 2px;
-    color: #444;
-    font-family: 'Orbitron', monospace;
-    margin-bottom: 8px;
-  }
-  .script-text {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 14px;
-    color: #555;
-    line-height: 1.7;
-    white-space: pre-wrap;
-  }
-  .script-text .highlight { color: var(--amber); }
+/* steps */
+.step-panel{padding:12px 14px;}
+.step-item{display:flex;gap:9px;padding:8px 0;border-bottom:1px solid #1e1e1e;align-items:flex-start;transition:all .3s;}
+.step-item:last-child{border-bottom:none;}
+.step-num{font-family:'Orbitron',monospace;font-size:10px;color:#555;min-width:22px;margin-top:2px;}
+.step-text{font-size:13px;color:#777;line-height:1.45;flex:1;}
+.step-item.current .step-num{color:var(--amber);}
+.step-item.current .step-text{color:#eee;font-weight:600;}
+.step-item.done .step-num{color:var(--green-dim);}
+.step-item.done .step-text{color:#555;text-decoration:line-through;}
+.step-check{font-size:13px;min-width:16px;color:#2a2a2a;}
+.step-item.done .step-check{color:var(--green-dim);}
+.step-item.current .step-check{color:var(--amber);}
+.step-hint{background:#0c1a10;border:1px solid #1e3a22;border-radius:4px;padding:8px 11px;font-size:12px;color:#7de0a8;margin-top:8px;line-height:1.5;font-style:italic;}
 
-  /* ===== RADIO BODY ===== */
-  .radio-body {
-    flex: 1;
-    max-width: 440px;
-    background: linear-gradient(170deg, var(--body-top) 0%, var(--body-mid) 40%, var(--body-bot) 100%);
-    border-radius: 16px 16px 20px 20px;
-    border: 1px solid #111;
-    box-shadow:
-      0 25px 60px rgba(0,0,0,0.8),
-      0 0 0 1px rgba(255,255,255,0.04),
-      inset 0 1px 0 rgba(255,255,255,0.08);
-    padding: 16px;
-    position: relative;
-    overflow: hidden;
-  }
+.prog-track{height:3px;background:#1e1e1e;border-radius:2px;margin:10px 14px 4px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--green-dim),var(--green));border-radius:2px;transition:width .4s ease;box-shadow:0 0 8px var(--green-glow);}
+.prog-label{font-size:11px;color:#777;text-align:right;letter-spacing:1px;padding:0 14px 8px;}
 
-  /* Subtle texture overlay */
-  .radio-body::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg width='3' height='3' viewBox='0 0 3 3' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0' y='0' width='1' height='1' fill='rgba(255,255,255,0.012)'/%3E%3C/svg%3E");
-    border-radius: inherit;
-    pointer-events: none;
-  }
+.fb-box{padding:9px 14px;border-radius:4px;font-size:13px;font-weight:600;letter-spacing:.4px;line-height:1.5;display:none;margin:0 14px 12px;}
+.fb-box.success{display:block;background:#0a1e0e;border:1px solid var(--green-dim);color:#66ffaa;}
+.fb-box.warning{display:block;background:#1e1500;border:1px solid var(--amber);color:#ffcc44;}
+.fb-box.error  {display:block;background:#1e0707;border:1px solid var(--red);color:#ff8888;}
 
-  /* Brand strip */
-  .radio-brand {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 4px 12px;
-  }
-  .brand-name {
-    font-family: 'Orbitron', monospace;
-    font-size: 13px;
-    font-weight: 900;
-    letter-spacing: 4px;
-    color: #555;
-  }
-  .brand-model {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 13px;
-    letter-spacing: 3px;
-    color: #333;
-  }
+/* voice badge */
+.voice-badge{display:none;align-items:center;gap:8px;padding:8px 14px;background:#0a1208;border:1px solid #1e3a22;font-size:12px;color:#7de0a8;font-family:'Share Tech Mono',monospace;}
+.voice-badge.show{display:flex;}
+.voice-badge .vb-dot{width:8px;height:8px;border-radius:50%;background:var(--red);box-shadow:0 0 8px var(--red);animation:vb-pulse .5s infinite alternate;flex-shrink:0;}
+.voice-badge.rx .vb-dot{background:var(--blue);box-shadow:0 0 8px var(--blue);}
+@keyframes vb-pulse{from{opacity:1}to{opacity:.3}}
 
-  /* Power LED */
-  .power-led {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: #111;
-    border: 1px solid #222;
-    transition: all 0.3s;
-  }
-  .power-led.on {
-    background: var(--green);
-    box-shadow: 0 0 10px var(--green), 0 0 20px var(--green-glow);
-  }
+/* ── RADIO BODY ── */
+.radio-body{
+  background:linear-gradient(170deg,var(--body-top) 0%,var(--body-mid) 40%,var(--body-bot) 100%);
+  border-radius:16px 16px 20px 20px;border:1px solid #111;
+  box-shadow:0 25px 60px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.04),inset 0 1px 0 rgba(255,255,255,.08);
+  padding:16px;position:relative;overflow:hidden;
+}
+.radio-body::before{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg width='3' height='3' viewBox='0 0 3 3' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0' y='0' width='1' height='1' fill='rgba(255,255,255,0.012)'/%3E%3C/svg%3E");border-radius:inherit;pointer-events:none;}
+.radio-brand{display:flex;justify-content:space-between;align-items:center;padding:0 4px 11px;}
+.brand-name{font-family:'Orbitron',monospace;font-size:13px;font-weight:900;letter-spacing:4px;color:#888;}
+.brand-model{font-family:'Rajdhani',sans-serif;font-size:11px;letter-spacing:3px;color:#666;}
+.power-led{width:8px;height:8px;border-radius:50%;background:#111;border:1px solid #222;transition:all .3s;}
+.power-led.on{background:var(--green);box-shadow:0 0 10px var(--green),0 0 20px var(--green-glow);}
 
-  /* ===== DISPLAY SCREEN ===== */
-  .screen-wrap {
-    background: #0a0a0a;
-    border-radius: 8px;
-    padding: 3px;
-    border: 1px solid #111;
-    box-shadow: inset 0 2px 8px rgba(0,0,0,0.8);
-    margin-bottom: 14px;
-  }
-  .screen {
-    background: var(--screen-bg);
-    border-radius: 6px;
-    padding: 14px;
-    height: 200px;
-    position: relative;
-    overflow: hidden;
-    font-family: 'Share Tech Mono', monospace;
-    box-shadow: inset 0 0 30px rgba(0,30,15,0.5);
-  }
-  /* Screen scanline effect */
-  .screen::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(0,0,0,0.08) 2px,
-      rgba(0,0,0,0.08) 4px
-    );
-    pointer-events: none;
-    border-radius: inherit;
-  }
+/* SCREEN */
+.screen-wrap{background:#0a0a0a;border-radius:8px;padding:3px;border:1px solid #111;box-shadow:inset 0 2px 8px rgba(0,0,0,.8);margin-bottom:13px;}
+.screen{background:var(--screen-bg);border-radius:6px;padding:9px 13px;height:232px;position:relative;overflow:hidden;font-family:'Share Tech Mono',monospace;box-shadow:inset 0 0 30px rgba(0,30,15,.5);display:flex;flex-direction:column;justify-content:space-between;}
+.screen::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.07) 2px,rgba(0,0,0,.07) 4px);pointer-events:none;border-radius:inherit;}
+.screen-top{display:flex;justify-content:space-between;align-items:center;min-height:18px;gap:4px;}
+.ch-name{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:1.5px;color:#3a6a4a;text-align:center;transition:color .3s;min-height:13px;}
+.ch-name.distress{color:#558855;}.ch-name.dsc{color:var(--amber-dim);}.ch-name.working{color:#336655;}.ch-name.tx{color:var(--red);}
+.ch-main{font-family:'Orbitron',monospace;font-size:62px;font-weight:900;color:var(--green);text-shadow:0 0 15px var(--green),0 0 30px var(--green-glow);line-height:1;text-align:center;letter-spacing:4px;transition:color .2s;}
+.ch-main.ch70    {color:var(--amber);text-shadow:0 0 15px var(--amber),0 0 30px rgba(255,170,0,.3);}
+.ch-main.transmit{color:var(--red);text-shadow:0 0 15px var(--red),0 0 30px var(--red-glow);}
+.ch-main.rx-active{color:#44ddff;text-shadow:0 0 15px #44ddff,0 0 30px rgba(68,200,255,.3);}
+.ch-main.off     {color:#0d0d0d;text-shadow:none;}
+.status-tag{font-family:'Orbitron',monospace;font-size:8px;letter-spacing:1.5px;padding:2px 5px;border-radius:2px;background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.2);color:var(--green-dim);transition:all .2s;white-space:nowrap;}
+.status-tag.hidden{opacity:0;pointer-events:none;}
+.status-tag.tx-tag{background:rgba(255,51,51,.15);border-color:rgba(255,51,51,.35);color:var(--red);animation:pulse-red .6s infinite alternate;}
+.status-tag.rx-tag{background:rgba(68,170,255,.12);border-color:rgba(68,170,255,.3);color:#66bbff;animation:pulse-blu .9s infinite alternate;}
+.status-tag.dw-tag{background:rgba(255,187,0,.1);border-color:rgba(255,187,0,.3);color:var(--amber);}
+@keyframes pulse-red{from{opacity:1}to{opacity:.4}}
+@keyframes pulse-blu{from{opacity:1}to{opacity:.5}}
+.power-row{display:flex;justify-content:center;gap:10px;}
+.pwr-ind{font-size:9px;letter-spacing:1.5px;color:#282828;transition:color .2s;}
+.pwr-ind.active{color:var(--green-dim);}
+.gps-row{display:flex;align-items:center;justify-content:center;gap:8px;padding:4px 0 2px;border-top:1px solid rgba(0,255,136,.1);}
+.gps-icon{font-family:'Orbitron',monospace;font-size:8px;letter-spacing:2px;color:#4a9a6a;}
+.gps-coords{font-family:'Share Tech Mono',monospace;font-size:12.5px;color:#55dd88;letter-spacing:.5px;text-shadow:0 0 8px rgba(0,200,100,.35);transition:color .3s;}
+.gps-coords.off{color:#1a1a1a;text-shadow:none;}
+.entry-display{position:absolute;top:9px;right:13px;font-family:'Orbitron',monospace;font-size:18px;color:var(--amber);text-shadow:0 0 8px var(--amber);letter-spacing:3px;opacity:0;transition:opacity .2s;}
+.entry-display.show{opacity:1;}
+.msg-ticker{position:absolute;bottom:33px;left:13px;right:13px;font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--amber);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;opacity:0;transition:opacity .4s;z-index:5;text-shadow:0 0 6px rgba(255,187,0,.4);}
+.msg-ticker.show{opacity:1;}
+.msg-ticker.rx-msg{color:#66ccff;text-shadow:0 0 6px rgba(68,180,255,.4);}
+.dsc-overlay{position:absolute;inset:0;background:rgba(0,0,0,.9);display:none;flex-direction:column;align-items:center;justify-content:center;border-radius:6px;z-index:10;}
+.dsc-overlay.active{display:flex;}
+.dsc-count{font-family:'Orbitron',monospace;font-size:72px;font-weight:900;color:var(--red);text-shadow:0 0 30px var(--red),0 0 60px var(--red-glow);animation:count-pulse 1s infinite;}
+@keyframes count-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.dsc-lbl{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:3px;color:#ff8888;margin-top:6px;}
+.dsc-bar-wrap{width:80%;height:4px;background:#1a0505;border-radius:2px;margin-top:12px;overflow:hidden;}
+.dsc-bar-fill{height:100%;background:var(--red);width:0%;box-shadow:0 0 8px var(--red);transition:width .05s linear;}
 
-  /* Main channel number */
-  .ch-main {
-    font-family: 'Orbitron', monospace;
-    font-size: 64px;
-    font-weight: 900;
-    color: var(--green);
-    text-shadow: 0 0 15px var(--green), 0 0 30px var(--green-glow);
-    line-height: 1;
-    text-align: center;
-    letter-spacing: 4px;
-    transition: color 0.2s;
-  }
-  .ch-main.ch16 { color: var(--green); }
-  .ch-main.ch70 { color: var(--amber); text-shadow: 0 0 15px var(--amber), 0 0 30px rgba(255,170,0,0.3); }
-  .ch-main.transmitting { color: var(--red); text-shadow: 0 0 15px var(--red), 0 0 30px var(--red-glow); }
-  .ch-main.off { color: #111; text-shadow: none; }
+/* SOFTKEYS */
+.sk-row{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:11px;}
+.sk{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:4px;color:#777;font-family:'Orbitron',monospace;font-size:8px;letter-spacing:1px;padding:7px 3px;cursor:pointer;text-align:center;transition:all .15s;user-select:none;}
+.sk:hover{background:#242424;color:#bbb;border-color:#333;}
+.sk:active{background:#111;transform:translateY(1px);}
+.sk.lit{color:var(--green);border-color:var(--green-dim);background:#0a1a0e;}
 
-  /* Status row */
-  .status-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 6px;
-  }
-  .status-tag {
-    font-family: 'Orbitron', monospace;
-    font-size: 10px;
-    letter-spacing: 1.5px;
-    padding: 2px 6px;
-    border-radius: 2px;
-    background: rgba(0,255,136,0.08);
-    border: 1px solid rgba(0,255,136,0.15);
-    color: var(--green-dim);
-    transition: all 0.2s;
-  }
-  .status-tag.hidden { opacity: 0; }
-  .status-tag.tx {
-    background: rgba(255,51,51,0.15);
-    border-color: rgba(255,51,51,0.3);
-    color: var(--red);
-    animation: pulse-red 0.6s infinite alternate;
-  }
-  @keyframes pulse-red { from{opacity:1} to{opacity:0.4} }
-  .status-tag.dw {
-    background: rgba(255,170,0,0.1);
-    border-color: rgba(255,170,0,0.25);
-    color: var(--amber);
-  }
+/* ZONES + BUTTONS */
+.zone{margin-bottom:9px;}
+.zone-lbl{font-size:9px;letter-spacing:2px;color:#666;font-family:'Orbitron',monospace;text-transform:uppercase;margin-bottom:5px;padding-left:2px;}
+.row{display:flex;gap:5px;margin-bottom:7px;}
+.row .btn{flex:1;}
+.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:7px;}
+.ptt-row{margin-top:9px;}
+.dial-row{display:flex;justify-content:space-around;align-items:center;padding:8px 0 3px;margin-bottom:7px;}
+.dial-unit{text-align:center;}
+.dial-ring{width:78px;height:78px;border-radius:50%;background:radial-gradient(circle at 38% 32%,#555 0%,#3a3a3a 25%,#252525 55%,#111 100%);border:3px solid #111;position:relative;cursor:grab;box-shadow:inset 0 4px 8px rgba(0,0,0,.7),inset 0 -2px 4px rgba(255,255,255,.06),0 6px 16px rgba(0,0,0,.6);user-select:none;touch-action:none;transition:box-shadow .15s;}
+.dial-ring:hover{box-shadow:inset 0 4px 8px rgba(0,0,0,.7),inset 0 -2px 4px rgba(255,255,255,.08),0 6px 16px rgba(0,0,0,.6),0 0 0 1px rgba(0,255,136,.15);}
+.dial-ring::after{content:'';position:absolute;top:8px;left:50%;width:5px;height:33px;background:linear-gradient(to bottom,#eee,#999);transform:translateX(-50%) rotate(var(--rot,-135deg));transform-origin:bottom center;border-radius:3px;box-shadow:0 2px 4px rgba(0,0,0,.6);transition:transform .07s ease-out;}
+.dial-lbl{font-family:'Orbitron',monospace;font-size:8px;letter-spacing:2px;color:#666;margin-top:6px;}
+.dial-val{font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--green-dim);margin-top:2px;}
+.btn{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:13px;letter-spacing:.5px;background:linear-gradient(180deg,#3a3a3a 0%,#2a2a2a 100%);border:1px solid #1e1e1e;border-bottom:2px solid #111;color:#ccc;padding:10px 7px;border-radius:5px;cursor:pointer;text-align:center;user-select:none;transition:all .1s;box-shadow:0 2px 4px rgba(0,0,0,.4);-webkit-tap-highlight-color:transparent;}
+.btn:hover{background:linear-gradient(180deg,#464646 0%,#363636 100%);color:#eee;}
+.btn:active{background:linear-gradient(180deg,#1e1e1e 0%,#252525 100%);border-bottom-width:1px;transform:translateY(1px);color:#999;}
+.btn-green{background:linear-gradient(180deg,#0d2a18 0%,#091a10 100%);border-color:#0d2a18;border-bottom-color:#061208;color:var(--green-dim);}
+.btn-green:hover{background:linear-gradient(180deg,#102e1c 0%,#0c1f14 100%);color:var(--green);}
+.btn-red{background:linear-gradient(180deg,#2e1010 0%,#1e0a0a 100%);border-color:#2e1010;border-bottom-color:#120606;color:#ee6666;}
+.btn-red:hover{color:var(--red);}
+.btn-amber{background:linear-gradient(180deg,#2e1f00 0%,#1e1400 100%);border-color:#2e1f00;border-bottom-color:#120e00;color:#ddaa00;}
+.btn-amber:hover{color:var(--amber);}
+.btn-ch16{background:linear-gradient(180deg,#002e1c 0%,#001e10 100%);border-color:#003e28;color:var(--green);font-family:'Orbitron',monospace;font-size:11px;font-weight:700;}
+.btn-dsc{background:linear-gradient(180deg,#3a0000 0%,#220000 100%);border:1px solid #580000;border-bottom:2px solid #110000;color:#ff7777;font-family:'Orbitron',monospace;font-size:9px;letter-spacing:1.5px;font-weight:700;padding:11px;box-shadow:0 3px 10px rgba(180,0,0,.25);}
+.btn-dsc:hover{background:linear-gradient(180deg,#460000 0%,#2c0000 100%);}
+.btn-ptt{background:linear-gradient(180deg,#3a0000 0%,#220000 100%);border:1px solid #4a0000;border-bottom:3px solid #110000;color:#ff7777;font-family:'Orbitron',monospace;font-size:11px;letter-spacing:2px;padding:14px;border-radius:6px;box-shadow:0 4px 12px rgba(180,0,0,.3);width:100%;font-weight:700;}
+.btn-ptt:hover{background:linear-gradient(180deg,#460000 0%,#2e0000 100%);}
+.btn-ptt:active{background:linear-gradient(180deg,#220000 0%,#1a0000 100%);border-bottom-width:1px;transform:translateY(2px);}
+.btn-ptt.active{background:linear-gradient(180deg,#5a0000 0%,#3a0000 100%);color:#ff9999;box-shadow:0 0 20px rgba(255,0,0,.4),0 4px 12px rgba(180,0,0,.5);animation:ptt-pulse .8s infinite alternate;}
+@keyframes ptt-pulse{from{box-shadow:0 0 15px rgba(255,0,0,.3)}to{box-shadow:0 0 30px rgba(255,0,0,.65)}}
 
-  /* Power row */
-  .power-row {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 5px;
-  }
-  .pwr-indicator {
-    font-size: 11px;
-    letter-spacing: 1.5px;
-    color: #222;
-    transition: color 0.2s;
-  }
-  .pwr-indicator.active { color: var(--green-dim); }
+/* COMMS LOG */
+.comms-log{margin-top:13px;background:#060606;border:1px solid #1e1e1e;border-radius:6px;overflow:hidden;}
+.log-hdr{background:#0e0e0e;padding:6px 12px;font-family:'Orbitron',monospace;font-size:8px;letter-spacing:2px;color:#666;border-bottom:1px solid #1a1a1a;display:flex;justify-content:space-between;align-items:center;}
+.log-clr{font-size:8px;color:#555;cursor:pointer;padding:2px 6px;border:1px solid #2a2a2a;border-radius:2px;background:none;font-family:'Rajdhani',sans-serif;letter-spacing:1px;transition:all .15s;}
+.log-clr:hover{color:#999;border-color:#444;}
+.log-body{height:110px;overflow-y:auto;padding:7px 12px;font-family:'Share Tech Mono',monospace;font-size:11px;line-height:1.75;scrollbar-width:thin;scrollbar-color:#222 #0a0a0a;}
+.log-body::-webkit-scrollbar{width:4px;}
+.log-body::-webkit-scrollbar-track{background:#0a0a0a;}
+.log-body::-webkit-scrollbar-thumb{background:#222;border-radius:2px;}
+.log-entry .ts  {color:#3a3a3a;}
+.log-entry .sys {color:#3a7a4a;}
+.log-entry .tx  {color:#8a6a28;}
+.log-entry .rx  {color:#2a7aaa;}
+.log-entry .rx2 {color:#2a6a8a;font-style:italic;}
+.log-entry .warn{color:#8a7a00;}
+.log-entry .ok  {color:#2a8a2a;}
+.log-entry .alert{color:#aa3030;font-weight:bold;}
 
-  /* Message ticker */
-  .msg-ticker {
-    position: absolute;
-    bottom: 10px;
-    left: 14px;
-    right: 14px;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 13px;
-    color: var(--amber);
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    opacity: 0;
-    transition: opacity 0.4s;
+/* RESPONSIVE */
+@media(max-width:900px){
+  .sim-wrapper,.sim-wrapper.no-training,.sim-wrapper.no-script,.sim-wrapper.no-training.no-script{
+    grid-template-columns:1fr;
+    grid-template-areas:"left" "radio" "script";
   }
-  .msg-ticker.show { opacity: 1; }
+  .script-col{position:static;}
+  .script-col.hidden{display:none;}
+}
 
-  /* Input entry display */
-  .entry-display {
-    position: absolute;
-    top: 12px;
-    right: 14px;
-    font-family: 'Orbitron', monospace;
-    font-size: 18px;
-    color: var(--amber);
-    text-shadow: 0 0 8px var(--amber);
-    letter-spacing: 3px;
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
-  .entry-display.show { opacity: 1; }
-
-  /* DSC countdown overlay */
-  .dsc-overlay {
-    position: absolute;
-    inset: 0;
-    background: rgba(0,0,0,0.85);
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border-radius: 6px;
-    z-index: 10;
-  }
-  .dsc-overlay.active { display: flex; }
-  .dsc-count {
-    font-family: 'Orbitron', monospace;
-    font-size: 72px;
-    font-weight: 900;
-    color: var(--red);
-    text-shadow: 0 0 30px var(--red), 0 0 60px var(--red-glow);
-    animation: count-pulse 1s infinite;
-  }
-  @keyframes count-pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
-  .dsc-label {
-    font-family: 'Orbitron', monospace;
-    font-size: 11px;
-    letter-spacing: 3px;
-    color: var(--red);
-    margin-top: 6px;
-    opacity: 0.8;
-  }
-  .dsc-bar-wrap {
-    width: 80%;
-    height: 4px;
-    background: #1a0505;
-    border-radius: 2px;
-    margin-top: 12px;
-    overflow: hidden;
-  }
-  .dsc-bar-fill {
-    height: 100%;
-    background: var(--red);
-    width: 0%;
-    box-shadow: 0 0 8px var(--red);
-    transition: width 0.05s linear;
-  }
-
-  /* ===== SOFTKEYS ===== */
-  .softkey-row {
-    display: grid;
-    grid-template-columns: repeat(4,1fr);
-    gap: 6px;
-    margin-bottom: 12px;
-  }
-  .sk {
-    background: #1a1a1a;
-    border: 1px solid #282828;
-    border-radius: 4px;
-    color: #555;
-    font-family: 'Orbitron', monospace;
-    font-size: 10px;
-    letter-spacing: 1px;
-    padding: 7px 4px;
-    cursor: pointer;
-    text-align: center;
-    transition: all 0.15s;
-    user-select: none;
-  }
-  .sk:hover { background: #222; color: #888; border-color: #333; }
-  .sk:active { background: #111; transform: translateY(1px); }
-  .sk.active { color: var(--green); border-color: var(--green-dim); background: #0a1a0e; }
-
-  /* ===== BUTTON ZONES ===== */
-  .zone {
-    margin-bottom: 10px;
-  }
-  .zone-label {
-    font-size: 11px;
-    letter-spacing: 2px;
-    color: #333;
-    font-family: 'Orbitron', monospace;
-    text-transform: uppercase;
-    margin-bottom: 6px;
-    padding-left: 2px;
-  }
-
-  /* Main controls row */
-  .main-controls {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-bottom: 10px;
-  }
-
-  /* Dial row */
-  .dial-row {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 10px 0 4px;
-    margin-bottom: 8px;
-  }
-  .dial-unit { text-align: center; }
-  .dial-ring {
-    width: 80px; height: 80px;
-    border-radius: 50%;
-    background:
-      radial-gradient(circle at 38% 32%, #555 0%, #3a3a3a 25%, #252525 55%, #111 100%);
-    border: 3px solid #111;
-    position: relative;
-    cursor: grab;
-    box-shadow:
-      inset 0 4px 8px rgba(0,0,0,0.7),
-      inset 0 -2px 4px rgba(255,255,255,0.06),
-      0 6px 16px rgba(0,0,0,0.6);
-    user-select: none;
-    touch-action: none;
-    transition: box-shadow 0.15s;
-  }
-  .dial-ring:hover {
-    box-shadow:
-      inset 0 4px 8px rgba(0,0,0,0.7),
-      inset 0 -2px 4px rgba(255,255,255,0.08),
-      0 6px 16px rgba(0,0,0,0.6),
-      0 0 0 1px rgba(0,255,136,0.15);
-  }
-  .dial-ring::after {
-    content: '';
-    position: absolute;
-    top: 8px;
-    left: 50%;
-    width: 5px;
-    height: 34px;
-    background: linear-gradient(to bottom, #eee, #999);
-    transform: translateX(-50%) rotate(var(--rot, -135deg));
-    transform-origin: bottom center;
-    border-radius: 3px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.6);
-    transition: transform 0.07s ease-out;
-  }
-  .dial-label-text {
-    font-family: 'Orbitron', monospace;
-    font-size: 10px;
-    letter-spacing: 2px;
-    color: #444;
-    margin-top: 7px;
-  }
-  .dial-val {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 15px;
-    color: var(--green-dim);
-    margin-top: 2px;
-  }
-
-  /* Nav buttons */
-  .nav-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6px;
-    margin-bottom: 8px;
-  }
-
-  /* Numpad */
-  .numpad-grid {
-    display: grid;
-    grid-template-columns: repeat(3,1fr);
-    gap: 6px;
-    margin-bottom: 8px;
-  }
-
-  /* Generic button */
-  .btn {
-    font-family: 'Rajdhani', sans-serif;
-    font-weight: 600;
-    font-size: 15px;
-    letter-spacing: 0.5px;
-    background: linear-gradient(180deg, var(--btn-base) 0%, #282828 100%);
-    border: 1px solid #1a1a1a;
-    border-bottom: 2px solid #111;
-    color: #999;
-    padding: 10px 8px;
-    border-radius: 5px;
-    cursor: pointer;
-    text-align: center;
-    user-select: none;
-    transition: all 0.1s;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.4);
-    -webkit-tap-highlight-color: transparent;
-  }
-  .btn:hover { background: linear-gradient(180deg, #3a3a3a 0%, #2e2e2e 100%); color: #bbb; }
-  .btn:active, .btn.pressed {
-    background: linear-gradient(180deg, #1e1e1e 0%, #252525 100%);
-    border-bottom-width: 1px;
-    transform: translateY(1px);
-    box-shadow: 0 1px 2px rgba(0,0,0,0.4);
-    color: #777;
-  }
-
-  /* Variant buttons */
-  .btn-green {
-    background: linear-gradient(180deg, #0d2a18 0%, #091a10 100%);
-    border-color: #0d2a18;
-    border-bottom-color: #061208;
-    color: var(--green-dim);
-  }
-  .btn-green:hover { background: linear-gradient(180deg, #102e1c 0%, #0c1f14 100%); color: var(--green); }
-
-  .btn-red {
-    background: linear-gradient(180deg, #2a0d0d 0%, #1a0909 100%);
-    border-color: #2a0d0d;
-    border-bottom-color: #120606;
-    color: #cc4444;
-  }
-  .btn-red:hover { background: linear-gradient(180deg, #330f0f 0%, #200a0a 100%); color: var(--red); }
-
-  .btn-amber {
-    background: linear-gradient(180deg, #2a1d00 0%, #1a1200 100%);
-    border-color: #2a1d00;
-    border-bottom-color: #120e00;
-    color: #cc8800;
-  }
-  .btn-amber:hover { color: var(--amber); }
-
-  .btn-ptt {
-    background: linear-gradient(180deg, #3a0000 0%, #220000 100%);
-    border: 1px solid #440000;
-    border-bottom: 3px solid #110000;
-    color: var(--red);
-    font-family: 'Orbitron', monospace;
-    font-size: 13px;
-    letter-spacing: 2px;
-    padding: 14px;
-    border-radius: 6px;
-    box-shadow: 0 4px 12px rgba(180,0,0,0.3);
-    width: 100%;
-    font-weight: 700;
-  }
-  .btn-ptt:hover { background: linear-gradient(180deg, #440000 0%, #2a0000 100%); box-shadow: 0 4px 16px rgba(255,0,0,0.25); }
-  .btn-ptt:active, .btn-ptt.pressed {
-    background: linear-gradient(180deg, #220000 0%, #1a0000 100%);
-    border-bottom-width: 1px;
-    transform: translateY(2px);
-    box-shadow: 0 2px 6px rgba(180,0,0,0.3);
-  }
-  .btn-ptt.active {
-    background: linear-gradient(180deg, #550000 0%, #3a0000 100%);
-    color: #ff6666;
-    box-shadow: 0 0 20px rgba(255,0,0,0.4), 0 4px 12px rgba(180,0,0,0.5);
-    animation: ptt-pulse 0.8s infinite alternate;
-  }
-  @keyframes ptt-pulse { from{box-shadow:0 0 15px rgba(255,0,0,0.3)} to{box-shadow:0 0 25px rgba(255,0,0,0.6)} }
-
-  .btn-dsc {
-    background: linear-gradient(180deg, #3a0000 0%, #220000 100%);
-    border: 1px solid #550000;
-    border-bottom: 2px solid #110000;
-    color: #ff4444;
-    font-family: 'Orbitron', monospace;
-    font-size: 11px;
-    letter-spacing: 1.5px;
-    font-weight: 700;
-    grid-column: span 2;
-    padding: 11px;
-    box-shadow: 0 3px 10px rgba(180,0,0,0.25);
-  }
-  .btn-dsc:hover { background: linear-gradient(180deg, #440000 0%, #2a0000 100%); }
-
-  .btn-ch16 {
-    background: linear-gradient(180deg, #002a1a 0%, #001a10 100%);
-    border-color: #003a22;
-    color: var(--green);
-    font-family: 'Orbitron', monospace;
-    font-size: 13px;
-    font-weight: 700;
-  }
-  .btn-ch16:hover { box-shadow: 0 0 10px rgba(0,255,136,0.15); }
-
-  /* Row layouts */
-  .row { display: flex; gap: 6px; margin-bottom: 8px; }
-  .row .btn { flex: 1; }
-  .row-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; margin-bottom: 8px; }
-
-  /* PTT row */
-  .ptt-row { margin-top: 10px; }
-
-  /* ===== COMMS LOG ===== */
-  .comms-log {
-    margin-top: 14px;
-    background: #050505;
-    border: 1px solid #181818;
-    border-radius: 6px;
-    overflow: hidden;
-  }
-  .log-header {
-    background: #0d0d0d;
-    padding: 6px 12px;
-    font-family: 'Orbitron', monospace;
-    font-size: 10px;
-    letter-spacing: 2px;
-    color: #333;
-    border-bottom: 1px solid #181818;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .log-clear {
-    font-size: 11px;
-    color: #2a2a2a;
-    cursor: pointer;
-    padding: 2px 6px;
-    border: 1px solid #1a1a1a;
-    border-radius: 2px;
-    background: none;
-    font-family: 'Rajdhani', sans-serif;
-    letter-spacing: 1px;
-    transition: all 0.15s;
-  }
-  .log-clear:hover { color: #555; border-color: #2a2a2a; }
-  .log-body {
-    height: 100px;
-    overflow-y: auto;
-    padding: 8px 12px;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 13px;
-    line-height: 1.7;
-    color: #3a3a3a;
-    scrollbar-width: thin;
-    scrollbar-color: #222 #0a0a0a;
-  }
-  .log-body::-webkit-scrollbar { width: 4px; }
-  .log-body::-webkit-scrollbar-track { background: #0a0a0a; }
-  .log-body::-webkit-scrollbar-thumb { background: #222; border-radius: 2px; }
-
-  .log-entry { padding: 1px 0; }
-  .log-entry .ts { color: #252525; }
-  .log-entry .sys { color: #2a4a2a; }
-  .log-entry .tx  { color: #4a3010; }
-  .log-entry .rx  { color: #1a3a4a; }
-  .log-entry .warn { color: #4a3000; }
-  .log-entry .ok  { color: #1a4a1a; }
-  .log-entry .alert { color: #4a1010; font-weight: bold; }
-
-  /* ===== RESPONSIVE ===== */
-  @media (max-width: 780px) {
-    .sim-wrapper { flex-direction: column; align-items: center; }
-    .training-panel { width: 100%; max-width: 440px; }
-  }
-
-  /* ===== OFF STATE ===== */
-  .radio-body.powered-off .screen { filter: brightness(0.2); }
-  .radio-body.powered-off .btn:not(#power-btn) { opacity: 0.4; cursor: not-allowed; }
-  .radio-body.powered-off .btn-ptt { opacity: 0.3; cursor: not-allowed; }
-  .radio-body.powered-off .dial-ring { opacity: 0.4; cursor: not-allowed; }
-  .radio-body.powered-off .sk { opacity: 0.3; cursor: not-allowed; }
-
-  /* Boot animation */
-  @keyframes boot-flicker {
-    0%{opacity:0} 10%{opacity:0.8} 20%{opacity:0.2} 30%{opacity:1} 40%{opacity:0.6}
-    50%{opacity:1} 60%{opacity:0.9} 70%{opacity:1} 100%{opacity:1}
-  }
-  .booting .ch-main { animation: boot-flicker 0.8s ease forwards; }
+/* POWERED OFF */
+.radio-body.powered-off .screen{filter:brightness(.15);}
+.radio-body.powered-off .btn:not(#power-btn){opacity:.4;cursor:not-allowed;}
+.radio-body.powered-off .btn-ptt{opacity:.3;cursor:not-allowed;}
+.radio-body.powered-off .dial-ring{opacity:.4;cursor:not-allowed;}
+.radio-body.powered-off .sk{opacity:.3;cursor:not-allowed;}
+@keyframes boot-flicker{0%{opacity:0}10%{opacity:.8}20%{opacity:.2}30%{opacity:1}40%{opacity:.6}50%{opacity:1}60%{opacity:.9}100%{opacity:1}}
+.booting .ch-main{animation:boot-flicker .8s ease forwards;}
 </style>
 </head>
 <body>
 
-<!-- PAGE HEADER -->
 <div class="page-header">
   <div class="brand">MARPRO Marine Training</div>
   <h1>VHF Radio Simulator</h1>
 </div>
 
-<!-- MODE SWITCHER -->
 <div class="mode-bar">
   <button class="mode-btn active" id="btn-freeplay">FREE PLAY</button>
   <button class="mode-btn" id="btn-training">TRAINING MODE</button>
 </div>
 
-<!-- MAIN WRAPPER -->
-<div class="sim-wrapper">
+<div class="sim-wrapper no-training no-script" id="sim-wrapper">
 
-  <!-- TRAINING PANEL -->
+  <!-- LEFT: TRAINING PANEL -->
   <div class="training-panel" id="training-panel">
-
-    <!-- Scenario Select -->
-    <div class="training-card">
-      <div class="training-card-header">
-        <span class="dot"></span>
-        SELECT SCENARIO
-      </div>
-      <div class="scenario-list">
-        <button class="scenario-btn" data-scenario="mayday" id="sc-mayday">
-          Mayday Distress Call
-          <span class="tag">CHANNEL 16 · VOICE PROCEDURE</span>
-        </button>
-        <button class="scenario-btn" data-scenario="dsc" id="sc-dsc">
-          DSC Distress Alert
-          <span class="tag">CHANNEL 70 · DIGITAL SELECTIVE CALLING</span>
-        </button>
+    <div class="t-card">
+      <div class="t-card-hdr"><span class="dot"></span>SELECT SCENARIO</div>
+      <div class="sc-list">
+        <div class="sc-cat">INITIAL SETUP</div>
+        <button class="sc-btn" data-scenario="setup">Setup Radio<span class="tag">POWER · VOLUME · SQUELCH · CHANNEL 16</span></button>
+        <div class="sc-cat">DISTRESS CALLS</div>
+        <button class="sc-btn" data-scenario="mayday">Mayday — Distress Call<span class="tag">CHANNEL 16 · IMMEDIATE DANGER TO LIFE</span></button>
+        <button class="sc-btn" data-scenario="dsc">DSC Distress Alert<span class="tag">CHANNEL 70 · DIGITAL SELECTIVE CALLING</span></button>
+        <button class="sc-btn" data-scenario="panpan">Pan-Pan — Urgency Call<span class="tag">CHANNEL 16 · URGENT BUT NOT IMMEDIATE</span></button>
+        <div class="sc-cat">SAFETY &amp; ROUTINE</div>
+        <button class="sc-btn" data-scenario="securite">Sécurité — Safety Call<span class="tag">CH 16 THEN CH 67 · NAVIGATIONAL</span></button>
+        <button class="sc-btn" data-scenario="radiocheck">Radio Check<span class="tag">CHANNEL 16 · TEST PROCEDURE</span></button>
+        <button class="sc-btn" data-scenario="shipto">Routine Ship-to-Shore Call<span class="tag">CH 16 THEN WORKING CH · PORT OPS</span></button>
+        <button class="sc-btn" data-scenario="relay">Responding to a Mayday<span class="tag">CHANNEL 16 · RELAY &amp; ACKNOWLEDGE</span></button>
       </div>
     </div>
 
-    <!-- Steps Card (hidden until scenario selected) -->
-    <div class="training-card" id="steps-card" style="display:none">
-      <div class="training-card-header">
-        <span class="dot"></span>
-        <span id="steps-title">PROCEDURE STEPS</span>
-      </div>
+    <div class="t-card" id="steps-card" style="display:none">
+      <div class="t-card-hdr"><span class="dot"></span><span id="steps-title">PROCEDURE</span></div>
       <div class="step-panel" id="step-panel"></div>
-      <div class="progress-track" style="margin:0 14px 10px;">
-        <div class="progress-fill" id="progress-fill" style="width:0%"></div>
-      </div>
-      <div class="progress-label" style="padding: 0 14px 10px; text-align:right; font-size:13px; color:#333;" id="progress-label">0 / 0</div>
-      <div id="feedback-box" class="feedback-box" style="margin:0 14px 12px;"></div>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+      <div class="prog-label" id="prog-label">0 / 0</div>
+      <div class="voice-badge" id="voice-badge"><span class="vb-dot"></span><span id="vb-text">Listening…</span></div>
+      <div class="fb-box" id="fb-box"></div>
     </div>
-
-    <!-- Script Reference -->
-    <div class="training-card" id="script-card" style="display:none">
-      <div class="training-card-header">
-        <span class="dot"></span>
-        VOICE PROCEDURE SCRIPT
-      </div>
-      <div class="script-box">
-        <div class="script-label">SAY EXACTLY</div>
-        <div class="script-text" id="script-content"></div>
-      </div>
-    </div>
-
   </div>
 
-  <!-- RADIO BODY -->
-  <div class="radio-body powered-off" id="radio-body">
-
-    <!-- Brand -->
-    <div class="radio-brand">
-      <span class="brand-name">MARPRO</span>
-      <span class="brand-model">VHF-16M · CLASS D DSC</span>
-      <div class="power-led" id="power-led"></div>
-    </div>
-
-    <!-- Screen -->
-    <div class="screen-wrap">
-      <div class="screen" id="screen">
-        <div class="entry-display" id="entry-display"></div>
-
-        <div class="ch-main off" id="ch-main">--</div>
-        <div class="status-row" id="status-row">
-          <div class="status-tag hidden" id="tag-dw">DUAL WATCH</div>
-          <div class="status-tag hidden" id="tag-wx">WEATHER</div>
-          <div class="status-tag hidden" id="tag-pwr">25W</div>
-          <div class="status-tag hidden" id="tag-tx">TX</div>
-        </div>
-        <div class="power-row" id="power-row">
-          <div class="pwr-indicator" id="pwr-hi">■■■ 25W</div>
-          <div class="pwr-indicator" id="pwr-lo">5W ■</div>
-        </div>
-
-        <div class="msg-ticker" id="msg-ticker"></div>
-
-        <!-- DSC countdown overlay -->
-        <div class="dsc-overlay" id="dsc-overlay">
-          <div class="dsc-count" id="dsc-count">3</div>
-          <div class="dsc-label">DSC DISTRESS — HOLD TO SEND</div>
-          <div class="dsc-bar-wrap">
-            <div class="dsc-bar-fill" id="dsc-bar-fill"></div>
+  <!-- CENTRE: RADIO -->
+  <div class="radio-col">
+    <div class="radio-body powered-off" id="radio-body">
+      <div class="radio-brand">
+        <span class="brand-name">MARPRO</span>
+        <span class="brand-model">VHF-16M · CLASS D DSC</span>
+        <div class="power-led" id="power-led"></div>
+      </div>
+      <div class="screen-wrap">
+        <div class="screen" id="screen">
+          <div class="entry-display" id="entry-display"></div>
+          <div class="screen-top">
+            <div class="status-tag hidden" id="tag-dw">DUAL WATCH</div>
+            <div class="status-tag hidden" id="tag-wx">WX</div>
+            <div class="status-tag hidden" id="tag-pwr">25W</div>
+            <div class="status-tag hidden" id="tag-rx">RX</div>
+            <div class="status-tag hidden" id="tag-tx">TX</div>
+          </div>
+          <div class="ch-name" id="ch-name"></div>
+          <div class="ch-main off" id="ch-main">--</div>
+          <div class="power-row">
+            <div class="pwr-ind" id="pwr-hi">■■■ 25W</div>
+            <div class="pwr-ind" id="pwr-lo">5W ■</div>
+          </div>
+          <div class="gps-row">
+            <span class="gps-icon">GPS</span>
+            <span class="gps-coords off" id="gps-coords">--°--'?  ---°--'?</span>
+          </div>
+          <div class="msg-ticker" id="msg-ticker"></div>
+          <div class="dsc-overlay" id="dsc-overlay">
+            <div class="dsc-count" id="dsc-count">3</div>
+            <div class="dsc-lbl">DSC DISTRESS — HOLD TO SEND</div>
+            <div class="dsc-bar-wrap"><div class="dsc-bar-fill" id="dsc-bar-fill"></div></div>
           </div>
         </div>
       </div>
-    </div>
-
-    <!-- Softkeys -->
-    <div class="softkey-row">
-      <div class="sk" id="sk-dsc">DSC</div>
-      <div class="sk" id="sk-scan">SCAN</div>
-      <div class="sk" id="sk-dw">DUAL</div>
-      <div class="sk" id="sk-ais">AIS</div>
-    </div>
-
-    <!-- Volume / Squelch dials -->
-    <div class="dial-row">
-      <div class="dial-unit">
-        <div class="dial-ring" id="vol-dial"></div>
-        <div class="dial-label-text">VOLUME</div>
-        <div class="dial-val" id="vol-val">5</div>
+      <div class="sk-row">
+        <div class="sk" id="sk-dsc">DSC</div>
+        <div class="sk" id="sk-scan">SCAN</div>
+        <div class="sk" id="sk-dw">DUAL</div>
+        <div class="sk" id="sk-ais">AIS</div>
       </div>
-      <div class="dial-unit">
-        <div class="dial-ring" id="sq-dial"></div>
-        <div class="dial-label-text">SQUELCH</div>
-        <div class="dial-val" id="sq-val">3</div>
+      <div class="dial-row">
+        <div class="dial-unit">
+          <div class="dial-ring" id="vol-dial"></div>
+          <div class="dial-lbl">VOLUME</div>
+          <div class="dial-val" id="vol-val">5</div>
+        </div>
+        <div class="dial-unit">
+          <div class="dial-ring" id="sq-dial"></div>
+          <div class="dial-lbl">SQUELCH</div>
+          <div class="dial-val" id="sq-val">3</div>
+        </div>
       </div>
-    </div>
-
-    <!-- Main controls -->
-    <div class="zone">
-      <div class="zone-label">MAIN CONTROLS</div>
-      <div class="row">
-        <button class="btn" id="power-btn">POWER</button>
-        <button class="btn btn-ch16" id="ch16-btn">16 / C</button>
-        <button class="btn btn-amber" id="hilo-btn">HI / LO</button>
+      <div class="zone">
+        <div class="zone-lbl">MAIN CONTROLS</div>
+        <div class="row">
+          <button class="btn" id="power-btn">POWER</button>
+          <button class="btn btn-ch16" id="ch16-btn">16 / C</button>
+          <button class="btn btn-amber" id="hilo-btn">HI / LO</button>
+        </div>
+        <div class="row">
+          <button class="btn btn-dsc" id="dsc-btn" style="flex:2">▲ DSC DISTRESS — HOLD 3 SECONDS</button>
+        </div>
       </div>
-      <div class="row">
-        <button class="btn btn-dsc" id="dsc-btn" style="flex:2">▲ DSC DISTRESS — HOLD 3 SECONDS</button>
+      <div class="zone">
+        <div class="zone-lbl">CHANNEL</div>
+        <div class="row">
+          <button class="btn" id="chan-up">CH ▲</button>
+          <button class="btn" id="chan-dn">CH ▼</button>
+          <button class="btn btn-amber" id="wx-btn">WX</button>
+          <button class="btn" id="dw-btn">D/W</button>
+        </div>
+        <div class="numpad" id="numpad">
+          <button class="btn keypad" data-d="1">1</button>
+          <button class="btn keypad" data-d="2">2</button>
+          <button class="btn keypad" data-d="3">3</button>
+          <button class="btn keypad" data-d="4">4</button>
+          <button class="btn keypad" data-d="5">5</button>
+          <button class="btn keypad" data-d="6">6</button>
+          <button class="btn keypad" data-d="7">7</button>
+          <button class="btn keypad" data-d="8">8</button>
+          <button class="btn keypad" data-d="9">9</button>
+          <button class="btn btn-red" id="clear-btn">CLR</button>
+          <button class="btn keypad" data-d="0">0</button>
+          <button class="btn btn-green" id="enter-btn">ENT</button>
+        </div>
       </div>
-    </div>
-
-    <!-- Channel nav + numpad -->
-    <div class="zone">
-      <div class="zone-label">CHANNEL</div>
-      <div class="row">
-        <button class="btn" id="chan-up">CH ▲</button>
-        <button class="btn" id="chan-dn">CH ▼</button>
-        <button class="btn btn-amber" id="wx-btn">WX</button>
-        <button class="btn" id="dw-btn">D/W</button>
+      <div class="ptt-row">
+        <button class="btn btn-ptt" id="ptt-btn">▶ PRESS TO TRANSMIT (PTT)</button>
       </div>
-      <div class="numpad-grid" id="numpad">
-        <button class="btn keypad" data-d="1">1</button>
-        <button class="btn keypad" data-d="2">2</button>
-        <button class="btn keypad" data-d="3">3</button>
-        <button class="btn keypad" data-d="4">4</button>
-        <button class="btn keypad" data-d="5">5</button>
-        <button class="btn keypad" data-d="6">6</button>
-        <button class="btn keypad" data-d="7">7</button>
-        <button class="btn keypad" data-d="8">8</button>
-        <button class="btn keypad" data-d="9">9</button>
-        <button class="btn btn-red" id="clear-btn">CLR</button>
-        <button class="btn keypad" data-d="0">0</button>
-        <button class="btn btn-green" id="enter-btn">ENT</button>
-      </div>
-    </div>
-
-    <!-- PTT -->
-    <div class="ptt-row">
-      <button class="btn btn-ptt" id="ptt-btn">▶ PRESS TO TRANSMIT (PTT)</button>
-    </div>
-
-    <!-- Comms Log -->
-    <div class="comms-log">
-      <div class="log-header">
-        <span>COMMS LOG</span>
-        <button class="log-clear" id="log-clear">CLEAR</button>
-      </div>
-      <div class="log-body" id="log-body">
-        <div class="log-entry"><span class="sys">SYS  Radio offline.</span></div>
+      <div class="comms-log">
+        <div class="log-hdr">
+          <span>COMMS LOG</span>
+          <button class="log-clr" id="log-clr">CLEAR</button>
+        </div>
+        <div class="log-body" id="log-body">
+          <div class="log-entry"><span class="sys">SYS  Radio offline.</span></div>
+        </div>
       </div>
     </div>
+  </div>
 
-  </div><!-- end radio-body -->
+  <!-- RIGHT: COLLAPSIBLE SCRIPT PANEL -->
+  <div class="script-col hidden" id="script-col">
+    <div class="script-toggle" id="script-toggle">
+      <span>PROCEDURE SCRIPT</span>
+      <span class="arrow">▲</span>
+    </div>
+    <div class="script-panel open" id="script-panel">
+      <div class="script-inner">
+        <div class="script-lbl">REFERENCE — <span id="script-scenario-title"></span></div>
+        <div class="script-body" id="script-body">Select a scenario to view the procedure script.</div>
+      </div>
+    </div>
+  </div>
 
 </div><!-- end sim-wrapper -->
 
 <script>
 /* ================================================================
-   MARPRO VHF RADIO SIMULATOR — Full Logic
+   MARPRO VHF RADIO SIMULATOR — v5
+   Correct IAMSAR/ITU procedure · Reef VTS · Harbour Control
+   Collapsible script panel · Three-column layout
    ================================================================ */
 
-// ---- Audio ----
-let audioCtx = null;
-function getAudioCtx() {
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  if (audioCtx.state === 'suspended') audioCtx.resume();
-  return audioCtx;
+// ── CHANNEL NAMES ─────────────────────────────────────────────────
+const CH_NAMES={6:'SHIP-SHIP SAFETY',9:'BOAT CALLING',11:'PORT OPS',12:'PORT OPS',13:'BRIDGE-BRIDGE',14:'PORT OPS',16:'DISTRESS / CALLING',22:'COAST GUARD',67:'SMALL CRAFT SAFETY',68:'WORKING',69:'WORKING',70:'DSC ONLY',71:'WORKING',72:'SHIP-SHIP',73:'WORKING',77:'WORKING'};
+function getChName(n){return CH_NAMES[n]||(n>=1&&n<=88?'WORKING CHANNEL':'');}
+
+// ── AUDIO ─────────────────────────────────────────────────────────
+let audioCtx=null;
+function getACtx(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();return audioCtx;}
+function beep(freq=800,dur=0.1,vol=0.25){try{const ctx=getACtx(),o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type='sine';o.frequency.value=freq;g.gain.setValueAtTime(vol*(S.volume/10),ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+dur);o.start();o.stop(ctx.currentTime+dur);}catch(e){}}
+function beepRise(){try{const ctx=getACtx(),o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type='sine';o.frequency.setValueAtTime(500,ctx.currentTime);o.frequency.linearRampToValueAtTime(900,ctx.currentTime+0.5);g.gain.setValueAtTime(0.4*(S.volume/10),ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.6);o.start();o.stop(ctx.currentTime+0.6);}catch(e){}}
+function beepDSC(){[0,0.22,0.44].forEach((t,i)=>{const f=[2187.5,1954.5,2187.5];try{const ctx=getACtx(),o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.type='sine';o.frequency.value=f[i];g.gain.setValueAtTime(0.5*(S.volume/10),ctx.currentTime+t);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+t+0.18);o.start(ctx.currentTime+t);o.stop(ctx.currentTime+t+0.18);}catch(e){}});}
+
+function playRxBurst(sec=2.5){
+  try{
+    const ctx=getACtx(),rate=ctx.sampleRate;
+    const buf=ctx.createBuffer(1,rate*sec,rate);const d=buf.getChannelData(0);
+    for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*0.5;
+    const src=ctx.createBufferSource();src.buffer=buf;
+    const bp=ctx.createBiquadFilter();bp.type='bandpass';bp.frequency.value=1400;bp.Q.value=0.7;
+    const g=ctx.createGain();
+    g.gain.setValueAtTime(0,ctx.currentTime);
+    g.gain.linearRampToValueAtTime(0.12*(S.volume/10),ctx.currentTime+0.1);
+    g.gain.setValueAtTime(0.12*(S.volume/10),ctx.currentTime+sec-0.15);
+    g.gain.linearRampToValueAtTime(0,ctx.currentTime+sec);
+    src.connect(bp);bp.connect(g);g.connect(ctx.destination);src.start();src.stop(ctx.currentTime+sec);
+  }catch(e){}
 }
 
-function beep(freq = 800, dur = 0.1, vol = 0.25) {
-  try {
-    const ctx = getAudioCtx();
-    const o = ctx.createOscillator(), g = ctx.createGain();
-    o.connect(g); g.connect(ctx.destination);
-    o.type = 'sine'; o.frequency.value = freq;
-    g.gain.setValueAtTime(vol * (state.volume / 10), ctx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
-    o.start(); o.stop(ctx.currentTime + dur);
-  } catch(e){}
+let staticNode=null,staticGain=null;
+function startStatic(){if(staticNode)return;try{const ctx=getACtx(),buf=4096;staticNode=ctx.createScriptProcessor(buf,1,1);staticNode.onaudioprocess=e=>{const o=e.outputBuffer.getChannelData(0);for(let i=0;i<buf;i++)o[i]=(Math.random()*2-1);};staticGain=ctx.createGain();staticGain.gain.value=(S.volume/10)*0.12;staticNode.connect(staticGain);staticGain.connect(ctx.destination);}catch(e){}}
+function stopStatic(){if(!staticNode)return;try{staticNode.disconnect();staticGain.disconnect();}catch(e){}staticNode=null;staticGain=null;}
+function updateStatic(){if(S.powered&&S.squelch<4)startStatic();else stopStatic();if(staticGain)staticGain.gain.value=(S.volume/10)*0.12;}
+
+// ── TTS RADIO VOICE ───────────────────────────────────────────────
+let ttsVoice=null;
+function loadVoices(){
+  const vs=speechSynthesis.getVoices();
+  ttsVoice=vs.find(v=>v.lang==='en-AU'&&v.name.toLowerCase().includes('male'))
+    ||vs.find(v=>v.lang==='en-AU')
+    ||vs.find(v=>v.lang.startsWith('en-'))
+    ||vs[0]||null;
+}
+if(typeof speechSynthesis!=='undefined'){loadVoices();speechSynthesis.onvoiceschanged=loadVoices;}
+
+function radioSpeak(text,onDone){
+  if(typeof speechSynthesis==='undefined'){if(onDone)onDone();return;}
+  speechSynthesis.cancel();
+  const utt=new SpeechSynthesisUtterance(text);
+  if(ttsVoice)utt.voice=ttsVoice;
+  utt.rate=0.90;utt.pitch=0.92;utt.volume=Math.max(0.1,S.volume/10);
+  const estSec=Math.max(2,(text.split(' ').length/125)*60);
+  playRxBurst(estSec);setRxState(true);
+  utt.onend=()=>{setRxState(false);if(onDone)onDone();};
+  utt.onerror=()=>{setRxState(false);if(onDone)onDone();};
+  speechSynthesis.speak(utt);
 }
 
-function beepRise() {
-  try {
-    const ctx = getAudioCtx();
-    const o = ctx.createOscillator(), g = ctx.createGain();
-    o.connect(g); g.connect(ctx.destination);
-    o.type = 'sine';
-    o.frequency.setValueAtTime(500, ctx.currentTime);
-    o.frequency.linearRampToValueAtTime(900, ctx.currentTime + 0.5);
-    g.gain.setValueAtTime(0.4 * (state.volume / 10), ctx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.6);
-    o.start(); o.stop(ctx.currentTime + 0.6);
-  } catch(e){}
+function setRxState(on){S.receiving=on;updateDisplay();if(on)showVoiceBadge('rx','Incoming transmission…');else hideVoiceBadge();}
+
+// Fires response after student releases PTT
+// voiceText = what TTS speaks; logText = short entry for comms log
+function scheduleResponse(voiceText,logText,delaySec,stepAction,onDone){
+  setTimeout(()=>{
+    log(`RX: ${logText||voiceText}`,'rx');
+    ticker(logText||voiceText,8000,true);
+    radioSpeak(voiceText,()=>{
+      if(stepAction)checkStep(stepAction);
+      if(onDone)onDone();
+    });
+  },delaySec*1000);
 }
 
-function beepDSC() {
-  // Three-tone DSC alert sound
-  [0, 0.22, 0.44].forEach((t, i) => {
-    const freqs = [2187.5, 1954.5, 2187.5];
-    try {
-      const ctx = getAudioCtx();
-      const o = ctx.createOscillator(), g = ctx.createGain();
-      o.connect(g); g.connect(ctx.destination);
-      o.type = 'sine'; o.frequency.value = freqs[i];
-      g.gain.setValueAtTime(0.5 * (state.volume / 10), ctx.currentTime + t);
-      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + t + 0.18);
-      o.start(ctx.currentTime + t);
-      o.stop(ctx.currentTime + t + 0.18);
-    } catch(e){}
-  });
+// ── VOICE BADGE ───────────────────────────────────────────────────
+function showVoiceBadge(type,text){const b=$('voice-badge');b.className='voice-badge show'+(type==='rx'?' rx':'');$('vb-text').textContent=text;}
+function hideVoiceBadge(){$('voice-badge').className='voice-badge';}
+
+// ── STATE ─────────────────────────────────────────────────────────
+const S={powered:false,channel:16,volume:5,squelch:3,highPower:true,dualWatch:false,weatherMode:false,transmitting:false,receiving:false,enteredDigits:'',dscHolding:false,dscTriggered:false,volAdjusted:false,sqAdjusted:false};
+
+// ── GPS ───────────────────────────────────────────────────────────
+const gps={lat:-33.8542,lon:151.3187};
+function fmtCoord(v,pos,neg,pad){const sign=v<0?neg:pos,abs=Math.abs(v),deg=Math.floor(abs),min=((abs-deg)*60).toFixed(2);return `${String(deg).padStart(pad,'0')}°${min.padStart(5,'0')}'${sign}`;}
+function updateGPS(){const el=$('gps-coords');if(!S.powered){el.textContent="--°--'?  ---°--'?";el.className='gps-coords off';return;}el.textContent=`${fmtCoord(gps.lat,'N','S',2)}  ${fmtCoord(gps.lon,'E','W',3)}`;el.className='gps-coords';}
+setInterval(()=>{if(!S.powered)return;gps.lat=Math.max(-38,Math.min(-28,gps.lat+(Math.random()-0.45)*0.00133));gps.lon=Math.max(148,Math.min(155,gps.lon+(Math.random()-0.45)*0.00133));updateGPS();},8000);
+
+// ── DOM ───────────────────────────────────────────────────────────
+function $(id){return document.getElementById(id);}
+const radioBody=$('radio-body'),chMain=$('ch-main'),chNameEl=$('ch-name'),entryDisp=$('entry-display');
+const tagDW=$('tag-dw'),tagWX=$('tag-wx'),tagPwr=$('tag-pwr'),tagRX=$('tag-rx'),tagTX=$('tag-tx');
+const pwrHi=$('pwr-hi'),pwrLo=$('pwr-lo'),msgTicker=$('msg-ticker'),dscOverlay=$('dsc-overlay');
+const dscCount=$('dsc-count'),dscBarFill=$('dsc-bar-fill'),powerLed=$('power-led'),logBody=$('log-body');
+const volDial=$('vol-dial'),volVal=$('vol-val'),sqDial=$('sq-dial'),sqVal=$('sq-val');
+const pttBtn=$('ptt-btn'),dscBtn=$('dsc-btn'),fbBox=$('fb-box');
+
+// ── LOG ───────────────────────────────────────────────────────────
+let logLines=[];
+function log(text,cls='sys'){const n=new Date(),ts=`${hh(n.getHours())}:${hh(n.getMinutes())}:${hh(n.getSeconds())}`;logLines.push({ts,text,cls});renderLog();}
+function hh(n){return String(n).padStart(2,'0');}
+function renderLog(){logBody.innerHTML=logLines.map(e=>`<div class="log-entry"><span class="ts">${e.ts}  </span><span class="${e.cls}">${e.text}</span></div>`).join('');logBody.scrollTop=logBody.scrollHeight;}
+
+// ── DISPLAY ───────────────────────────────────────────────────────
+function updateDisplay(){
+  if(!S.powered){chMain.textContent='--';chMain.className='ch-main off';chNameEl.textContent='';chNameEl.className='ch-name';[tagDW,tagWX,tagPwr,tagRX,tagTX].forEach(t=>t.classList.add('hidden'));pwrHi.classList.remove('active');pwrLo.classList.remove('active');entryDisp.textContent='';entryDisp.classList.remove('show');updateGPS();return;}
+  let cls='ch-main';
+  if(S.transmitting)cls+=' transmit';else if(S.receiving)cls+=' rx-active';else if(S.channel===70)cls+=' ch70';
+  chMain.className=cls;chMain.textContent=String(S.channel).padStart(2,'0');
+  chNameEl.textContent=getChName(S.channel);
+  chNameEl.className='ch-name'+(S.channel===16?' distress':S.channel===70?' dsc':S.transmitting?' tx':' working');
+  if(S.enteredDigits){entryDisp.textContent=S.enteredDigits;entryDisp.classList.add('show');}else{entryDisp.textContent='';entryDisp.classList.remove('show');}
+  tagDW.classList.toggle('hidden',!S.dualWatch);tagDW.classList.toggle('dw-tag',S.dualWatch);
+  tagWX.classList.toggle('hidden',!S.weatherMode);
+  tagTX.classList.toggle('hidden',!S.transmitting);if(S.transmitting)tagTX.classList.add('tx-tag');else tagTX.classList.remove('tx-tag');
+  tagRX.classList.toggle('hidden',!S.receiving);if(S.receiving)tagRX.classList.add('rx-tag');else tagRX.classList.remove('rx-tag');
+  tagPwr.classList.toggle('hidden',false);tagPwr.textContent=S.highPower?'25W':'5W';
+  pwrHi.classList.toggle('active',S.highPower);pwrLo.classList.toggle('active',!S.highPower);
+  updateGPS();
 }
 
-let staticNode = null, staticGainNode = null;
-function startStatic() {
-  if (staticNode) return;
-  try {
-    const ctx = getAudioCtx();
-    const bufSize = 4096;
-    staticNode = ctx.createScriptProcessor(bufSize, 1, 1);
-    staticNode.onaudioprocess = e => {
-      const out = e.outputBuffer.getChannelData(0);
-      for (let i = 0; i < bufSize; i++) out[i] = (Math.random() * 2 - 1);
+function ticker(msg,dur=4000,isRx=false){msgTicker.textContent=msg;msgTicker.className='msg-ticker show'+(isRx?' rx-msg':'');clearTimeout(ticker._t);ticker._t=setTimeout(()=>msgTicker.classList.remove('show'),dur);}
+
+// ── COLLAPSIBLE SCRIPT PANEL ──────────────────────────────────────
+const scriptToggle=$('script-toggle');
+const scriptPanel=$('script-panel');
+scriptToggle.addEventListener('click',()=>{
+  const open=scriptPanel.classList.toggle('open');
+  scriptToggle.classList.toggle('open',open);
+});
+// Start open
+scriptToggle.classList.add('open');
+
+// ── AMBIENT RX CALLS ─────────────────────────────────────────────
+// These fire on a schedule after power-on to populate the radio environment.
+// They use correct ITU format and are read aloud.
+const AMBIENT=[
+  {delay:50,
+   voice:'Reef V T S, Reef V T S, Reef V T S. This is Motor Vessel Osprey, Motor Vessel Osprey, Motor Vessel Osprey. Request weather update for inshore passage. Over.',
+   log:'MV OSPREY: Reef VTS × 3, this is MV Osprey × 3. Req. weather update.'},
+  {delay:110,
+   voice:'All stations, all stations, all stations. This is Reef V T S. Wind south east 15 knots, seas 1 to 1.5 metres, visibility good. Out.',
+   log:'REEF VTS: All stations × 3. Wind SE 15kt, seas 1–1.5m.'},
+  {delay:190,
+   voice:'Motor Vessel Blue Horizon. This is Reef V T S. Go to Channel 67. Over.',
+   log:'REEF VTS: MV Blue Horizon — go to Channel 67.'},
+  {delay:280,
+   voice:'All stations, all stations, all stations. This is Reef V T S. Pan Pan, Pan Pan, Pan Pan. Motor Vessel Coral Star reports engine failure, position 5 nautical miles east of Cape Tribulation. All vessels in the area please maintain watch on Channel 16. Reef V T S out.',
+   log:'REEF VTS: Pan-Pan — MV Coral Star engine failure, 5nm E Cape Tribulation.'},
+];
+let ambientScheduled=false;
+function scheduleAmbient(){
+  if(ambientScheduled)return;ambientScheduled=true;
+  AMBIENT.forEach(c=>setTimeout(()=>{
+    if(!S.powered||S.channel!==16)return;
+    log(`RX CH16: ${c.log}`,'rx2');
+    ticker(c.log,7000,true);
+    radioSpeak(c.voice);
+  },c.delay*1000));
+}
+
+// ── POWER ─────────────────────────────────────────────────────────
+$('power-btn').addEventListener('click',()=>{
+  beep(600,0.08);S.powered=!S.powered;
+  radioBody.classList.toggle('powered-off',!S.powered);powerLed.classList.toggle('on',S.powered);
+  if(S.powered){
+    radioBody.classList.add('booting');setTimeout(()=>radioBody.classList.remove('booting'),1000);
+    S.channel=16;S.enteredDigits='';log('Radio powered ON — CH 16 default','sys');ticker('MARPRO VHF-16M  READY');
+    updateDisplay();updateStatic();scheduleAmbient();
+  }else{
+    stopStatic();if(typeof speechSynthesis!=='undefined')speechSynthesis.cancel();
+    S.transmitting=false;S.receiving=false;S.dscHolding=false;S.dscTriggered=false;
+    dscOverlay.classList.remove('active');pttBtn.classList.remove('active');
+    log('Radio powered OFF','sys');updateDisplay();
+  }
+});
+function needsPower(){if(!S.powered){beep(200,0.1,0.1);return true;}return false;}
+
+// ── CHANNEL ───────────────────────────────────────────────────────
+function setCh(n){
+  n=parseInt(n,10);if(isNaN(n)||n<1||n>88){ticker('INVALID CHANNEL — 01 to 88');log(`Invalid channel: ${n}`,'warn');beep(200,0.15);return;}
+  S.channel=n;S.weatherMode=false;S.enteredDigits='';beep(800,0.07);log(`Channel → ${String(n).padStart(2,'0')}`,'sys');updateDisplay();updateStatic();checkStep('channel',n);
+}
+$('ch16-btn').addEventListener('click',()=>{if(needsPower())return;setCh(16);ticker('CHANNEL 16 — DISTRESS / CALLING');checkStep('ch16');});
+$('chan-up').addEventListener('click',()=>{if(needsPower())return;let n=S.channel+1;if(n>88)n=1;setCh(n);});
+$('chan-dn').addEventListener('click',()=>{if(needsPower())return;let n=S.channel-1;if(n<1)n=88;setCh(n);});
+document.querySelectorAll('#numpad .keypad').forEach(b=>b.addEventListener('click',()=>{if(needsPower())return;beep(750,0.06);if(S.enteredDigits.length<2){S.enteredDigits+=b.dataset.d;updateDisplay();}}));
+$('enter-btn').addEventListener('click',()=>{if(needsPower())return;if(S.enteredDigits)setCh(S.enteredDigits);});
+$('clear-btn').addEventListener('click',()=>{beep(400,0.07);S.enteredDigits='';updateDisplay();});
+
+// ── HI/LO, WX, D/W, SOFTKEYS ─────────────────────────────────────
+$('hilo-btn').addEventListener('click',()=>{if(needsPower())return;beep(700,0.07);S.highPower=!S.highPower;ticker(S.highPower?'HIGH POWER — 25W':'LOW POWER — 5W');log(`Power → ${S.highPower?'25W':'5W'}`,'sys');updateDisplay();checkStep('power');});
+$('wx-btn').addEventListener('click',()=>{if(needsPower())return;beep(700,0.07);S.weatherMode=!S.weatherMode;ticker(S.weatherMode?'WEATHER CHANNEL — WX':'WEATHER MODE OFF');log(`Weather ${S.weatherMode?'ON':'OFF'}`,'sys');updateDisplay();});
+$('dw-btn').addEventListener('click',()=>{if(needsPower())return;beep(700,0.07);S.dualWatch=!S.dualWatch;ticker(S.dualWatch?'DUAL WATCH — CH 16 ACTIVE':'DUAL WATCH OFF');log(`Dual Watch ${S.dualWatch?'enabled':'disabled'}`,'sys');updateDisplay();if(S.dualWatch)checkStep('dw_on');});
+$('sk-dsc').addEventListener('click',()=>{if(needsPower())return;beep(700,0.07);ticker('DSC MENU — (SIMULATED)');log('DSC menu accessed','sys');});
+$('sk-scan').addEventListener('click',()=>{if(needsPower())return;beep(700,0.07);ticker('SCANNING CHANNELS...');log('Channel scan started','sys');});
+$('sk-dw').addEventListener('click',()=>{if(needsPower())return;$('dw-btn').click();});
+$('sk-ais').addEventListener('click',()=>{if(needsPower())return;beep(700,0.07);ticker('AIS — NO TARGETS IN RANGE');log('AIS checked — no targets','sys');});
+
+// ── DIALS ─────────────────────────────────────────────────────────
+function makeDial(el,valEl,init,min,max,cb){
+  let val=init,drag=false,sy=0,sv=0;
+  const rot=v=>{el.style.setProperty('--rot',((v-min)/(max-min))*270-135+'deg');valEl.textContent=v;};rot(val);
+  const start=e=>{if(!S.powered)return;drag=true;sy=(e.touches?e.touches[0].clientY:e.clientY);sv=val;e.preventDefault();};
+  const move=e=>{if(!drag)return;const y=(e.touches?e.touches[0].clientY:e.clientY);let nv=Math.round(sv+(sy-y)*0.25);nv=Math.max(min,Math.min(max,nv));if(nv!==val){val=nv;rot(val);cb(val);beep(500,0.04,0.1);}e.preventDefault();};
+  el.addEventListener('mousedown',start);el.addEventListener('touchstart',start,{passive:false});
+  document.addEventListener('mousemove',move);document.addEventListener('touchmove',move,{passive:false});
+  document.addEventListener('mouseup',()=>{drag=false;});document.addEventListener('touchend',()=>{drag=false;});
+}
+makeDial(volDial,volVal,5,0,10,v=>{S.volume=v;if(staticGain)staticGain.gain.value=(v/10)*0.12;log(`Volume → ${v}`,'sys');if(!S.volAdjusted&&v>0){S.volAdjusted=true;checkStep('volume_set');}});
+makeDial(sqDial,sqVal,3,0,10,v=>{S.squelch=v;updateStatic();log(`Squelch → ${v}`,'sys');if(!S.sqAdjusted){S.sqAdjusted=true;checkStep('squelch_set');}});
+
+// ── PTT + SPEECH RECOGNITION ─────────────────────────────────────
+let pttActive=false,recog=null,lastTranscript='';
+if('SpeechRecognition' in window||'webkitSpeechRecognition' in window){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  recog=new SR();recog.continuous=false;recog.interimResults=false;recog.lang='en-AU';
+  recog.onresult=e=>{lastTranscript=e.results[0][0].transcript.trim();log(`TX: "${lastTranscript}" — CH ${String(S.channel).padStart(2,'0')}`,'tx');ticker(`TX: ${lastTranscript}`);hideVoiceBadge();};
+  recog.onerror=e=>{log(`Mic: ${e.error}`,'warn');hideVoiceBadge();};
+  recog.onend=()=>{if(pttActive){pttActive=false;endTx();}};
+}
+function startTx(){
+  if(!S.powered)return;
+  if(S.channel===70){ticker('CH 70 — DSC ONLY · NO VOICE TX');log('TX blocked — CH 70 DSC only','warn');beep(200,0.2);checkStep('tx_ch70');return;}
+  pttActive=true;S.transmitting=true;lastTranscript='';pttBtn.classList.add('active');
+  beep(1100,0.08);log(`PTT OPEN — CH ${String(S.channel).padStart(2,'0')} ${S.highPower?'25W':'5W'}`,'tx');
+  updateDisplay();if(recog){try{recog.start();showVoiceBadge('tx','Microphone open — speak now');}catch(e){}}
+  checkStep('ptt');
+}
+function endTx(){
+  S.transmitting=false;pttActive=false;pttBtn.classList.remove('active');
+  beep(700,0.06);log('PTT CLOSED','tx');updateDisplay();hideVoiceBadge();
+  if(lastTranscript)setTimeout(()=>handleVoice(lastTranscript),400);
+}
+pttBtn.addEventListener('mousedown',e=>{e.preventDefault();startTx();});
+pttBtn.addEventListener('touchstart',e=>{e.preventDefault();startTx();},{passive:false});
+pttBtn.addEventListener('mouseup',endTx);
+pttBtn.addEventListener('touchend',endTx);
+pttBtn.addEventListener('mouseleave',()=>{if(pttActive)endTx();});
+
+/* ================================================================
+   VOICE HANDLER
+   Each response follows ITU format:
+   First contact:  [called station] × 3, This is [calling station] × 3, [message], Over/Out
+   Subsequent:     [called station], This is [calling station], [message], Over/Out
+   ================================================================ */
+
+// Track whether this is first or subsequent contact per scenario session
+let firstContact={};
+function isFirst(key){if(!firstContact[key]){firstContact[key]=true;return true;}return false;}
+function resetContacts(){firstContact={};}
+
+function handleVoice(text){
+  const lo=text.toLowerCase();
+  const sc=activeSc?SCENARIOS[activeSc]:null;
+  const curId=sc?sc.steps[curStep]?.id:null;
+
+  // ── MAYDAY ──────────────────────────────────────────────────
+  if(lo.includes('mayday')){
+    if(S.channel!==16){
+      showFb('error','✗ Mayday calls must be transmitted on Channel 16. Switch channels and try again.');
+      log('WARN: Mayday on wrong channel','warn');return;
+    }
+    checkStep('mayday_spoken');
+    // IAMSAR format: called vessel × 3, This is Reef VTS × 3, Received Mayday, Over
+    const voice=`[VESSEL NAME], [VESSEL NAME], [VESSEL NAME]. `+
+      `This is Reef V T S, Reef V T S, Reef V T S. `+
+      `Received Mayday. Over.`;
+    const logShort='REEF VTS: [VESSEL NAME] × 3, This is Reef VTS × 3. Received Mayday. Over.';
+    scheduleResponse(voice,logShort,1.2,'mayday_ack');
+    return;
+  }
+
+  // ── PAN-PAN ─────────────────────────────────────────────────
+  if(lo.includes('pan pan')||lo.includes('pan-pan')){
+    if(S.channel!==16){showFb('error','✗ Pan-Pan calls must be on Channel 16.');return;}
+    checkStep('panpan_spoken');
+    const voice=`[VESSEL NAME], [VESSEL NAME], [VESSEL NAME]. `+
+      `This is Reef V T S, Reef V T S, Reef V T S. `+
+      `Received Pan Pan. Please confirm your position and the nature of your urgency. Over.`;
+    const logShort='REEF VTS: [VESSEL NAME] × 3, This is Reef VTS × 3. Received Pan-Pan. Over.';
+    scheduleResponse(voice,logShort,1.2,'panpan_ack');
+    return;
+  }
+
+  // ── SÉCURITÉ ────────────────────────────────────────────────
+  if(lo.includes('securite')||lo.includes('sécurité')||lo.includes('security')){
+    if(S.channel!==16){showFb('error','✗ Sécurité announcement must begin on Channel 16.');return;}
+    checkStep('securite_spoken');
+    const voice=`All stations, all stations, all stations. `+
+      `This is Reef V T S. `+
+      `Sécurité message received. All vessels please listen on Channel 67. Out.`;
+    const logShort='REEF VTS: All stations × 3. Sécurité received — listen Channel 67.';
+    scheduleResponse(voice,logShort,1.0,'securite_ack');
+    return;
+  }
+
+  // ── RADIO CHECK ─────────────────────────────────────────────
+  if(lo.includes('radio check')){
+    checkStep('radiocheck_spoken');
+    // Harbour Control responds directly to the calling vessel — shortened format (already established contact)
+    const voice=`[VESSEL NAME]. `+
+      `This is Harbour Control. `+
+      `Loud and clear. Out.`;
+    const logShort='HARBOUR CONTROL: [VESSEL NAME], this is Harbour Control. Loud and clear. Out.';
+    scheduleResponse(voice,logShort,1.0,'radiocheck_ack');
+    return;
+  }
+
+  // ── SHIP-TO-SHORE — initial call on CH 16 ───────────────────
+  if(lo.includes('harbour control')||lo.includes('harbor control')||lo.includes('port operations')||lo.includes('port ops')){
+    if(lo.includes('mayday')||lo.includes('pan'))return; // handled above
+    if(S.channel!==16){showFb('error','✗ Initial call to Harbour Control must be on Channel 16.');return;}
+    checkStep('calling_spoken');
+    // First contact — full format
+    const voice=`[VESSEL NAME], [VESSEL NAME], [VESSEL NAME]. `+
+      `This is Harbour Control, Harbour Control, Harbour Control. `+
+      `Go to Channel 67. Over.`;
+    const logShort='HARBOUR CONTROL: [VESSEL NAME] × 3, This is Harbour Control × 3. Go to Channel 67. Over.';
+    scheduleResponse(voice,logShort,1.0,'shipto_response');
+    return;
+  }
+
+  // ── SHIP-TO-SHORE — student acknowledges working channel ────
+  if((lo.includes('going to')||lo.includes('channel 6')||lo.includes('six seven')||lo.includes('67'))&&activeSc==='shipto'){
+    checkStep('workchan_spoken');
+    // Now on CH 67 — shortened format (subsequent contact)
+    setTimeout(()=>scheduleResponse(
+      `[VESSEL NAME]. This is Harbour Control. Go ahead with your message. Over.`,
+      'HARBOUR CONTROL: [VESSEL NAME], this is Harbour Control. Go ahead. Over.',
+      0.8
+    ),600);
+    return;
+  }
+
+  // ── MAYDAY RELAY ────────────────────────────────────────────
+  if(lo.includes('mayday relay')||(lo.includes('relay')&&lo.includes('mayday'))){
+    checkStep('relay_spoken');
+    const voice=`[VESSEL NAME], [VESSEL NAME], [VESSEL NAME]. `+
+      `This is Reef V T S, Reef V T S, Reef V T S. `+
+      `Mayday relay received. We are co-ordinating the response. `+
+      `All vessels maintain radio silence on Channel 16 unless directly involved. `+
+      `Reef V T S out.`;
+    const logShort='REEF VTS: [VESSEL NAME] × 3, Mayday relay received. Coordinating response. Maintain silence CH 16.';
+    scheduleResponse(voice,logShort,1.2,'relay_ack');
+    return;
+  }
+
+  // ── RELAY — initial ack to distressed vessel ─────────────────
+  if(curId==='ptt'&&activeSc==='relay'){
+    checkStep('ptt');
+    // Reef VTS now responds, having not yet replied — first contact full format
+    const voice=`[VESSEL NAME], [VESSEL NAME], [VESSEL NAME]. `+
+      `This is Reef V T S, Reef V T S, Reef V T S. `+
+      `Received Mayday. State your position, nature of distress, and persons on board. Over.`;
+    const logShort='REEF VTS: [VESSEL NAME] × 3, This is Reef VTS × 3. Received Mayday. State position, POB. Over.';
+    scheduleResponse(voice,logShort,1.2);
+    return;
+  }
+
+  // ── WRONG CHANNEL / WRONG FORMAT FEEDBACK ───────────────────
+  if(sc&&curId){
+    const hints={
+      mayday_spoken:     'Your call should begin: "Mayday Mayday Mayday, this is [Vessel Name] [Vessel Name] [Vessel Name]…"',
+      panpan_spoken:     'Your call should begin: "Pan-Pan Pan-Pan Pan-Pan, all stations all stations all stations, this is [Vessel Name] [Vessel Name] [Vessel Name]…"',
+      securite_spoken:   'Your call should begin: "Sécurité Sécurité Sécurité, all stations all stations all stations, this is [Vessel Name]…"',
+      radiocheck_spoken: 'Your call should be: "Harbour Control Harbour Control Harbour Control, this is [Vessel Name] [Vessel Name] [Vessel Name], radio check on Channel 16, over."',
+      calling_spoken:    'Your call should be: "Harbour Control Harbour Control Harbour Control, this is [Vessel Name] [Vessel Name] [Vessel Name], over."',
+      relay_spoken:      'Your relay should begin: "Mayday Relay Mayday Relay Mayday Relay, all stations all stations all stations, this is [Vessel Name]…"',
     };
-    staticGainNode = ctx.createGain();
-    staticGainNode.gain.value = (state.volume / 10) * 0.12;
-    staticNode.connect(staticGainNode);
-    staticGainNode.connect(ctx.destination);
-  } catch(e){}
-}
-function stopStatic() {
-  if (!staticNode) return;
-  try { staticNode.disconnect(); staticGainNode.disconnect(); } catch(e){}
-  staticNode = null; staticGainNode = null;
-}
-function updateStatic() {
-  if (state.powered && state.squelch < 4) startStatic();
-  else stopStatic();
-  if (staticGainNode) staticGainNode.gain.value = (state.volume / 10) * 0.12;
-}
-
-// ---- State ----
-const state = {
-  powered:      false,
-  channel:      16,
-  volume:       5,
-  squelch:      3,
-  highPower:    true,
-  dualWatch:    false,
-  weatherMode:  false,
-  transmitting: false,
-  enteredDigits:'',
-  dscHolding:   false,
-  dscTriggered: false,
-  scanning:     false,
-};
-
-// ---- DOM refs ----
-const radioBody    = document.getElementById('radio-body');
-const chMain       = document.getElementById('ch-main');
-const entryDisp    = document.getElementById('entry-display');
-const tagDW        = document.getElementById('tag-dw');
-const tagWX        = document.getElementById('tag-wx');
-const tagPwr       = document.getElementById('tag-pwr');
-const tagTX        = document.getElementById('tag-tx');
-const pwrHi        = document.getElementById('pwr-hi');
-const pwrLo        = document.getElementById('pwr-lo');
-const msgTicker    = document.getElementById('msg-ticker');
-const dscOverlay   = document.getElementById('dsc-overlay');
-const dscCount     = document.getElementById('dsc-count');
-const dscBarFill   = document.getElementById('dsc-bar-fill');
-const powerLed     = document.getElementById('power-led');
-const logBody      = document.getElementById('log-body');
-const volVal       = document.getElementById('vol-val');
-const sqVal        = document.getElementById('sq-val');
-const volDial      = document.getElementById('vol-dial');
-const sqDial       = document.getElementById('sq-dial');
-const pttBtn       = document.getElementById('ptt-btn');
-const dscBtn       = document.getElementById('dsc-btn');
-const feedbackBox  = document.getElementById('feedback-box');
-
-// ---- Logging ----
-let logLines = [];
-function logEntry(text, cls = 'sys') {
-  const now = new Date();
-  const ts = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
-  logLines.push({ ts, text, cls });
-  renderLog();
-}
-function renderLog() {
-  logBody.innerHTML = logLines.map(e =>
-    `<div class="log-entry"><span class="ts">${e.ts}  </span><span class="${e.cls}">${e.text}</span></div>`
-  ).join('');
-  logBody.scrollTop = logBody.scrollHeight;
-}
-
-// ---- Display update ----
-function updateDisplay() {
-  if (!state.powered) {
-    chMain.textContent = '--';
-    chMain.className = 'ch-main off';
-    [tagDW, tagWX, tagPwr, tagTX].forEach(t => t.classList.add('hidden'));
-    pwrHi.classList.remove('active'); pwrLo.classList.remove('active');
-    entryDisp.textContent = ''; entryDisp.classList.remove('show');
-    return;
+    if(hints[curId]){showFb('warning',`⚠ Not recognised. ${hints[curId]}`);log('WARN: Voice call not recognised — see hint in training panel','warn');return;}
   }
 
-  // Channel display
-  let chClass = 'ch-main';
-  if (state.transmitting) chClass += ' transmitting';
-  else if (state.channel === 70) chClass += ' ch70';
-  else chClass += ' ch16'; // green for all normal
-  chMain.className = chClass;
-  chMain.textContent = String(state.channel).padStart(2, '0');
-
-  // Entry overlay
-  if (state.enteredDigits) {
-    entryDisp.textContent = state.enteredDigits;
-    entryDisp.classList.add('show');
-  } else {
-    entryDisp.textContent = '';
-    entryDisp.classList.remove('show');
-  }
-
-  // Status tags
-  tagDW.classList.toggle('hidden', !state.dualWatch);
-  tagDW.classList.toggle('dw', state.dualWatch);
-  tagWX.classList.toggle('hidden', !state.weatherMode);
-  tagTX.classList.toggle('hidden', !state.transmitting);
-  if (state.transmitting) tagTX.classList.add('tx'); else tagTX.classList.remove('tx');
-  tagPwr.classList.toggle('hidden', false);
-  tagPwr.textContent = state.highPower ? '25W' : '5W';
-
-  // Power indicators
-  pwrHi.classList.toggle('active', state.highPower);
-  pwrLo.classList.toggle('active', !state.highPower);
+  // Generic fallback
+  log(`RX CH${String(S.channel).padStart(2,'0')}: Message acknowledged.`,'rx');
+  scheduleResponse(`[VESSEL NAME]. This is Reef V T S. Received. Out.`,'REEF VTS: [VESSEL NAME], received. Out.',0.8);
 }
 
-function ticker(msg, duration = 4000) {
-  msgTicker.textContent = msg;
-  msgTicker.classList.add('show');
-  clearTimeout(ticker._t);
-  ticker._t = setTimeout(() => msgTicker.classList.remove('show'), duration);
+// ── DSC ───────────────────────────────────────────────────────────
+let dscHoldT=null,dscCountT=null;
+function startDSC(e){
+  if(e.cancelable)e.preventDefault();
+  if(!S.powered||S.dscTriggered||S.dscHolding)return;
+  S.dscHolding=true;const t0=Date.now();let sec=3;
+  dscOverlay.classList.add('active');dscCount.textContent=sec;dscBarFill.style.width='0%';beep(800,0.1);
+  dscCountT=setInterval(()=>{sec--;dscCount.textContent=Math.max(0,sec);if(sec>0)beep(800,0.08);},1000);
+  dscHoldT=setInterval(()=>{
+    const pct=Math.min(100,((Date.now()-t0)/3000)*100);dscBarFill.style.width=pct+'%';
+    if(pct>=100&&!S.dscTriggered){S.dscTriggered=true;clearInterval(dscHoldT);clearInterval(dscCountT);fireDSC();}
+  },40);
 }
-
-// ---- Power ----
-document.getElementById('power-btn').addEventListener('click', () => {
-  beep(600, 0.08);
-  state.powered = !state.powered;
-  radioBody.classList.toggle('powered-off', !state.powered);
-  powerLed.classList.toggle('on', state.powered);
-  if (state.powered) {
-    radioBody.classList.add('booting');
-    setTimeout(() => radioBody.classList.remove('booting'), 1000);
-    state.channel = 16;
-    state.enteredDigits = '';
-    logEntry('Radio powered ON — CH 16 default', 'sys');
-    ticker('MARPRO VHF-16M  READY');
-    updateDisplay();
-    updateStatic();
-  } else {
-    stopStatic();
-    state.transmitting = false;
-    state.dscHolding = false;
-    state.dscTriggered = false;
-    dscOverlay.classList.remove('active');
-    pttBtn.classList.remove('active');
-    logEntry('Radio powered OFF', 'sys');
-    updateDisplay();
-  }
-});
-
-// ---- Guard: require power ----
-function needsPower() {
-  if (!state.powered) { beep(200, 0.1, 0.1); return true; }
-  return false;
+function cancelDSC(){
+  if(!S.dscHolding||S.dscTriggered)return;
+  clearInterval(dscHoldT);clearInterval(dscCountT);
+  dscOverlay.classList.remove('active');dscBarFill.style.width='0%';S.dscHolding=false;
+  log('DSC hold released early — cancelled','warn');checkStep('dsc_cancelled');
 }
-
-// ---- Channel set ----
-function setChannel(n) {
-  n = parseInt(n, 10);
-  if (isNaN(n) || n < 1 || n > 88) {
-    ticker('INVALID CHANNEL — 01 to 88');
-    logEntry(`Invalid channel entry: ${n}`, 'warn');
-    beep(200, 0.15);
-    return;
-  }
-  state.channel = n;
-  state.weatherMode = false;
-  state.enteredDigits = '';
-  beep(800, 0.07);
-  logEntry(`Channel → ${String(n).padStart(2,'0')}`, 'sys');
-  updateDisplay();
-  updateStatic();
-  checkTrainingStep('channel', n);
-}
-
-// ---- CH 16 button ----
-document.getElementById('ch16-btn').addEventListener('click', () => {
-  if (needsPower()) return;
-  setChannel(16);
-  ticker('CHANNEL 16 — DISTRESS / CALLING');
-  checkTrainingStep('ch16');
-});
-
-// ---- Chan Up / Down ----
-document.getElementById('chan-up').addEventListener('click', () => {
-  if (needsPower()) return;
-  let n = state.channel + 1; if (n > 88) n = 1;
-  setChannel(n);
-});
-document.getElementById('chan-dn').addEventListener('click', () => {
-  if (needsPower()) return;
-  let n = state.channel - 1; if (n < 1) n = 88;
-  setChannel(n);
-});
-
-// ---- Numpad ----
-document.querySelectorAll('#numpad .keypad').forEach(btn => {
-  btn.addEventListener('click', () => {
-    if (needsPower()) return;
-    beep(750, 0.06);
-    if (state.enteredDigits.length < 2) {
-      state.enteredDigits += btn.dataset.d;
-      updateDisplay();
-    }
-  });
-});
-document.getElementById('enter-btn').addEventListener('click', () => {
-  if (needsPower()) return;
-  if (state.enteredDigits) setChannel(state.enteredDigits);
-});
-document.getElementById('clear-btn').addEventListener('click', () => {
-  beep(400, 0.07);
-  state.enteredDigits = '';
-  updateDisplay();
-});
-
-// ---- HI/LO ----
-document.getElementById('hilo-btn').addEventListener('click', () => {
-  if (needsPower()) return;
-  beep(700, 0.07);
-  state.highPower = !state.highPower;
-  ticker(state.highPower ? 'HIGH POWER — 25W' : 'LOW POWER — 5W');
-  logEntry(`Power → ${state.highPower ? '25W' : '5W'}`, 'sys');
-  updateDisplay();
-  checkTrainingStep('power');
-});
-
-// ---- Weather ----
-document.getElementById('wx-btn').addEventListener('click', () => {
-  if (needsPower()) return;
-  beep(700, 0.07);
-  state.weatherMode = !state.weatherMode;
-  ticker(state.weatherMode ? 'WEATHER CHANNEL — WX' : 'WEATHER MODE OFF');
-  logEntry(`Weather mode ${state.weatherMode ? 'ON' : 'OFF'}`, 'sys');
-  updateDisplay();
-});
-
-// ---- Dual Watch ----
-document.getElementById('dw-btn').addEventListener('click', () => {
-  if (needsPower()) return;
-  beep(700, 0.07);
-  state.dualWatch = !state.dualWatch;
-  ticker(state.dualWatch ? 'DUAL WATCH — CH 16 ACTIVE' : 'DUAL WATCH OFF');
-  logEntry(`Dual Watch ${state.dualWatch ? 'enabled' : 'disabled'}`, 'sys');
-  updateDisplay();
-});
-
-// ---- Softkeys ----
-document.getElementById('sk-dsc').addEventListener('click', () => {
-  if (needsPower()) return;
-  beep(700, 0.07);
-  ticker('DSC MENU — (SIMULATED)');
-  logEntry('DSC menu accessed', 'sys');
-});
-document.getElementById('sk-scan').addEventListener('click', () => {
-  if (needsPower()) return;
-  beep(700, 0.07);
-  ticker('SCANNING CHANNELS...');
-  logEntry('Channel scan started', 'sys');
-});
-document.getElementById('sk-dw').addEventListener('click', () => {
-  if (needsPower()) return;
-  document.getElementById('dw-btn').click();
-});
-document.getElementById('sk-ais').addEventListener('click', () => {
-  if (needsPower()) return;
-  beep(700, 0.07);
-  ticker('AIS — NO TARGETS IN RANGE');
-  logEntry('AIS checked — no targets', 'sys');
-});
-
-// ---- Dials ----
-function makeDial(el, valEl, init, min, max, onChange) {
-  let val = init, dragging = false, startY = 0, startVal = 0;
-  const setRot = v => {
-    const ang = ((v - min) / (max - min)) * 270 - 135;
-    el.style.setProperty('--rot', ang + 'deg');
-    valEl.textContent = v;
-  };
-  setRot(val);
-
-  const onStart = e => {
-    if (!state.powered) return;
-    dragging = true;
-    startY = (e.touches ? e.touches[0].clientY : e.clientY);
-    startVal = val;
-    e.preventDefault();
-  };
-  const onMove = e => {
-    if (!dragging) return;
-    const y = (e.touches ? e.touches[0].clientY : e.clientY);
-    let nv = Math.round(startVal + (startY - y) * 0.25);
-    nv = Math.max(min, Math.min(max, nv));
-    if (nv !== val) { val = nv; setRot(val); onChange(val); beep(500, 0.04, 0.1); }
-    e.preventDefault();
-  };
-  const onEnd = () => { dragging = false; };
-
-  el.addEventListener('mousedown', onStart);
-  el.addEventListener('touchstart', onStart, { passive: false });
-  document.addEventListener('mousemove', onMove);
-  document.addEventListener('touchmove', onMove, { passive: false });
-  document.addEventListener('mouseup', onEnd);
-  document.addEventListener('touchend', onEnd);
-}
-
-makeDial(volDial, volVal, 5, 0, 10, v => {
-  state.volume = v;
-  if (staticGainNode) staticGainNode.gain.value = (v / 10) * 0.12;
-  logEntry(`Volume → ${v}`, 'sys');
-});
-makeDial(sqDial, sqVal, 3, 0, 10, v => {
-  state.squelch = v;
-  updateStatic();
-  logEntry(`Squelch → ${v}`, 'sys');
-});
-
-// ---- PTT ----
-let pttActive = false;
-let recognition = null;
-
-if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  recognition = new SR();
-  recognition.continuous = false;
-  recognition.interimResults = false;
-  recognition.lang = 'en-AU';
-  recognition.onresult = e => {
-    const t = e.results[0][0].transcript.trim();
-    logEntry(`TX: "${t}" — CH ${String(state.channel).padStart(2,'0')}`, 'tx');
-    ticker(`TX: ${t}`);
-    handleVoiceInput(t);
-  };
-  recognition.onerror = () => {};
-  recognition.onend = () => {
-    if (pttActive) { pttActive = false; endTransmit(); }
-  };
-}
-
-function startTransmit() {
-  if (!state.powered) return;
-  if (state.channel === 70) {
-    ticker('CH 70 — DSC ONLY · NO VOICE TX');
-    logEntry('TX blocked — CH 70 is DSC only, no voice', 'warn');
-    beep(200, 0.2);
-    checkTrainingStep('tx_blocked_ch70');
-    return;
-  }
-  pttActive = true;
-  state.transmitting = true;
-  pttBtn.classList.add('active');
-  beep(1100, 0.08);
-  logEntry(`PTT OPEN — CH ${String(state.channel).padStart(2,'0')} ${state.highPower ? '25W' : '5W'}`, 'tx');
-  updateDisplay();
-  if (recognition) { try { recognition.start(); } catch(e){} }
-  checkTrainingStep('ptt');
-}
-
-function endTransmit() {
-  state.transmitting = false;
-  pttActive = false;
-  pttBtn.classList.remove('active');
-  beep(700, 0.06);
-  logEntry('PTT CLOSED', 'tx');
-  updateDisplay();
-}
-
-pttBtn.addEventListener('mousedown', e => { e.preventDefault(); startTransmit(); });
-pttBtn.addEventListener('touchstart', e => { e.preventDefault(); startTransmit(); }, { passive: false });
-pttBtn.addEventListener('mouseup', endTransmit);
-pttBtn.addEventListener('touchend', endTransmit);
-pttBtn.addEventListener('mouseleave', () => { if (pttActive) endTransmit(); });
-
-function handleVoiceInput(text) {
-  const lower = text.toLowerCase();
-  setTimeout(() => {
-    if (lower.includes('mayday')) {
-      if (state.channel === 16) {
-        logEntry('RX: Coast Guard — MAYDAY received, state your position', 'rx');
-        ticker('COAST GUARD: MAYDAY RECEIVED');
-        beepRise();
-        checkTrainingStep('mayday_spoken');
-      } else {
-        logEntry('RX: Mayday heard — should be on CH 16', 'warn');
-        ticker('WARNING: MAYDAY SHOULD BE ON CH 16');
-        checkTrainingStep('wrong_channel_mayday');
-      }
-    } else if (lower.includes('pan pan')) {
-      logEntry('RX: Pan-Pan received — urgency acknowledged', 'rx');
-      ticker('RX: PAN-PAN ACKNOWLEDGED');
-      beepRise();
-    } else if (lower.includes('securite') || lower.includes('sécurité') || lower.includes('security')) {
-      logEntry('RX: Sécurité — navigational safety broadcast noted', 'rx');
-      ticker('RX: SÉCURITÉ NOTED');
-    } else {
-      logEntry(`RX: Message acknowledged on CH ${String(state.channel).padStart(2,'0')}`, 'rx');
-      ticker('RX: MESSAGE ACKNOWLEDGED');
-    }
-    beep(600, 0.08);
-  }, 600);
-}
-
-// ---- DSC Distress ----
-let dscHoldTimer = null, dscCountInterval = null;
-
-function startDSCHold(e) {
-  if (e.cancelable) e.preventDefault();
-  if (!state.powered || state.dscTriggered) return;
-  if (state.dscHolding) return;
-
-  state.dscHolding = true;
-  const holdStart = Date.now();
-  let sec = 3;
-
-  dscOverlay.classList.add('active');
-  dscCount.textContent = sec;
-  dscBarFill.style.width = '0%';
-  beep(800, 0.1);
-
-  dscCountInterval = setInterval(() => {
-    sec--;
-    dscCount.textContent = Math.max(0, sec);
-    if (sec > 0) beep(800, 0.08);
-  }, 1000);
-
-  dscHoldTimer = setInterval(() => {
-    const elapsed = Date.now() - holdStart;
-    const pct = Math.min(100, (elapsed / 3000) * 100);
-    dscBarFill.style.width = pct + '%';
-    if (pct >= 100 && !state.dscTriggered) {
-      state.dscTriggered = true;
-      clearInterval(dscHoldTimer);
-      clearInterval(dscCountInterval);
-      fireDSCDistress();
-    }
-  }, 40);
-}
-
-function cancelDSCHold() {
-  if (!state.dscHolding || state.dscTriggered) return;
-  clearInterval(dscHoldTimer);
-  clearInterval(dscCountInterval);
-  dscOverlay.classList.remove('active');
-  dscBarFill.style.width = '0%';
-  state.dscHolding = false;
-  logEntry('DSC hold released early — cancelled', 'warn');
-  checkTrainingStep('dsc_hold_cancelled');
-}
-
-function fireDSCDistress() {
-  dscOverlay.classList.remove('active');
-  beepDSC();
-  logEntry('▲ DSC DISTRESS ALERT TRANSMITTED — CH 70', 'alert');
-  logEntry('DSC: MMSI, position (GPS), time sent to all stations', 'alert');
+function fireDSC(){
+  dscOverlay.classList.remove('active');beepDSC();
+  log('▲ DSC DISTRESS ALERT TRANSMITTED — CH 70','alert');
+  log('DSC: MMSI, position (GPS), time — broadcast to all stations','alert');
   ticker('DSC DISTRESS SENT — SWITCHING TO CH 16');
-  checkTrainingStep('dsc_sent');
-  state.dscHolding = false;
-
-  // Auto-switch to 16 after 1.5s (standard procedure)
-  setTimeout(() => {
-    setChannel(16);
-    logEntry('Auto-switched to CH 16 — await Coast Guard voice response', 'sys');
-    ticker('MONITOR CH 16 FOR COAST GUARD RESPONSE');
-    checkTrainingStep('auto_ch16');
-    state.dscTriggered = false;
-  }, 1500);
+  checkStep('dsc_sent');S.dscHolding=false;
+  setTimeout(()=>{
+    setCh(16);log('Auto-switched to CH 16 — await Reef VTS response','sys');
+    ticker('MONITOR CH 16 FOR REEF VTS RESPONSE');checkStep('auto_ch16');S.dscTriggered=false;
+    // Reef VTS DSC acknowledgement — IAMSAR full first-contact format
+    scheduleResponse(
+      `[VESSEL NAME], [VESSEL NAME], [VESSEL NAME]. `+
+      `This is Reef V T S, Reef V T S, Reef V T S. `+
+      `We have received your DSC distress alert. `+
+      `Please respond on Channel 16. Over.`,
+      'REEF VTS: [VESSEL NAME] × 3, This is Reef VTS × 3. DSC distress received. Respond CH 16. Over.',
+      2.0
+    );
+  },1500);
 }
+dscBtn.addEventListener('mousedown',startDSC);dscBtn.addEventListener('touchstart',startDSC,{passive:false});
+dscBtn.addEventListener('mouseup',cancelDSC);dscBtn.addEventListener('mouseleave',cancelDSC);dscBtn.addEventListener('touchend',cancelDSC);
+$('log-clr').addEventListener('click',()=>{logLines=[];renderLog();});
 
-dscBtn.addEventListener('mousedown', startDSCHold);
-dscBtn.addEventListener('touchstart', startDSCHold, { passive: false });
-dscBtn.addEventListener('mouseup', cancelDSCHold);
-dscBtn.addEventListener('mouseleave', cancelDSCHold);
-dscBtn.addEventListener('touchend', cancelDSCHold);
+/* ================================================================
+   TRAINING SCENARIOS
+   ================================================================ */
+const SCENARIOS={
 
-// ---- Log clear ----
-document.getElementById('log-clear').addEventListener('click', () => {
-  logLines = []; renderLog();
-});
-
-// ===========================================
-// TRAINING MODE SYSTEM
-// ===========================================
-
-const scenarios = {
-
-  mayday: {
-    title: 'MAYDAY DISTRESS CALL',
-    steps: [
-      { id: 'power',    text: 'Turn the radio on',                           hint: 'Press the POWER button.' },
-      { id: 'ch16',     text: 'Select Channel 16 (distress & calling)',       hint: 'Press the 16/C button, or enter 1-6 and ENT.' },
-      { id: 'power_hi', text: 'Set to HIGH power (25W)',                      hint: 'Press HI/LO until 25W is shown.' },
-      { id: 'ptt',      text: 'Press and hold PTT to begin transmission',     hint: 'Hold the red PTT button at the bottom.' },
-      { id: 'mayday',   text: 'Speak your MAYDAY call (see script below)',    hint: 'Say "MAYDAY MAYDAY MAYDAY, this is [vessel]..."' },
-      { id: 'release',  text: 'Release PTT and await acknowledgement',        hint: 'Release the PTT button and listen on CH 16.' },
+  setup:{
+    title:'SETUP RADIO',
+    steps:[
+      {id:'power',      text:'Turn the radio on',                                          hint:'Press the POWER button. The green LED lights and screen boots to CH 16.'},
+      {id:'volume_set', text:'Adjust Volume to a comfortable listening level',            hint:'Drag the VOLUME dial upward. A level of 5–7 is typical.'},
+      {id:'squelch_set',text:'Adjust Squelch until background static disappears',        hint:'Raise SQUELCH slowly until static just cuts out — usually around 3–5.'},
+      {id:'ch16',       text:'Select Channel 16 — the distress and calling channel',     hint:'Press the 16/C button or key 1–6 then ENT.'},
+      {id:'power_hi',   text:'Confirm radio is on HIGH power — 25W',                     hint:'Check the screen shows 25W. Press HI/LO if needed to switch.'},
+      {id:'dw_on',      text:'Enable Dual Watch to monitor CH 16 + working channel',     hint:'Press the D/W button — DUAL WATCH appears on the display.'},
     ],
-    script: `<span class="highlight">MAYDAY  MAYDAY  MAYDAY</span>
+    script:`RADIO SETUP CHECKLIST
 
-This is <span class="highlight">[VESSEL NAME]  [VESSEL NAME]  [VESSEL NAME]</span>
+1. POWER ON
+   → Green LED lit · Display shows CH 16
 
-MAYDAY — <span class="highlight">[VESSEL NAME]</span>
+2. VOLUME
+   → Set to comfortable level (5–7 typical)
+   → Must hear incoming calls clearly
 
-My position is <span class="highlight">[LAT/LON or BEARING & DISTANCE]</span>
+3. SQUELCH
+   → Raise until static just disappears
+   → <span class="hl">Too high = weak signals missed</span>
+   → Too low = constant background static
 
-Nature of distress: <span class="highlight">[SINKING / FIRE / etc.]</span>
+4. CHANNEL 16
+   → <span class="hl">Always monitor CH 16 when underway</span>
+   → International distress & calling channel
 
-Number of persons on board: <span class="highlight">[NUMBER]</span>
+5. HIGH POWER — 25W
+   → Use 25W for open-water operation
+   → <span class="hl">5W only for close-range / harbour use</span>
 
-Any other useful information: <span class="highlight">[DESCRIPTION / COLOUR]</span>
-
-OVER`,
-    completedMsg: '✓ Mayday procedure complete! Well done. Remember: MAYDAY × 3, vessel name × 3, position, nature of distress, persons on board.',
+6. DUAL WATCH
+   → Monitors CH 16 + your working channel
+   → <span class="hl">Never miss a distress call while working</span>`,
+    completedMsg:'✓ Radio setup complete! Your radio is ready for use. Always monitor Channel 16 when underway.',
   },
 
-  dsc: {
-    title: 'DSC DISTRESS ALERT',
-    steps: [
-      { id: 'power',    text: 'Turn the radio on',                            hint: 'Press the POWER button.' },
-      { id: 'ch16',     text: 'Confirm you are on Channel 16',                hint: 'The radio will start on CH 16 automatically.' },
-      { id: 'dsc_hold', text: 'Press and hold the red DSC DISTRESS button for 3 seconds', hint: 'Hold the DSC button — watch the countdown!' },
-      { id: 'dsc_sent', text: 'DSC alert transmitted on CH 70 automatically', hint: 'The radio transmits your MMSI, GPS position & time.' },
-      { id: 'ch16_mon', text: 'Monitor CH 16 for Coast Guard voice response', hint: 'After DSC, switch to CH 16 and listen for a response.' },
-      { id: 'ptt',      text: 'When called, press PTT and give MAYDAY voice call', hint: 'Follow up with a voice MAYDAY call on CH 16.' },
+  mayday:{
+    title:'MAYDAY DISTRESS CALL',
+    steps:[
+      {id:'power',        text:'Turn the radio on',                                    hint:'Press POWER.'},
+      {id:'ch16',         text:'Select Channel 16',                                    hint:'Press 16/C.'},
+      {id:'power_hi',     text:'Confirm HIGH power — 25W',                             hint:'Press HI/LO until 25W shows on screen.'},
+      {id:'ptt',          text:'Hold PTT and transmit your Mayday call',               hint:'Hold PTT. Speak: "Mayday Mayday Mayday, this is [Vessel] [Vessel] [Vessel]…"'},
+      {id:'mayday_spoken',text:'Mayday call transmitted',                              hint:'Include position from GPS on screen, nature of distress, persons on board.'},
+      {id:'mayday_ack',   text:'Release PTT — receive acknowledgement from Reef VTS', hint:'Release PTT and listen. Reef VTS will acknowledge on Channel 16.'},
     ],
-    script: `DSC DISTRESS ALERT transmits:
+    script:`MAYDAY — CHANNEL 16 — 25 WATTS
 
-• <span class="highlight">MMSI</span> (your vessel identity)
-• <span class="highlight">Nature of distress</span> (undesignated)
-• <span class="highlight">Position & time</span> (from GPS)
+<span class="hl">MAYDAY  MAYDAY  MAYDAY</span>
 
-After DSC alert — voice MAYDAY on CH 16:
+<span class="hl">[CALLED STATION]  [CALLED STATION]  [CALLED STATION]</span>
+<span class="note">(omit if unknown — use "all stations")</span>
 
-<span class="highlight">MAYDAY  MAYDAY  MAYDAY</span>
-This is <span class="highlight">[VESSEL NAME]  ×3</span>
-MAYDAY — <span class="highlight">[VESSEL NAME]</span>
-Position: <span class="highlight">[LAT/LON]</span>
-Distress: <span class="highlight">[NATURE]</span>
-POB: <span class="highlight">[NUMBER]</span>
-OVER`,
-    completedMsg: '✓ DSC distress procedure complete! Remember: DSC sends on CH 70 automatically, then follow up with voice on CH 16.',
+This is  <span class="hl">[VESSEL NAME]  [VESSEL NAME]  [VESSEL NAME]</span>
+
+MAYDAY  <span class="hl">[VESSEL NAME]</span>
+
+My position is  <span class="hl">[READ GPS FROM SCREEN]</span>
+
+Nature of distress:  <span class="hl">[SINKING / FIRE / MAN OVB / etc.]</span>
+
+Persons on board:  <span class="hl">[NUMBER]</span>
+
+Any other information:  <span class="hl">[HULL COLOUR / TYPE / EPIRB]</span>
+
+OVER
+
+<span class="rx">REEF VTS responds (IAMSAR format):</span>
+<span class="rx">[VESSEL] [VESSEL] [VESSEL],</span>
+<span class="rx">This is Reef VTS Reef VTS Reef VTS.</span>
+<span class="rx">Received Mayday. Over.</span>`,
+    completedMsg:'✓ Mayday complete! Vessel name × 3 in the call, position from GPS, nature, POB.',
+  },
+
+  dsc:{
+    title:'DSC DISTRESS ALERT',
+    steps:[
+      {id:'power',    text:'Turn the radio on',                                        hint:'Press POWER.'},
+      {id:'ch16',     text:'Confirm you are on Channel 16',                            hint:'Radio defaults to CH 16 on power-on.'},
+      {id:'dsc_hold', text:'Hold the DSC DISTRESS button for 3 seconds',              hint:'Hold the red DSC button — watch the countdown on screen.'},
+      {id:'dsc_sent', text:'DSC alert transmitted automatically on CH 70',            hint:'MMSI, GPS position and UTC time are broadcast to all stations.'},
+      {id:'ch16_mon', text:'Monitor CH 16 — Reef VTS will respond by voice',          hint:'Radio auto-switches to CH 16 after the DSC alert is sent.'},
+      {id:'ptt',      text:'When called by Reef VTS — PTT and give MAYDAY voice call',hint:'Speak the full Mayday call in response. See script.'},
+    ],
+    script:`DSC DISTRESS ALERT — CH 70 (automatic)
+
+The radio transmits on CH 70:
+• <span class="hl">MMSI</span> — your vessel identity
+• <span class="hl">Nature of distress</span> — undesignated
+• <span class="hl">Position & UTC time</span> — from GPS
+
+<span class="rx">Reef VTS acknowledges (IAMSAR):</span>
+<span class="rx">[VESSEL] [VESSEL] [VESSEL],</span>
+<span class="rx">This is Reef VTS Reef VTS Reef VTS.</span>
+<span class="rx">Received DSC distress alert.</span>
+<span class="rx">Respond on Channel 16. Over.</span>
+
+Then transmit MAYDAY voice on CH 16:
+
+<span class="hl">MAYDAY  MAYDAY  MAYDAY</span>
+This is  <span class="hl">[VESSEL]  [VESSEL]  [VESSEL]</span>
+MAYDAY  <span class="hl">[VESSEL]</span>
+Position:  <span class="hl">[READ GPS FROM SCREEN]</span>
+Distress:  <span class="hl">[NATURE]</span>
+POB:  <span class="hl">[NUMBER]</span>
+OVER
+
+<span class="note">DSC sends on CH 70 · Voice Mayday on CH 16
+Both are required for a complete distress alert.</span>`,
+    completedMsg:'✓ DSC procedure complete! DSC on CH 70 then full voice Mayday on CH 16.',
+  },
+
+  panpan:{
+    title:'PAN-PAN URGENCY CALL',
+    steps:[
+      {id:'power',        text:'Turn the radio on',                                    hint:'Press POWER.'},
+      {id:'ch16',         text:'Select Channel 16',                                    hint:'Press 16/C.'},
+      {id:'power_hi',     text:'Confirm HIGH power — 25W',                             hint:'Press HI/LO until 25W shows.'},
+      {id:'ptt',          text:'Hold PTT and transmit your Pan-Pan call',              hint:'Hold PTT. Speak: "Pan-Pan Pan-Pan Pan-Pan, all stations…"'},
+      {id:'panpan_spoken',text:'Pan-Pan call transmitted',                             hint:'Include vessel name × 3, position, nature of urgency, POB.'},
+      {id:'panpan_ack',   text:'Release PTT — receive acknowledgement from Reef VTS', hint:'Release PTT and listen for Reef VTS response on CH 16.'},
+    ],
+    script:`PAN-PAN — CHANNEL 16 — 25 WATTS
+
+<span class="hl">PAN-PAN  PAN-PAN  PAN-PAN</span>
+
+All stations  All stations  All stations
+
+This is  <span class="hl">[VESSEL NAME]  [VESSEL NAME]  [VESSEL NAME]</span>
+
+My position is  <span class="hl">[READ GPS FROM SCREEN]</span>
+
+Nature of urgency:  <span class="hl">[MEDICAL / ENGINE FAILURE / TAKING ON WATER]</span>
+
+Persons on board:  <span class="hl">[NUMBER]</span>
+
+<span class="hl">[Assistance required / any other information]</span>
+
+OVER
+
+<span class="note">Pan-Pan = URGENT but NOT immediate danger to life.
+Use MAYDAY if vessel or persons face immediate danger.
+Pan-Pan × 3 · All stations × 3 · Vessel name × 3</span>
+
+<span class="rx">REEF VTS responds (IAMSAR):</span>
+<span class="rx">[VESSEL] [VESSEL] [VESSEL],</span>
+<span class="rx">This is Reef VTS Reef VTS Reef VTS.</span>
+<span class="rx">Received Pan-Pan. Confirm position and urgency. Over.</span>`,
+    completedMsg:'✓ Pan-Pan complete! PAN-PAN × 3, all stations × 3, vessel name × 3, position, nature.',
+  },
+
+  securite:{
+    title:'SÉCURITÉ SAFETY CALL',
+    steps:[
+      {id:'power',          text:'Turn the radio on',                                  hint:'Press POWER.'},
+      {id:'ch16',           text:'Select Channel 16',                                  hint:'Press 16/C.'},
+      {id:'ptt',            text:'Hold PTT and announce the Sécurité on CH 16',       hint:'Say: "Sécurité Sécurité Sécurité, all stations…listen on Channel 67."'},
+      {id:'securite_spoken',text:'Sécurité announcement transmitted on CH 16',        hint:'Tell all stations to listen on Channel 67 for a safety message.'},
+      {id:'workchan',       text:'Switch to Channel 67',                               hint:'Key 6–7 on numpad then ENT, or use CH ▲/▼.'},
+      {id:'ptt',            text:'PTT and broadcast the full safety message on CH 67', hint:'Give the complete hazard description on Channel 67.'},
+    ],
+    script:`SÉCURITÉ — CHANNEL 16 THEN CHANNEL 67
+
+ON CHANNEL 16:
+
+<span class="hl">SÉCURITÉ  SÉCURITÉ  SÉCURITÉ</span>
+
+All stations  All stations  All stations
+
+This is  <span class="hl">[VESSEL NAME]</span>
+
+I have a navigational safety message.
+Listen on Channel  <span class="hl">67</span>
+
+OUT
+
+<span class="note">— Switch to Channel 67 —</span>
+
+ON CHANNEL 67:
+
+<span class="hl">SÉCURITÉ  SÉCURITÉ  SÉCURITÉ</span>
+
+All stations  All stations  All stations
+
+This is  <span class="hl">[VESSEL NAME]</span>
+
+<span class="hl">[DESCRIPTION OF HAZARD]</span>
+<span class="hl">[POSITION OF HAZARD]</span>
+<span class="hl">[NATURE / ADVICE TO VESSELS]</span>
+
+OUT
+
+<span class="note">No acknowledgement required for Sécurité.
+Reef VTS will confirm receipt on CH 16.</span>`,
+    completedMsg:'✓ Sécurité complete! Announce on CH 16 — broadcast hazard detail on CH 67.',
+  },
+
+  radiocheck:{
+    title:'RADIO CHECK',
+    steps:[
+      {id:'power',            text:'Turn the radio on',                                hint:'Press POWER.'},
+      {id:'ch16',             text:'Select Channel 16',                                hint:'Press 16/C.'},
+      {id:'power_hi',         text:'Confirm HIGH power — 25W',                        hint:'Ensures signal can be heard for the check.'},
+      {id:'ptt',              text:'Hold PTT and request a radio check from Harbour Control', hint:'Say: "Harbour Control Harbour Control Harbour Control, this is [Vessel] [Vessel] [Vessel], radio check Channel 16, over."'},
+      {id:'radiocheck_spoken',text:'Radio check request transmitted',                  hint:'Identify the called station first, then identify yourself.'},
+      {id:'radiocheck_ack',   text:'Release PTT — receive signal report from Harbour Control', hint:'Listen for the signal report in response.'},
+    ],
+    script:`RADIO CHECK — CHANNEL 16
+
+<span class="hl">HARBOUR CONTROL  HARBOUR CONTROL  HARBOUR CONTROL</span>
+
+This is  <span class="hl">[VESSEL NAME]  [VESSEL NAME]  [VESSEL NAME]</span>
+
+Radio check on Channel 16
+
+OVER
+
+<span class="rx">HARBOUR CONTROL responds (shortened — subsequent contact):</span>
+<span class="rx">[VESSEL NAME],</span>
+<span class="rx">This is Harbour Control.</span>
+<span class="rx">Loud and clear. Out.</span>
+
+<span class="note">Signal reports used in marine radio:
+• Loud and clear (5 by 5)
+• Readable
+• Weak but readable
+• Barely readable
+• Unreadable
+
+Always identify the CALLED station first,
+then identify YOURSELF:
+"[CALLED STATION] × 3, this is [YOUR VESSEL] × 3"</span>`,
+    completedMsg:'✓ Radio check complete! Always call the station you want first, then identify yourself.',
+  },
+
+  shipto:{
+    title:'ROUTINE SHIP-TO-SHORE CALL',
+    steps:[
+      {id:'power',          text:'Turn the radio on',                                  hint:'Press POWER.'},
+      {id:'ch16',           text:'Select Channel 16 for the initial call',             hint:'All routine calls begin on CH 16.'},
+      {id:'ptt',            text:'Hold PTT and call Harbour Control on CH 16',        hint:'Say: "Harbour Control Harbour Control Harbour Control, this is [Vessel] [Vessel] [Vessel], over."'},
+      {id:'calling_spoken', text:'Initial call transmitted on CH 16',                  hint:'Harbour Control will assign you a working channel.'},
+      {id:'shipto_response',text:'Harbour Control assigns you Channel 67',             hint:'Acknowledge and switch to CH 67.'},
+      {id:'workchan_spoken',text:'Switch to CH 67 and conduct your business',          hint:'Say "Going to 67, out." then switch and call again on CH 67.'},
+    ],
+    script:`ROUTINE CALL — CH 16 THEN WORKING CH
+
+ON CHANNEL 16:
+
+<span class="hl">HARBOUR CONTROL  HARBOUR CONTROL  HARBOUR CONTROL</span>
+
+This is  <span class="hl">[VESSEL NAME]  [VESSEL NAME]  [VESSEL NAME]</span>
+
+OVER
+
+<span class="rx">HARBOUR CONTROL responds (full first contact):</span>
+<span class="rx">[VESSEL] [VESSEL] [VESSEL],</span>
+<span class="rx">This is Harbour Control Harbour Control Harbour Control.</span>
+<span class="rx">Go to Channel 67. Over.</span>
+
+<span class="hl">[VESSEL NAME]</span>: Going to 67. Out.
+
+<span class="note">— Switch to Channel 67 —</span>
+
+<span class="hl">HARBOUR CONTROL  HARBOUR CONTROL  HARBOUR CONTROL</span>
+
+This is  <span class="hl">[VESSEL NAME]  [VESSEL NAME]  [VESSEL NAME]</span>
+
+Request berth for  <span class="hl">[VESSEL]</span>, arriving  <span class="hl">[DATE/TIME]</span>,
+length  <span class="hl">[LENGTH]</span> metres, draft  <span class="hl">[DRAFT]</span> metres.
+
+OVER
+
+<span class="note">Never conduct business on CH 16.
+Initial call only — then move to working channel.
+"Out" = conversation complete (no reply expected).
+"Over" = reply expected.</span>`,
+    completedMsg:'✓ Ship-to-shore complete! Initial call on CH 16 then business on working channel.',
+  },
+
+  relay:{
+    title:'RESPONDING TO A MAYDAY',
+    steps:[
+      {id:'power',       text:'Ensure radio is on and monitoring Channel 16',          hint:'You should always have the radio on when underway.'},
+      {id:'ch16',        text:'Confirm you are on Channel 16',                         hint:'All Mayday calls are received on CH 16.'},
+      {id:'ptt',         text:'If Reef VTS has not responded within 30 seconds — PTT and acknowledge the distressed vessel', hint:'Say "[Vessel in distress] × 3, this is [your vessel] × 3, received Mayday, over."'},
+      {id:'relay_spoken',text:'If Reef VTS still cannot respond — transmit a Mayday Relay', hint:'Say: "Mayday Relay Mayday Relay Mayday Relay, all stations × 3, this is [your vessel]…"'},
+      {id:'relay_ack',   text:'Reef VTS acknowledges — maintain silence on CH 16',    hint:'Do not transmit on CH 16 unless directed by Reef VTS.'},
+    ],
+    script:`RESPONDING TO A MAYDAY — CH 16
+
+<span class="note">When you HEAR a Mayday:</span>
+1. Do NOT transmit — listen carefully
+2. Note vessel name, position, nature, POB
+3. Wait ~30 seconds for Reef VTS to acknowledge
+
+If no acknowledgement — respond to distressed vessel:
+
+<span class="hl">[DISTRESSED VESSEL]  [DISTRESSED VESSEL]  [DISTRESSED VESSEL]</span>
+
+This is  <span class="hl">[YOUR VESSEL]  [YOUR VESSEL]  [YOUR VESSEL]</span>
+
+Received Mayday. Over.
+
+<span class="note">— If relaying on behalf of distressed vessel —</span>
+
+<span class="hl">MAYDAY RELAY  MAYDAY RELAY  MAYDAY RELAY</span>
+
+All stations  All stations  All stations
+
+This is  <span class="hl">[YOUR VESSEL]  [YOUR VESSEL]  [YOUR VESSEL]</span>
+
+The following Mayday received from  <span class="hl">[VESSEL]</span>:
+Position:  <span class="hl">[POSITION]</span>
+Distress:  <span class="hl">[NATURE]</span>
+POB:  <span class="hl">[NUMBER]</span>
+
+OVER
+
+<span class="rx">REEF VTS responds:</span>
+<span class="rx">[VESSEL] × 3, This is Reef VTS × 3.</span>
+<span class="rx">Mayday relay received. Co-ordinating response.</span>
+<span class="rx">All vessels maintain silence on Channel 16.</span>`,
+    completedMsg:"✓ Mayday response complete! Listen first, acknowledge if Reef VTS doesn't, relay if required.",
   },
 };
 
-// Step tracking
-let activeScenario = null;
-let currentStepIndex = 0;
-let completedSteps = new Set();
-let stepCheckMap = {};
+// ── TRAINING STATE ────────────────────────────────────────────────
+let activeSc=null,curStep=0,doneKeys=new Set();
 
-function loadScenario(key) {
-  activeScenario = key;
-  currentStepIndex = 0;
-  completedSteps.clear();
-  stepCheckMap = {};
-
-  const sc = scenarios[key];
-
-  // Highlight active scenario button
-  document.querySelectorAll('.scenario-btn').forEach(b => b.classList.remove('active'));
+function loadScenario(key){
+  activeSc=key;curStep=0;doneKeys.clear();resetContacts();
+  S.volAdjusted=false;S.sqAdjusted=false;
+  const sc=SCENARIOS[key];
+  document.querySelectorAll('.sc-btn').forEach(b=>b.classList.remove('active'));
   document.querySelector(`[data-scenario="${key}"]`).classList.add('active');
-
-  // Build step-to-index map
-  sc.steps.forEach((s, i) => { stepCheckMap[s.id] = i; });
-
-  // Show cards
-  document.getElementById('steps-card').style.display = 'block';
-  document.getElementById('script-card').style.display = 'block';
-
-  // Render steps
+  $('steps-card').style.display='block';
   renderSteps();
-
-  // Render script
-  document.getElementById('script-content').innerHTML = sc.script;
-  document.getElementById('steps-title').textContent = sc.title;
-
-  // Clear feedback
-  feedbackBox.className = 'feedback-box';
-  feedbackBox.textContent = '';
-
-  logEntry(`— Training scenario loaded: ${sc.title} —`, 'sys');
+  // Update script panel
+  $('script-scenario-title').textContent=sc.title;
+  $('script-body').innerHTML=sc.script;
+  // Ensure script col visible and open
+  $('script-col').classList.remove('hidden');
+  scriptPanel.classList.add('open');scriptToggle.classList.add('open');
+  updateWrapperClasses();
+  fbBox.className='fb-box';fbBox.textContent='';
+  log(`— Scenario: ${sc.title} —`,'sys');
 }
 
-function renderSteps() {
-  if (!activeScenario) return;
-  const sc = scenarios[activeScenario];
-  const panel = document.getElementById('step-panel');
-  panel.innerHTML = sc.steps.map((s, i) => {
-    let cls = 'step-item';
-    let check = '○';
-    if (completedSteps.has(s.id)) { cls += ' done'; check = '✓'; }
-    else if (i === currentStepIndex) { cls += ' current'; check = '▶'; }
-    const hintHtml = (i === currentStepIndex && s.hint)
-      ? `<div class="step-hint">💡 ${s.hint}</div>` : '';
-    return `<div class="${cls}">
-      <div class="step-num">${String(i+1).padStart(2,'0')}</div>
-      <div class="step-text">${s.text}</div>
-      <div class="step-check">${check}</div>
-    </div>${hintHtml}`;
+function renderSteps(){
+  if(!activeSc)return;
+  const sc=SCENARIOS[activeSc];
+  $('step-panel').innerHTML=sc.steps.map((s,i)=>{
+    const k=s.id+':'+i;let cls='step-item',check='○';
+    if(doneKeys.has(k)){cls+=' done';check='✓';}
+    else if(i===curStep){cls+=' current';check='▶';}
+    const hint=(i===curStep&&s.hint)?`<div class="step-hint">💡 ${s.hint}</div>`:'';
+    return `<div class="${cls}"><div class="step-num">${String(i+1).padStart(2,'0')}</div><div class="step-text">${s.text}</div><div class="step-check">${check}</div></div>${hint}`;
   }).join('');
-
-  // Progress
-  const total = sc.steps.length;
-  const done = completedSteps.size;
-  const pct = total ? Math.round((done / total) * 100) : 0;
-  document.getElementById('progress-fill').style.width = pct + '%';
-  document.getElementById('progress-label').textContent = `${done} / ${total}`;
+  const total=sc.steps.length,done=doneKeys.size;
+  $('prog-fill').style.width=`${total?Math.round(done/total*100):0}%`;
+  $('prog-label').textContent=`${done} / ${total}`;
 }
 
-function advanceStep(stepId) {
-  if (!activeScenario) return;
-  const sc = scenarios[activeScenario];
-  if (completedSteps.has(stepId)) return;
-  const expectedIdx = stepCheckMap[stepId];
-  if (expectedIdx === undefined) return;
+function advanceStep(stepId){
+  if(!activeSc)return;
+  const sc=SCENARIOS[activeSc];
+  if(curStep>=sc.steps.length)return;
+  if(sc.steps[curStep].id!==stepId)return;
+  const k=stepId+':'+curStep;if(doneKeys.has(k))return;
+  doneKeys.add(k);curStep++;
+  beepRise();showFb('success',`✓ Step ${doneKeys.size} complete!`);renderSteps();
+  if(doneKeys.size===sc.steps.length){setTimeout(()=>showFb('success',sc.completedMsg),600);log(`✓ Scenario "${sc.title}" COMPLETED`,'ok');}
+}
 
-  // Allow completing current or future steps in order
-  if (expectedIdx < currentStepIndex) return; // already past this
-  if (expectedIdx > currentStepIndex) {
-    // Skipped a step
-    showFeedback('warning', `⚠ Step ${currentStepIndex+1} not yet completed — work through steps in order.`);
-    return;
-  }
-
-  completedSteps.add(stepId);
-  currentStepIndex = expectedIdx + 1;
-  beepRise();
-  showFeedback('success', `✓ Step ${expectedIdx+1} complete!`);
-  renderSteps();
-
-  // Check if all steps done
-  if (completedSteps.size === sc.steps.length) {
-    setTimeout(() => showFeedback('success', sc.completedMsg), 500);
-    logEntry(`✓ Scenario "${sc.title}" COMPLETED`, 'ok');
+function checkStep(action,value){
+  if(!activeSc)return;
+  const sc=SCENARIOS[activeSc];const cur=sc.steps[curStep];if(!cur)return;
+  switch(action){
+    case 'power_on':    if(cur.id==='power')advanceStep('power');break;
+    case 'ch16':        if(cur.id==='ch16')advanceStep('ch16');break;
+    case 'channel':
+      if(value===16&&cur.id==='ch16')advanceStep('ch16');
+      else if(value===16&&cur.id==='ch16_mon')advanceStep('ch16_mon');
+      else if((value===67||value===68)&&cur.id==='workchan')advanceStep('workchan');
+      break;
+    case 'power':       if(S.highPower&&cur.id==='power_hi')advanceStep('power_hi');break;
+    case 'volume_set':  if(cur.id==='volume_set')advanceStep('volume_set');break;
+    case 'squelch_set': if(cur.id==='squelch_set')advanceStep('squelch_set');break;
+    case 'dw_on':       if(cur.id==='dw_on')advanceStep('dw_on');break;
+    case 'ptt':         if(cur.id==='ptt')advanceStep('ptt');break;
+    case 'mayday_spoken':    if(cur.id==='mayday_spoken')advanceStep('mayday_spoken');break;
+    case 'mayday_ack':       if(cur.id==='mayday_ack')advanceStep('mayday_ack');break;
+    case 'panpan_spoken':    if(cur.id==='panpan_spoken')advanceStep('panpan_spoken');break;
+    case 'panpan_ack':       if(cur.id==='panpan_ack')advanceStep('panpan_ack');break;
+    case 'securite_spoken':  if(cur.id==='securite_spoken')advanceStep('securite_spoken');break;
+    case 'securite_ack':     if(cur.id==='securite_ack')advanceStep('securite_ack');break;
+    case 'radiocheck_spoken':if(cur.id==='radiocheck_spoken')advanceStep('radiocheck_spoken');break;
+    case 'radiocheck_ack':   if(cur.id==='radiocheck_ack')advanceStep('radiocheck_ack');break;
+    case 'calling_spoken':   if(cur.id==='calling_spoken')advanceStep('calling_spoken');break;
+    case 'shipto_response':  if(cur.id==='shipto_response')advanceStep('shipto_response');break;
+    case 'workchan_spoken':  if(cur.id==='workchan_spoken')advanceStep('workchan_spoken');break;
+    case 'relay_spoken':     if(cur.id==='relay_spoken')advanceStep('relay_spoken');break;
+    case 'relay_ack':        if(cur.id==='relay_ack')advanceStep('relay_ack');break;
+    case 'dsc_cancelled':    if(cur.id==='dsc_hold')showFb('error','✗ Released too early — hold DSC for the full 3 seconds.');break;
+    case 'dsc_sent':
+      if(cur.id==='dsc_hold'){advanceStep('dsc_hold');setTimeout(()=>{if(SCENARIOS[activeSc]?.steps[curStep]?.id==='dsc_sent')advanceStep('dsc_sent');},100);}break;
+    case 'auto_ch16':   if(cur.id==='ch16_mon')advanceStep('ch16_mon');break;
+    case 'tx_ch70':     showFb('error','✗ Channel 70 is DSC-only — voice TX not permitted on this channel.');break;
   }
 }
 
-function checkTrainingStep(action, value) {
-  if (!activeScenario) return;
-  const sc = scenarios[activeScenario];
-  const cur = sc.steps[currentStepIndex];
-  if (!cur) return;
+$('power-btn').addEventListener('click',()=>{if(!S.powered)setTimeout(()=>checkStep('power_on'),60);},{capture:true});
 
-  if (action === 'channel' && cur.id === 'ch16' && value === 16) { advanceStep('ch16'); return; }
-  if (action === 'channel' && cur.id === 'ch16_mon' && value === 16) { advanceStep('ch16_mon'); return; }
-  if (action === 'ch16') { advanceStep('ch16'); return; }
-  if (action === 'power' && state.highPower && cur.id === 'power_hi') { advanceStep('power_hi'); return; }
-  if (action === 'ptt' && cur.id === 'ptt') { advanceStep('ptt'); return; }
-  if (action === 'mayday_spoken' && cur.id === 'mayday') { advanceStep('mayday'); advanceStep('release'); return; }
-  if (action === 'dsc_hold_cancelled' && cur.id === 'dsc_hold') {
-    showFeedback('error', '✗ DSC hold released too early — hold the button for the full 3 seconds.');
-    return;
-  }
-  if (action === 'dsc_sent' && cur.id === 'dsc_hold') { advanceStep('dsc_hold'); advanceStep('dsc_sent'); return; }
-  if (action === 'auto_ch16' && cur.id === 'ch16_mon') { advanceStep('ch16_mon'); return; }
-  if (action === 'tx_blocked_ch70') {
-    showFeedback('error', '✗ CH 70 is DSC-only — voice transmissions are not permitted on this channel.');
-    return;
-  }
-  // Power on
-  if (action === 'power_on' || cur.id === 'power') { advanceStep('power'); return; }
+function showFb(type,msg){fbBox.className=`fb-box ${type}`;fbBox.textContent=msg;clearTimeout(showFb._t);showFb._t=setTimeout(()=>{if(fbBox.textContent===msg)fbBox.className='fb-box';},9000);}
+
+// ── MODE SWITCHER + LAYOUT ────────────────────────────────────────
+function updateWrapperClasses(){
+  const wrapper=$('sim-wrapper');
+  const trainingVisible=$('training-panel').classList.contains('visible');
+  const scriptVisible=!$('script-col').classList.contains('hidden');
+  wrapper.classList.toggle('no-training',!trainingVisible);
+  wrapper.classList.toggle('no-script',!scriptVisible);
 }
 
-// Intercept power-on for training check
-document.getElementById('power-btn').addEventListener('click', () => {
-  if (state.powered) checkTrainingStep('power_on');
-}, { capture: true });
-
-function showFeedback(type, msg) {
-  feedbackBox.className = `feedback-box ${type}`;
-  feedbackBox.textContent = msg;
-  setTimeout(() => {
-    if (feedbackBox.textContent === msg) feedbackBox.className = 'feedback-box';
-  }, 6000);
-}
-
-// ---- Scenario buttons ----
-document.querySelectorAll('.scenario-btn').forEach(btn => {
-  btn.addEventListener('click', () => loadScenario(btn.dataset.scenario));
+const btnFP=$('btn-freeplay'),btnTR=$('btn-training'),tPanel=$('training-panel');
+btnFP.addEventListener('click',()=>{
+  btnFP.classList.add('active');btnTR.classList.remove('active');
+  tPanel.classList.remove('visible');
+  $('script-col').classList.add('hidden');
+  activeSc=null;log('Mode → Free Play','sys');updateWrapperClasses();
+});
+btnTR.addEventListener('click',()=>{
+  btnTR.classList.add('active');btnFP.classList.remove('active');
+  tPanel.classList.add('visible');log('Mode → Training','sys');updateWrapperClasses();
 });
 
-// ---- Mode switcher ----
-const btnFP = document.getElementById('btn-freeplay');
-const btnTR = document.getElementById('btn-training');
-const trainingPanel = document.getElementById('training-panel');
+document.querySelectorAll('.sc-btn').forEach(b=>b.addEventListener('click',()=>loadScenario(b.dataset.scenario)));
 
-btnFP.addEventListener('click', () => {
-  btnFP.classList.add('active'); btnTR.classList.remove('active');
-  trainingPanel.classList.remove('visible');
-  activeScenario = null;
-  logEntry('Mode → Free Play', 'sys');
-});
-btnTR.addEventListener('click', () => {
-  btnTR.classList.add('active'); btnFP.classList.remove('active');
-  trainingPanel.classList.add('visible');
-  logEntry('Mode → Training', 'sys');
-});
-
-// ---- Initial state ----
 updateDisplay();
 </script>
 </body>
