@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VHF Radio Simulator — MARPRO LROCP</title>
+<title>VHF Radio Simulator — MARPRO</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -26,12 +26,12 @@ body{
 
 /* PAGE HEADER */
 .page-header{text-align:center;margin-bottom:14px;}
-.page-header .brand{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:6px;color:#777;text-transform:uppercase;}
-.page-header h1{font-family:'Orbitron',monospace;font-size:18px;font-weight:600;color:#aaa;letter-spacing:3px;margin-top:2px;}
+.page-header .brand{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;letter-spacing:6px;color:#777;text-transform:uppercase;}
+.page-header h1{font-family:'Orbitron',monospace;font-size:22px;font-weight:600;color:#aaa;letter-spacing:3px;margin-top:2px;}
 
 /* MODE BAR */
 .mode-bar{display:flex;gap:8px;margin-bottom:16px;}
-.mode-btn{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:13px;letter-spacing:2px;text-transform:uppercase;padding:8px 22px;border:1px solid #333;background:#111;color:#666;border-radius:3px;cursor:pointer;transition:all .2s;}
+.mode-btn{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:15px;letter-spacing:2px;text-transform:uppercase;padding:8px 22px;border:1px solid #333;background:#111;color:#666;border-radius:3px;cursor:pointer;transition:all .2s;}
 .mode-btn.active{background:#0a1a10;border-color:var(--green-dim);color:var(--green);box-shadow:0 0 12px rgba(0,204,102,.2);}
 .mode-btn:hover:not(.active){color:#bbb;border-color:#444;}
 
@@ -97,8 +97,8 @@ body{
 .script-panel.open{max-height:1200px;}
 
 .script-inner{padding:14px;}
-.script-lbl{font-size:10px;letter-spacing:2px;color:#777;font-family:'Orbitron',monospace;margin-bottom:10px;}
-.script-body{font-family:'Share Tech Mono',monospace;font-size:12px;color:#999;line-height:2;white-space:pre-wrap;}
+.script-lbl{font-size:12px;letter-spacing:2px;color:#777;font-family:'Orbitron',monospace;margin-bottom:10px;}
+.script-body{font-family:'Share Tech Mono',monospace;font-size:14px;color:#999;line-height:2;white-space:pre-wrap;}
 .script-body .hl  {color:var(--amber);}
 .script-body .rx  {color:#55ccff;}
 .script-body .note{color:#777;font-style:italic;}
@@ -115,16 +115,16 @@ body{
 
 /* ── SHARED CARD STYLES ── */
 .t-card{background:#111;border:1px solid #2a2a2a;border-radius:6px;overflow:hidden;}
-.t-card-hdr{background:#1a1a1a;padding:9px 14px;font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;color:#999;border-bottom:1px solid #222;display:flex;align-items:center;gap:8px;}
+.t-card-hdr{background:#1a1a1a;padding:9px 14px;font-family:'Orbitron',monospace;font-size:12px;letter-spacing:2px;color:#999;border-bottom:1px solid #222;display:flex;align-items:center;gap:8px;}
 .t-card-hdr .dot{width:6px;height:6px;border-radius:50%;background:var(--green-dim);box-shadow:0 0 6px var(--green-dim);animation:blink 2s infinite;flex-shrink:0;}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 
 /* scenario list */
 .sc-list{padding:8px;display:flex;flex-direction:column;gap:4px;}
-.sc-btn{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:13px;padding:8px 11px;background:#161616;border:1px solid #2a2a2a;border-left:3px solid #333;color:#aaa;text-align:left;border-radius:3px;cursor:pointer;transition:all .15s;}
+.sc-btn{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:15px;padding:8px 11px;background:#161616;border:1px solid #2a2a2a;border-left:3px solid #333;color:#aaa;text-align:left;border-radius:3px;cursor:pointer;transition:all .15s;}
 .sc-btn:hover{background:#1e1e1e;color:#ddd;border-left-color:var(--green-dim);}
 .sc-btn.active{background:#0a180e;color:var(--green);border-left-color:var(--green);}
-.sc-btn .tag{font-size:10px;color:#666;display:block;margin-top:1px;font-weight:500;letter-spacing:1px;}
+.sc-btn .tag{font-size:12px;color:#666;display:block;margin-top:1px;font-weight:500;letter-spacing:1px;}
 .sc-btn.active .tag{color:var(--green-dim);}
 .sc-cat{font-family:'Orbitron',monospace;font-size:9px;letter-spacing:2px;color:#444;padding:7px 11px 2px;}
 
@@ -132,8 +132,8 @@ body{
 .step-panel{padding:12px 14px;}
 .step-item{display:flex;gap:9px;padding:8px 0;border-bottom:1px solid #1e1e1e;align-items:flex-start;transition:all .3s;}
 .step-item:last-child{border-bottom:none;}
-.step-num{font-family:'Orbitron',monospace;font-size:10px;color:#555;min-width:22px;margin-top:2px;}
-.step-text{font-size:13px;color:#777;line-height:1.45;flex:1;}
+.step-num{font-family:'Orbitron',monospace;font-size:12px;color:#555;min-width:22px;margin-top:2px;}
+.step-text{font-size:15px;color:#777;line-height:1.45;flex:1;}
 .step-item.current .step-num{color:var(--amber);}
 .step-item.current .step-text{color:#eee;font-weight:600;}
 .step-item.done .step-num{color:var(--green-dim);}
@@ -141,13 +141,13 @@ body{
 .step-check{font-size:13px;min-width:16px;color:#2a2a2a;}
 .step-item.done .step-check{color:var(--green-dim);}
 .step-item.current .step-check{color:var(--amber);}
-.step-hint{background:#0c1a10;border:1px solid #1e3a22;border-radius:4px;padding:8px 11px;font-size:12px;color:#7de0a8;margin-top:8px;line-height:1.5;font-style:italic;}
+.step-hint{background:#0c1a10;border:1px solid #1e3a22;border-radius:4px;padding:8px 11px;font-size:14px;color:#7de0a8;margin-top:8px;line-height:1.5;font-style:italic;}
 
 .prog-track{height:3px;background:#1e1e1e;border-radius:2px;margin:10px 14px 4px;overflow:hidden;}
 .prog-fill{height:100%;background:linear-gradient(90deg,var(--green-dim),var(--green));border-radius:2px;transition:width .4s ease;box-shadow:0 0 8px var(--green-glow);}
-.prog-label{font-size:11px;color:#777;text-align:right;letter-spacing:1px;padding:0 14px 8px;}
+.prog-label{font-size:13px;color:#777;text-align:right;letter-spacing:1px;padding:0 14px 8px;}
 
-.fb-box{padding:9px 14px;border-radius:4px;font-size:13px;font-weight:600;letter-spacing:.4px;line-height:1.5;display:none;margin:0 14px 12px;}
+.fb-box{padding:9px 14px;border-radius:4px;font-size:15px;font-weight:600;letter-spacing:.4px;line-height:1.5;display:none;margin:0 14px 12px;}
 .fb-box.success{display:block;background:#0a1e0e;border:1px solid var(--green-dim);color:#66ffaa;}
 .fb-box.warning{display:block;background:#1e1500;border:1px solid var(--amber);color:#ffcc44;}
 .fb-box.error  {display:block;background:#1e0707;border:1px solid var(--red);color:#ff8888;}
@@ -169,7 +169,7 @@ body{
 .radio-body::before{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg width='3' height='3' viewBox='0 0 3 3' xmlns='http://www.w3.org/2000/svg'%3E%3Crect x='0' y='0' width='1' height='1' fill='rgba(255,255,255,0.012)'/%3E%3C/svg%3E");border-radius:inherit;pointer-events:none;}
 .radio-brand{display:flex;justify-content:space-between;align-items:center;padding:0 4px 11px;}
 .brand-name{font-family:'Orbitron',monospace;font-size:13px;font-weight:900;letter-spacing:4px;color:#888;}
-.brand-model{font-family:'Rajdhani',sans-serif;font-size:11px;letter-spacing:3px;color:#666;}
+.brand-model{font-family:'Rajdhani',sans-serif;font-size:13px;letter-spacing:3px;color:#666;}
 .power-led{width:8px;height:8px;border-radius:50%;background:#111;border:1px solid #222;transition:all .3s;}
 .power-led.on{background:var(--green);box-shadow:0 0 10px var(--green),0 0 20px var(--green-glow);}
 
@@ -185,7 +185,7 @@ body{
 .ch-main.transmit{color:var(--red);text-shadow:0 0 15px var(--red),0 0 30px var(--red-glow);}
 .ch-main.rx-active{color:#44ddff;text-shadow:0 0 15px #44ddff,0 0 30px rgba(68,200,255,.3);}
 .ch-main.off     {color:#0d0d0d;text-shadow:none;}
-.status-tag{font-family:'Orbitron',monospace;font-size:8px;letter-spacing:1.5px;padding:2px 5px;border-radius:2px;background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.2);color:var(--green-dim);transition:all .2s;white-space:nowrap;}
+.status-tag{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:1.5px;padding:2px 5px;border-radius:2px;background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.2);color:var(--green-dim);transition:all .2s;white-space:nowrap;}
 .status-tag.hidden{opacity:0;pointer-events:none;}
 .status-tag.tx-tag{background:rgba(255,51,51,.15);border-color:rgba(255,51,51,.35);color:var(--red);animation:pulse-red .6s infinite alternate;}
 .status-tag.rx-tag{background:rgba(68,170,255,.12);border-color:rgba(68,170,255,.3);color:#66bbff;animation:pulse-blu .9s infinite alternate;}
@@ -193,7 +193,7 @@ body{
 @keyframes pulse-red{from{opacity:1}to{opacity:.4}}
 @keyframes pulse-blu{from{opacity:1}to{opacity:.5}}
 .power-row{display:flex;justify-content:center;gap:10px;}
-.pwr-ind{font-size:9px;letter-spacing:1.5px;color:#282828;transition:color .2s;}
+.pwr-ind{font-size:11px;letter-spacing:1.5px;color:#282828;transition:color .2s;}
 .pwr-ind.active{color:var(--green-dim);}
 .gps-row{display:flex;align-items:center;justify-content:center;gap:8px;padding:4px 0 2px;border-top:1px solid rgba(0,255,136,.1);}
 .gps-icon{font-family:'Orbitron',monospace;font-size:8px;letter-spacing:2px;color:#4a9a6a;}
@@ -201,7 +201,7 @@ body{
 .gps-coords.off{color:#1a1a1a;text-shadow:none;}
 .entry-display{position:absolute;top:9px;right:13px;font-family:'Orbitron',monospace;font-size:18px;color:var(--amber);text-shadow:0 0 8px var(--amber);letter-spacing:3px;opacity:0;transition:opacity .2s;}
 .entry-display.show{opacity:1;}
-.msg-ticker{position:absolute;bottom:33px;left:13px;right:13px;font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--amber);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;opacity:0;transition:opacity .4s;z-index:5;text-shadow:0 0 6px rgba(255,187,0,.4);}
+.msg-ticker{position:absolute;bottom:33px;left:13px;right:13px;font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--amber);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;opacity:0;transition:opacity .4s;z-index:5;text-shadow:0 0 6px rgba(255,187,0,.4);}
 .msg-ticker.show{opacity:1;}
 .msg-ticker.rx-msg{color:#66ccff;text-shadow:0 0 6px rgba(68,180,255,.4);}
 .dsc-overlay{position:absolute;inset:0;background:rgba(0,0,0,.9);display:none;flex-direction:column;align-items:center;justify-content:center;border-radius:6px;z-index:10;}
@@ -213,15 +213,15 @@ body{
 .dsc-bar-fill{height:100%;background:var(--red);width:0%;box-shadow:0 0 8px var(--red);transition:width .05s linear;}
 
 /* SOFTKEYS */
-.sk-row{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-bottom:11px;}
-.sk{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:4px;color:#777;font-family:'Orbitron',monospace;font-size:8px;letter-spacing:1px;padding:7px 3px;cursor:pointer;text-align:center;transition:all .15s;user-select:none;}
+.sk-row{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:11px;}
+.sk{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:4px;color:#777;font-family:'Orbitron',monospace;font-size:10px;letter-spacing:1px;padding:7px 3px;cursor:pointer;text-align:center;transition:all .15s;user-select:none;}
 .sk:hover{background:#242424;color:#bbb;border-color:#333;}
 .sk:active{background:#111;transform:translateY(1px);}
 .sk.lit{color:var(--green);border-color:var(--green-dim);background:#0a1a0e;}
 
 /* ZONES + BUTTONS */
 .zone{margin-bottom:9px;}
-.zone-lbl{font-size:9px;letter-spacing:2px;color:#666;font-family:'Orbitron',monospace;text-transform:uppercase;margin-bottom:5px;padding-left:2px;}
+.zone-lbl{font-size:11px;letter-spacing:2px;color:#666;font-family:'Orbitron',monospace;text-transform:uppercase;margin-bottom:5px;padding-left:2px;}
 .row{display:flex;gap:5px;margin-bottom:7px;}
 .row .btn{flex:1;}
 .numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:7px;}
@@ -231,9 +231,9 @@ body{
 .dial-ring{width:78px;height:78px;border-radius:50%;background:radial-gradient(circle at 38% 32%,#555 0%,#3a3a3a 25%,#252525 55%,#111 100%);border:3px solid #111;position:relative;cursor:grab;box-shadow:inset 0 4px 8px rgba(0,0,0,.7),inset 0 -2px 4px rgba(255,255,255,.06),0 6px 16px rgba(0,0,0,.6);user-select:none;touch-action:none;transition:box-shadow .15s;}
 .dial-ring:hover{box-shadow:inset 0 4px 8px rgba(0,0,0,.7),inset 0 -2px 4px rgba(255,255,255,.08),0 6px 16px rgba(0,0,0,.6),0 0 0 1px rgba(0,255,136,.15);}
 .dial-ring::after{content:'';position:absolute;top:8px;left:50%;width:5px;height:33px;background:linear-gradient(to bottom,#eee,#999);transform:translateX(-50%) rotate(var(--rot,-135deg));transform-origin:bottom center;border-radius:3px;box-shadow:0 2px 4px rgba(0,0,0,.6);transition:transform .07s ease-out;}
-.dial-lbl{font-family:'Orbitron',monospace;font-size:8px;letter-spacing:2px;color:#666;margin-top:6px;}
-.dial-val{font-family:'Share Tech Mono',monospace;font-size:13px;color:var(--green-dim);margin-top:2px;}
-.btn{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:13px;letter-spacing:.5px;background:linear-gradient(180deg,#3a3a3a 0%,#2a2a2a 100%);border:1px solid #1e1e1e;border-bottom:2px solid #111;color:#ccc;padding:10px 7px;border-radius:5px;cursor:pointer;text-align:center;user-select:none;transition:all .1s;box-shadow:0 2px 4px rgba(0,0,0,.4);-webkit-tap-highlight-color:transparent;}
+.dial-lbl{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;color:#666;margin-top:6px;}
+.dial-val{font-family:'Share Tech Mono',monospace;font-size:15px;color:var(--green-dim);margin-top:2px;}
+.btn{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:15px;letter-spacing:.5px;background:linear-gradient(180deg,#3a3a3a 0%,#2a2a2a 100%);border:1px solid #1e1e1e;border-bottom:2px solid #111;color:#ccc;padding:10px 7px;border-radius:5px;cursor:pointer;text-align:center;user-select:none;transition:all .1s;box-shadow:0 2px 4px rgba(0,0,0,.4);-webkit-tap-highlight-color:transparent;}
 .btn:hover{background:linear-gradient(180deg,#464646 0%,#363636 100%);color:#eee;}
 .btn:active{background:linear-gradient(180deg,#1e1e1e 0%,#252525 100%);border-bottom-width:1px;transform:translateY(1px);color:#999;}
 .btn-green{background:linear-gradient(180deg,#0d2a18 0%,#091a10 100%);border-color:#0d2a18;border-bottom-color:#061208;color:var(--green-dim);}
@@ -242,10 +242,10 @@ body{
 .btn-red:hover{color:var(--red);}
 .btn-amber{background:linear-gradient(180deg,#2e1f00 0%,#1e1400 100%);border-color:#2e1f00;border-bottom-color:#120e00;color:#ddaa00;}
 .btn-amber:hover{color:var(--amber);}
-.btn-ch16{background:linear-gradient(180deg,#002e1c 0%,#001e10 100%);border-color:#003e28;color:var(--green);font-family:'Orbitron',monospace;font-size:11px;font-weight:700;}
-.btn-dsc{background:linear-gradient(180deg,#3a0000 0%,#220000 100%);border:1px solid #580000;border-bottom:2px solid #110000;color:#ff7777;font-family:'Orbitron',monospace;font-size:9px;letter-spacing:1.5px;font-weight:700;padding:11px;box-shadow:0 3px 10px rgba(180,0,0,.25);}
+.btn-ch16{background:linear-gradient(180deg,#002e1c 0%,#001e10 100%);border-color:#003e28;color:var(--green);font-family:'Orbitron',monospace;font-size:13px;font-weight:700;}
+.btn-dsc{background:linear-gradient(180deg,#3a0000 0%,#220000 100%);border:1px solid #580000;border-bottom:2px solid #110000;color:#ff7777;font-family:'Orbitron',monospace;font-size:11px;letter-spacing:1.5px;font-weight:700;padding:11px;box-shadow:0 3px 10px rgba(180,0,0,.25);}
 .btn-dsc:hover{background:linear-gradient(180deg,#460000 0%,#2c0000 100%);}
-.btn-ptt{background:linear-gradient(180deg,#3a0000 0%,#220000 100%);border:1px solid #4a0000;border-bottom:3px solid #110000;color:#ff7777;font-family:'Orbitron',monospace;font-size:11px;letter-spacing:2px;padding:14px;border-radius:6px;box-shadow:0 4px 12px rgba(180,0,0,.3);width:100%;font-weight:700;}
+.btn-ptt{background:linear-gradient(180deg,#3a0000 0%,#220000 100%);border:1px solid #4a0000;border-bottom:3px solid #110000;color:#ff7777;font-family:'Orbitron',monospace;font-size:13px;letter-spacing:2px;padding:14px;border-radius:6px;box-shadow:0 4px 12px rgba(180,0,0,.3);width:100%;font-weight:700;}
 .btn-ptt:hover{background:linear-gradient(180deg,#460000 0%,#2e0000 100%);}
 .btn-ptt:active{background:linear-gradient(180deg,#220000 0%,#1a0000 100%);border-bottom-width:1px;transform:translateY(2px);}
 .btn-ptt.active{background:linear-gradient(180deg,#5a0000 0%,#3a0000 100%);color:#ff9999;box-shadow:0 0 20px rgba(255,0,0,.4),0 4px 12px rgba(180,0,0,.5);animation:ptt-pulse .8s infinite alternate;}
@@ -253,10 +253,10 @@ body{
 
 /* COMMS LOG */
 .comms-log{margin-top:13px;background:#060606;border:1px solid #1e1e1e;border-radius:6px;overflow:hidden;}
-.log-hdr{background:#0e0e0e;padding:6px 12px;font-family:'Orbitron',monospace;font-size:8px;letter-spacing:2px;color:#666;border-bottom:1px solid #1a1a1a;display:flex;justify-content:space-between;align-items:center;}
-.log-clr{font-size:8px;color:#555;cursor:pointer;padding:2px 6px;border:1px solid #2a2a2a;border-radius:2px;background:none;font-family:'Rajdhani',sans-serif;letter-spacing:1px;transition:all .15s;}
+.log-hdr{background:#0e0e0e;padding:6px 12px;font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;color:#666;border-bottom:1px solid #1a1a1a;display:flex;justify-content:space-between;align-items:center;}
+.log-clr{font-size:11px;color:#555;cursor:pointer;padding:2px 6px;border:1px solid #2a2a2a;border-radius:2px;background:none;font-family:'Rajdhani',sans-serif;letter-spacing:1px;transition:all .15s;}
 .log-clr:hover{color:#999;border-color:#444;}
-.log-body{height:110px;overflow-y:auto;padding:7px 12px;font-family:'Share Tech Mono',monospace;font-size:11px;line-height:1.75;scrollbar-width:thin;scrollbar-color:#222 #0a0a0a;}
+.log-body{height:110px;overflow-y:auto;padding:7px 12px;font-family:'Share Tech Mono',monospace;font-size:13px;line-height:1.75;scrollbar-width:thin;scrollbar-color:#222 #0a0a0a;}
 .log-body::-webkit-scrollbar{width:4px;}
 .log-body::-webkit-scrollbar-track{background:#0a0a0a;}
 .log-body::-webkit-scrollbar-thumb{background:#222;border-radius:2px;}
@@ -287,13 +287,93 @@ body{
 .radio-body.powered-off .sk{opacity:.3;cursor:not-allowed;}
 @keyframes boot-flicker{0%{opacity:0}10%{opacity:.8}20%{opacity:.2}30%{opacity:1}40%{opacity:.6}50%{opacity:1}60%{opacity:.9}100%{opacity:1}}
 .booting .ch-main{animation:boot-flicker .8s ease forwards;}
+
+/* ===== DSC DISTRESS COVER ===== */
+.dsc-cover-wrap{position:relative;flex:2;perspective:500px;}
+.dsc-cover{position:absolute;inset:0;background:linear-gradient(180deg,#7a3800 0%,#4a2000 100%);border:1px solid #cc6600;border-bottom:2px solid #2a1000;border-radius:5px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;z-index:5;transform-origin:top center;transform:rotateX(0deg);transition:transform .45s ease,opacity .2s .15s;box-shadow:0 3px 10px rgba(160,80,0,.35),inset 0 1px 0 rgba(255,180,80,.15);user-select:none;}
+.dsc-cover.open{transform:rotateX(-100deg);opacity:0;pointer-events:none;}
+.dsc-cover-hinge{position:absolute;top:0;left:50%;transform:translateX(-50%);width:28px;height:5px;background:#111;border-radius:0 0 5px 5px;box-shadow:0 2px 4px rgba(0,0,0,.7);}
+.dsc-cover-label{font-family:'Orbitron',monospace;font-size:10px;color:#ffaa44;letter-spacing:2px;font-weight:700;}
+.dsc-cover-sub{font-family:'Rajdhani',sans-serif;font-size:11px;color:rgba(255,160,60,.55);letter-spacing:1px;}
+
+/* ===== SCREEN PAGES (DSC / SCAN / AIS) ===== */
+.screen-page{position:absolute;inset:0;background:var(--screen-bg);z-index:8;display:none;flex-direction:column;border-radius:inherit;overflow:hidden;}
+.screen-page.active{display:flex;}
+.dsc-m-hdr{background:#0a180d;border-bottom:1px solid #1a3020;padding:5px 10px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
+.dsc-m-title{font-family:'Orbitron',monospace;font-size:10px;color:var(--green);letter-spacing:2px;}
+.dsc-m-close{font-family:'Orbitron',monospace;font-size:8px;color:#555;background:#0d0d0d;border:1px solid #2a2a2a;border-radius:3px;padding:3px 7px;cursor:pointer;letter-spacing:1px;transition:all .15s;}
+.dsc-m-close:hover{color:#aaa;border-color:#444;}
+.dsc-m-body{flex:1;padding:6px 8px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;}
+.dsc-m-item{display:flex;align-items:center;gap:8px;padding:7px 10px;background:#0a0a0a;border:1px solid #1e1e1e;border-left:3px solid #2a2a2a;border-radius:4px;cursor:pointer;transition:all .15s;user-select:none;}
+.dsc-m-item:hover{background:#0d1a0f;border-left-color:var(--green-dim);}
+.dsc-m-num{font-family:'Orbitron',monospace;font-size:10px;color:#555;min-width:16px;}
+.dsc-m-lbl{font-family:'Rajdhani',sans-serif;font-weight:600;font-size:13px;color:#888;flex:1;letter-spacing:.5px;}
+.dsc-m-item:hover .dsc-m-lbl{color:var(--green);}
+.dsc-m-arrow{color:#444;font-size:11px;}
+.dsc-m-item:hover .dsc-m-arrow{color:var(--green-dim);}
+.dsc-m-info{padding:6px 8px;background:#080808;border:1px solid #181818;border-radius:4px;font-family:'Share Tech Mono',monospace;font-size:10px;color:#4a4a4a;line-height:1.7;}
+.dsc-m-info .hl{color:var(--green-dim);}
+.dsc-m-info .am{color:var(--amber);}
+.dsc-field-lbl{font-family:'Orbitron',monospace;font-size:8px;color:#555;letter-spacing:2px;margin-bottom:2px;}
+.dsc-mmsi-disp{background:#050d07;border:1px solid #1a3a1a;border-radius:4px;padding:8px 6px;text-align:center;font-family:'Orbitron',monospace;font-size:16px;color:var(--green);text-shadow:0 0 8px var(--green-glow);letter-spacing:4px;margin:4px 0;min-height:40px;display:flex;align-items:center;justify-content:center;}
+.dsc-mmsi-cur{animation:blink .8s step-end infinite;color:var(--green);}
+.dsc-instr{font-family:'Rajdhani',sans-serif;font-size:11px;color:#666;line-height:1.4;text-align:center;padding:2px 0;}
+.dsc-instr .hl{color:var(--amber);}
+.dsc-cat-row{display:flex;flex-direction:column;gap:4px;margin-top:4px;}
+.dsc-cat-btn{padding:7px 10px;background:#0a0a0a;border:1px solid #1e1e1e;border-left:3px solid #2a2a2a;border-radius:4px;cursor:pointer;text-align:left;font-family:'Rajdhani',sans-serif;font-weight:600;font-size:12px;letter-spacing:.5px;color:#777;transition:all .15s;}
+.dsc-cat-btn:hover{background:#0d140e;}
+.dsc-cat-btn.rc{border-left-color:#1a4a2a;color:#55bb77;}
+.dsc-cat-btn.sc{border-left-color:#4a4a1a;color:#bbbb44;}
+.dsc-cat-btn.uc{border-left-color:#4a3800;color:var(--amber);}
+.dsc-cat-btn small{display:block;font-size:9px;color:#555;font-weight:400;margin-top:1px;font-family:'Orbitron',monospace;letter-spacing:1px;}
+.dsc-ch-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:4px;}
+.dsc-ch-btn{padding:7px 2px;background:#0a0a0a;border:1px solid #1e1e1e;border-radius:4px;cursor:pointer;text-align:center;font-family:'Orbitron',monospace;font-size:11px;color:#666;letter-spacing:1px;transition:all .15s;}
+.dsc-ch-btn:hover,.dsc-ch-btn.sel{background:#0d1a0f;border-color:var(--green-dim);color:var(--green);}
+.dsc-confirm-box{background:#080808;border:1px solid #1a2a1a;border-radius:4px;padding:7px 10px;font-family:'Share Tech Mono',monospace;font-size:10px;color:#4a5a4a;line-height:1.8;margin-bottom:6px;}
+.dsc-confirm-box .hl{color:var(--green-dim);}
+.dsc-confirm-box .val{color:var(--green);}
+.dsc-send-btn{width:100%;padding:9px;background:linear-gradient(180deg,#0a2a18 0%,#061810 100%);border:1px solid var(--green-dim);border-bottom:2px solid #031008;border-radius:5px;cursor:pointer;font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;color:var(--green);font-weight:700;transition:all .15s;box-shadow:0 2px 10px rgba(0,200,100,.15);}
+.dsc-send-btn:hover{background:linear-gradient(180deg,#0d3322 0%,#0a1e14 100%);box-shadow:0 2px 16px rgba(0,200,100,.3);}
+.dsc-back-btn{width:100%;padding:6px;background:#0d0d0d;border:1px solid #222;border-radius:5px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:11px;letter-spacing:1px;color:#555;transition:all .15s;margin-top:4px;}
+.dsc-back-btn:hover{color:#999;border-color:#333;}
+.dsc-tx-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:10px;}
+.dsc-tx-pulse{width:36px;height:36px;border-radius:50%;border:2px solid var(--green-dim);box-shadow:0 0 16px var(--green-glow),0 0 32px var(--green-glow);animation:dsc-tx-p 1s ease infinite;}
+@keyframes dsc-tx-p{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.15);opacity:.6}}
+.dsc-tx-lbl{font-family:'Orbitron',monospace;font-size:10px;color:var(--green);letter-spacing:2px;animation:blink .8s infinite;}
+.dsc-tx-prog-wrap{width:80%;height:4px;background:#111;border-radius:2px;overflow:hidden;}
+.dsc-tx-prog{height:100%;background:var(--green);width:0%;box-shadow:0 0 6px var(--green-glow);transition:width 1.8s ease-in;}
+.dsc-ack-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:8px;padding:10px;text-align:center;}
+.dsc-ack-icon{font-size:24px;}
+.dsc-ack-title{font-family:'Orbitron',monospace;font-size:11px;letter-spacing:2px;}
+.dsc-ack-detail{font-family:'Rajdhani',sans-serif;font-size:12px;color:#777;line-height:1.5;}
+.dsc-ack-ch{font-family:'Share Tech Mono',monospace;font-size:15px;color:var(--green-dim);letter-spacing:4px;background:var(--screen-bg);padding:5px 14px;border-radius:4px;border:1px solid #1a3a1a;}
+/* SCAN PAGE */
+.scan-hdr{font-family:'Orbitron',monospace;font-size:9px;color:#555;letter-spacing:2px;padding:6px 10px 4px;border-bottom:1px solid #111;display:flex;justify-content:space-between;align-items:center;}
+.scan-lbl{color:var(--green-dim);}
+.scan-body{flex:1;overflow-y:auto;padding:4px 6px;display:flex;flex-direction:column;gap:3px;}
+.scan-item{display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:3px;border:1px solid #111;}
+.scan-item.active{background:#040e06;border-color:#1a3020;}
+.scan-ch{font-family:'Orbitron',monospace;font-size:11px;color:#444;min-width:28px;}
+.scan-item.active .scan-ch{color:var(--green);}
+.scan-name{font-family:'Share Tech Mono',monospace;font-size:10px;color:#333;flex:1;}
+.scan-item.active .scan-name{color:#66dd88;}
+.scan-act{font-size:8px;font-family:'Orbitron',monospace;letter-spacing:1px;color:transparent;}
+.scan-item.active .scan-act{color:var(--green-dim);animation:blink .8s infinite;}
+/* AIS PAGE */
+.ais-hdr{font-family:'Orbitron',monospace;font-size:9px;color:#555;letter-spacing:2px;padding:6px 10px 4px;border-bottom:1px solid #111;display:flex;justify-content:space-between;align-items:center;}
+.ais-lbl{color:#44aaff;}
+.ais-body{flex:1;overflow-y:auto;padding:4px 6px;display:flex;flex-direction:column;gap:4px;}
+.ais-target{padding:6px 8px;background:#020408;border:1px solid #0a1a2a;border-left:3px solid #1a4a7a;border-radius:4px;}
+.ais-name{font-family:'Orbitron',monospace;font-size:10px;color:#44aaff;letter-spacing:1px;margin-bottom:2px;}
+.ais-detail{font-family:'Share Tech Mono',monospace;font-size:9px;color:#3a5a7a;line-height:1.6;}
+.ais-detail .hl{color:#5588aa;}
 </style>
 </head>
 <body>
 
 <div class="page-header">
-  <div class="brand">MARPRO Marine Training</div>
-  <h1>VHF Radio Simulator</h1>
+  <div class="brand">MARPRO Maritime Training</div>
+  <h1>VHF Marine Radio Simulator</h1>
 </div>
 
 <div class="mode-bar">
@@ -337,7 +417,7 @@ body{
     <div class="radio-body powered-off" id="radio-body">
       <div class="radio-brand">
         <span class="brand-name">MARPRO</span>
-        <span class="brand-model">VHF-16M · CLASS D DSC</span>
+        <span class="brand-model">VHF-SIM · CLASS D DSC</span>
         <div class="power-led" id="power-led"></div>
       </div>
       <div class="screen-wrap">
@@ -345,7 +425,6 @@ body{
           <div class="entry-display" id="entry-display"></div>
           <div class="screen-top">
             <div class="status-tag hidden" id="tag-dw">DUAL WATCH</div>
-            <div class="status-tag hidden" id="tag-wx">WX</div>
             <div class="status-tag hidden" id="tag-pwr">25W</div>
             <div class="status-tag hidden" id="tag-rx">RX</div>
             <div class="status-tag hidden" id="tag-tx">TX</div>
@@ -361,6 +440,24 @@ body{
             <span class="gps-coords off" id="gps-coords">--°--'?  ---°--'?</span>
           </div>
           <div class="msg-ticker" id="msg-ticker"></div>
+          <!-- DSC SCREEN PAGE -->
+          <div class="screen-page" id="sp-dsc">
+            <div class="dsc-m-hdr">
+              <span class="dsc-m-title" id="dsc-m-title">DSC MENU</span>
+              <button class="dsc-m-close" id="dsc-m-close">✕ EXIT</button>
+            </div>
+            <div class="dsc-m-body" id="dsc-m-body"></div>
+          </div>
+          <!-- SCAN SCREEN PAGE -->
+          <div class="screen-page" id="sp-scan">
+            <div class="scan-hdr"><span class="scan-lbl">CHANNEL SCAN</span><span id="scan-status">SCANNING</span></div>
+            <div class="scan-body" id="scan-body"></div>
+          </div>
+          <!-- AIS SCREEN PAGE -->
+          <div class="screen-page" id="sp-ais">
+            <div class="ais-hdr"><span class="ais-lbl">AIS TARGETS</span><span id="ais-count">2 VESSELS</span></div>
+            <div class="ais-body" id="ais-body"></div>
+          </div>
           <div class="dsc-overlay" id="dsc-overlay">
             <div class="dsc-count" id="dsc-count">3</div>
             <div class="dsc-lbl">DSC DISTRESS — HOLD TO SEND</div>
@@ -371,7 +468,6 @@ body{
       <div class="sk-row">
         <div class="sk" id="sk-dsc">DSC</div>
         <div class="sk" id="sk-scan">SCAN</div>
-        <div class="sk" id="sk-dw">DUAL</div>
         <div class="sk" id="sk-ais">AIS</div>
       </div>
       <div class="dial-row">
@@ -394,7 +490,14 @@ body{
           <button class="btn btn-amber" id="hilo-btn">HI / LO</button>
         </div>
         <div class="row">
-          <button class="btn btn-dsc" id="dsc-btn" style="flex:2">▲ DSC DISTRESS — HOLD 3 SECONDS</button>
+          <div class="dsc-cover-wrap">
+            <button class="btn btn-dsc" id="dsc-btn" style="width:100%">▲ DSC DISTRESS — HOLD 3 SECONDS</button>
+            <div class="dsc-cover" id="dsc-cover">
+              <span class="dsc-cover-hinge"></span>
+              <span class="dsc-cover-label">▲ LIFT COVER</span>
+              <span class="dsc-cover-sub">DSC DISTRESS GUARD</span>
+            </div>
+          </div>
         </div>
       </div>
       <div class="zone">
@@ -402,7 +505,6 @@ body{
         <div class="row">
           <button class="btn" id="chan-up">CH ▲</button>
           <button class="btn" id="chan-dn">CH ▼</button>
-          <button class="btn btn-amber" id="wx-btn">WX</button>
           <button class="btn" id="dw-btn">D/W</button>
         </div>
         <div class="numpad" id="numpad">
@@ -490,6 +592,29 @@ function startStatic(){if(staticNode)return;try{const ctx=getACtx(),buf=4096;sta
 function stopStatic(){if(!staticNode)return;try{staticNode.disconnect();staticGain.disconnect();}catch(e){}staticNode=null;staticGain=null;}
 function updateStatic(){if(S.powered&&S.squelch<4)startStatic();else stopStatic();if(staticGain)staticGain.gain.value=(S.volume/10)*0.12;}
 
+// RX noise layer — adds squelch-controlled noise during incoming messages
+let rxNoiseNode=null,rxNoiseGain=null;
+function startRxNoise(durationSec){
+  const noiseLevel=Math.max(0,(4-S.squelch)/4)*0.2*(S.volume/10);
+  if(noiseLevel<0.01)return;
+  try{
+    const ctx=getACtx(),rate=ctx.sampleRate;
+    const samples=Math.min(rate*durationSec,rate*60);
+    const buf=ctx.createBuffer(1,samples,rate);const d=buf.getChannelData(0);
+    for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1);
+    rxNoiseNode=ctx.createBufferSource();rxNoiseNode.buffer=buf;
+    const bp=ctx.createBiquadFilter();bp.type='bandpass';bp.frequency.value=1800;bp.Q.value=0.6;
+    rxNoiseGain=ctx.createGain();
+    rxNoiseGain.gain.setValueAtTime(0,ctx.currentTime);
+    rxNoiseGain.gain.linearRampToValueAtTime(noiseLevel,ctx.currentTime+0.15);
+    rxNoiseGain.gain.setValueAtTime(noiseLevel,ctx.currentTime+durationSec-0.15);
+    rxNoiseGain.gain.linearRampToValueAtTime(0,ctx.currentTime+durationSec);
+    rxNoiseNode.connect(bp);bp.connect(rxNoiseGain);rxNoiseGain.connect(ctx.destination);
+    rxNoiseNode.start();rxNoiseNode.stop(ctx.currentTime+durationSec);
+  }catch(e){}
+}
+function stopRxNoise(){if(!rxNoiseNode)return;try{rxNoiseNode.stop();rxNoiseGain.disconnect();}catch(e){}rxNoiseNode=null;rxNoiseGain=null;}
+
 // ── TTS RADIO VOICE ───────────────────────────────────────────────
 let ttsVoice=null;
 function loadVoices(){
@@ -501,31 +626,41 @@ function loadVoices(){
 }
 if(typeof speechSynthesis!=='undefined'){loadVoices();speechSynthesis.onvoiceschanged=loadVoices;}
 
-function radioSpeak(text,onDone){
+// rxCh: the channel the incoming transmission is on.
+// Audio plays only if the student is monitoring that channel
+// (either tuned to it directly, or via Dual Watch when rxCh===16).
+function radioSpeak(text,onDone,rxCh){
   if(typeof speechSynthesis==='undefined'){if(onDone)onDone();return;}
+  const canHear=rxCh===undefined||S.channel===rxCh||(S.dualWatch&&rxCh===16);
+  if(!canHear){if(onDone)onDone();return;}
   speechSynthesis.cancel();
   const utt=new SpeechSynthesisUtterance(text);
   if(ttsVoice)utt.voice=ttsVoice;
-  utt.rate=0.90;utt.pitch=0.92;utt.volume=Math.max(0.1,S.volume/10);
+  utt.rate=0.90;utt.pitch=0.92;
+  utt.volume=S.volume/10;
   const estSec=Math.max(2,(text.split(' ').length/125)*60);
   playRxBurst(estSec);setRxState(true);
-  utt.onend=()=>{setRxState(false);if(onDone)onDone();};
-  utt.onerror=()=>{setRxState(false);if(onDone)onDone();};
+  startRxNoise(estSec);
+  utt.onend=()=>{stopRxNoise();setRxState(false);if(onDone)onDone();};
+  utt.onerror=()=>{stopRxNoise();setRxState(false);if(onDone)onDone();};
   speechSynthesis.speak(utt);
 }
 
 function setRxState(on){S.receiving=on;updateDisplay();if(on)showVoiceBadge('rx','Incoming transmission…');else hideVoiceBadge();}
 
-// Fires response after student releases PTT
-// voiceText = what TTS speaks; logText = short entry for comms log
+// Fires response after student releases PTT.
+// Captures S.channel at call-time so the response plays on the correct channel
+// even if the student switches away before the delay fires.
 function scheduleResponse(voiceText,logText,delaySec,stepAction,onDone){
+  const rxCh=S.channel; // capture transmitting channel now
   setTimeout(()=>{
-    log(`RX: ${logText||voiceText}`,'rx');
-    ticker(logText||voiceText,8000,true);
+    log(`RX CH${String(rxCh).padStart(2,'0')}: ${logText||voiceText}`,'rx');
+    // Show ticker only if student can hear this channel
+    if(S.channel===rxCh||(S.dualWatch&&rxCh===16))ticker(logText||voiceText,8000,true);
     radioSpeak(voiceText,()=>{
       if(stepAction)checkStep(stepAction);
       if(onDone)onDone();
-    });
+    },rxCh);
   },delaySec*1000);
 }
 
@@ -534,18 +669,31 @@ function showVoiceBadge(type,text){const b=$('voice-badge');b.className='voice-b
 function hideVoiceBadge(){$('voice-badge').className='voice-badge';}
 
 // ── STATE ─────────────────────────────────────────────────────────
-const S={powered:false,channel:16,volume:5,squelch:3,highPower:true,dualWatch:false,weatherMode:false,transmitting:false,receiving:false,enteredDigits:'',dscHolding:false,dscTriggered:false,volAdjusted:false,sqAdjusted:false};
+const S={powered:false,channel:16,volume:5,squelch:3,highPower:true,dualWatch:false,transmitting:false,receiving:false,enteredDigits:'',dscHolding:false,dscTriggered:false,volAdjusted:false,sqAdjusted:false};
+let screenView=null;
 
 // ── GPS ───────────────────────────────────────────────────────────
-const gps={lat:-33.8542,lon:151.3187};
+// Vessel heading 135° (SE, offshore toward Coral Sea from Cairns)
+// Speed: ~0.1 arc-minutes per real minute → 0.001667°/min → 0.0002222°/8s tick
+const gps={lat:-16.6412,lon:145.8030};
+const GPS_HDG=135*Math.PI/180; // radians
+const GPS_STEP=0.0002222;      // degrees per 8-second tick
 function fmtCoord(v,pos,neg,pad){const sign=v<0?neg:pos,abs=Math.abs(v),deg=Math.floor(abs),min=((abs-deg)*60).toFixed(2);return `${String(deg).padStart(pad,'0')}°${min.padStart(5,'0')}'${sign}`;}
 function updateGPS(){const el=$('gps-coords');if(!S.powered){el.textContent="--°--'?  ---°--'?";el.className='gps-coords off';return;}el.textContent=`${fmtCoord(gps.lat,'N','S',2)}  ${fmtCoord(gps.lon,'E','W',3)}`;el.className='gps-coords';}
-setInterval(()=>{if(!S.powered)return;gps.lat=Math.max(-38,Math.min(-28,gps.lat+(Math.random()-0.45)*0.00133));gps.lon=Math.max(148,Math.min(155,gps.lon+(Math.random()-0.45)*0.00133));updateGPS();},8000);
+setInterval(()=>{
+  if(!S.powered)return;
+  const noise=0.8+Math.random()*0.4; // ±20% variation around nominal step
+  gps.lat+=GPS_STEP*Math.cos(GPS_HDG)*noise; // cos(135°)≈-0.707 → south
+  gps.lon+=GPS_STEP*Math.sin(GPS_HDG)*noise; // sin(135°)≈+0.707 → east
+  gps.lat=Math.max(-28,Math.min(-14,gps.lat));
+  gps.lon=Math.max(144,Math.min(156,gps.lon));
+  updateGPS();
+},8000);
 
 // ── DOM ───────────────────────────────────────────────────────────
 function $(id){return document.getElementById(id);}
 const radioBody=$('radio-body'),chMain=$('ch-main'),chNameEl=$('ch-name'),entryDisp=$('entry-display');
-const tagDW=$('tag-dw'),tagWX=$('tag-wx'),tagPwr=$('tag-pwr'),tagRX=$('tag-rx'),tagTX=$('tag-tx');
+const tagDW=$('tag-dw'),tagPwr=$('tag-pwr'),tagRX=$('tag-rx'),tagTX=$('tag-tx');
 const pwrHi=$('pwr-hi'),pwrLo=$('pwr-lo'),msgTicker=$('msg-ticker'),dscOverlay=$('dsc-overlay');
 const dscCount=$('dsc-count'),dscBarFill=$('dsc-bar-fill'),powerLed=$('power-led'),logBody=$('log-body');
 const volDial=$('vol-dial'),volVal=$('vol-val'),sqDial=$('sq-dial'),sqVal=$('sq-val');
@@ -559,7 +707,7 @@ function renderLog(){logBody.innerHTML=logLines.map(e=>`<div class="log-entry"><
 
 // ── DISPLAY ───────────────────────────────────────────────────────
 function updateDisplay(){
-  if(!S.powered){chMain.textContent='--';chMain.className='ch-main off';chNameEl.textContent='';chNameEl.className='ch-name';[tagDW,tagWX,tagPwr,tagRX,tagTX].forEach(t=>t.classList.add('hidden'));pwrHi.classList.remove('active');pwrLo.classList.remove('active');entryDisp.textContent='';entryDisp.classList.remove('show');updateGPS();return;}
+  if(!S.powered){chMain.textContent='--';chMain.className='ch-main off';chNameEl.textContent='';chNameEl.className='ch-name';[tagDW,tagPwr,tagRX,tagTX].forEach(t=>t.classList.add('hidden'));pwrHi.classList.remove('active');pwrLo.classList.remove('active');entryDisp.textContent='';entryDisp.classList.remove('show');updateGPS();return;}
   let cls='ch-main';
   if(S.transmitting)cls+=' transmit';else if(S.receiving)cls+=' rx-active';else if(S.channel===70)cls+=' ch70';
   chMain.className=cls;chMain.textContent=String(S.channel).padStart(2,'0');
@@ -567,7 +715,6 @@ function updateDisplay(){
   chNameEl.className='ch-name'+(S.channel===16?' distress':S.channel===70?' dsc':S.transmitting?' tx':' working');
   if(S.enteredDigits){entryDisp.textContent=S.enteredDigits;entryDisp.classList.add('show');}else{entryDisp.textContent='';entryDisp.classList.remove('show');}
   tagDW.classList.toggle('hidden',!S.dualWatch);tagDW.classList.toggle('dw-tag',S.dualWatch);
-  tagWX.classList.toggle('hidden',!S.weatherMode);
   tagTX.classList.toggle('hidden',!S.transmitting);if(S.transmitting)tagTX.classList.add('tx-tag');else tagTX.classList.remove('tx-tag');
   tagRX.classList.toggle('hidden',!S.receiving);if(S.receiving)tagRX.classList.add('rx-tag');else tagRX.classList.remove('rx-tag');
   tagPwr.classList.toggle('hidden',false);tagPwr.textContent=S.highPower?'25W':'5W';
@@ -608,10 +755,11 @@ let ambientScheduled=false;
 function scheduleAmbient(){
   if(ambientScheduled)return;ambientScheduled=true;
   AMBIENT.forEach(c=>setTimeout(()=>{
-    if(!S.powered||S.channel!==16)return;
+    if(!S.powered)return;
     log(`RX CH16: ${c.log}`,'rx2');
-    ticker(c.log,7000,true);
-    radioSpeak(c.voice);
+    // Only show ticker/play audio if student is on CH16 or Dual Watch is active
+    if(S.channel===16||S.dualWatch)ticker(c.log,7000,true);
+    radioSpeak(c.voice,null,16);
   },c.delay*1000));
 }
 
@@ -627,6 +775,7 @@ $('power-btn').addEventListener('click',()=>{
     stopStatic();if(typeof speechSynthesis!=='undefined')speechSynthesis.cancel();
     S.transmitting=false;S.receiving=false;S.dscHolding=false;S.dscTriggered=false;
     dscOverlay.classList.remove('active');pttBtn.classList.remove('active');
+    if(screenView){$('sp-'+screenView).classList.remove('active');$('sk-'+screenView).classList.remove('lit');screenView=null;}
     log('Radio powered OFF','sys');updateDisplay();
   }
 });
@@ -635,23 +784,62 @@ function needsPower(){if(!S.powered){beep(200,0.1,0.1);return true;}return false
 // ── CHANNEL ───────────────────────────────────────────────────────
 function setCh(n){
   n=parseInt(n,10);if(isNaN(n)||n<1||n>88){ticker('INVALID CHANNEL — 01 to 88');log(`Invalid channel: ${n}`,'warn');beep(200,0.15);return;}
-  S.channel=n;S.weatherMode=false;S.enteredDigits='';beep(800,0.07);log(`Channel → ${String(n).padStart(2,'0')}`,'sys');updateDisplay();updateStatic();checkStep('channel',n);
+  S.channel=n;S.enteredDigits='';beep(800,0.07);log(`Channel → ${String(n).padStart(2,'0')}`,'sys');updateDisplay();updateStatic();checkStep('channel',n);
 }
 $('ch16-btn').addEventListener('click',()=>{if(needsPower())return;setCh(16);ticker('CHANNEL 16 — DISTRESS / CALLING');checkStep('ch16');});
 $('chan-up').addEventListener('click',()=>{if(needsPower())return;let n=S.channel+1;if(n>88)n=1;setCh(n);});
 $('chan-dn').addEventListener('click',()=>{if(needsPower())return;let n=S.channel-1;if(n<1)n=88;setCh(n);});
-document.querySelectorAll('#numpad .keypad').forEach(b=>b.addEventListener('click',()=>{if(needsPower())return;beep(750,0.06);if(S.enteredDigits.length<2){S.enteredDigits+=b.dataset.d;updateDisplay();}}));
-$('enter-btn').addEventListener('click',()=>{if(needsPower())return;if(S.enteredDigits)setCh(S.enteredDigits);});
-$('clear-btn').addEventListener('click',()=>{beep(400,0.07);S.enteredDigits='';updateDisplay();});
+document.querySelectorAll('#numpad .keypad').forEach(b=>b.addEventListener('click',()=>{
+  if(needsPower())return;beep(750,0.06);
+  if(screenView==='dsc'&&dscM.page==='individual'){
+    if(dscM.mmsi.length<9){dscM.mmsi+=b.dataset.d;renderDscMenu();}return;
+  }
+  if(S.enteredDigits.length<2){S.enteredDigits+=b.dataset.d;updateDisplay();}
+}));
+$('enter-btn').addEventListener('click',()=>{
+  if(needsPower())return;
+  if(screenView==='dsc'&&dscM.page==='individual'){
+    if(dscM.mmsi.length===9){dscM.page='category';renderDscMenu();}
+    else{ticker('MMSI must be 9 digits');beep(200,0.15);}return;
+  }
+  if(S.enteredDigits)setCh(S.enteredDigits);
+});
+$('clear-btn').addEventListener('click',()=>{
+  beep(400,0.07);
+  if(screenView==='dsc'&&dscM.page==='individual'){dscM.mmsi='';renderDscMenu();return;}
+  S.enteredDigits='';updateDisplay();
+});
 
-// ── HI/LO, WX, D/W, SOFTKEYS ─────────────────────────────────────
+// ── HI/LO, D/W, SOFTKEYS ─────────────────────────────────────────
 $('hilo-btn').addEventListener('click',()=>{if(needsPower())return;beep(700,0.07);S.highPower=!S.highPower;ticker(S.highPower?'HIGH POWER — 25W':'LOW POWER — 5W');log(`Power → ${S.highPower?'25W':'5W'}`,'sys');updateDisplay();checkStep('power');});
-$('wx-btn').addEventListener('click',()=>{if(needsPower())return;beep(700,0.07);S.weatherMode=!S.weatherMode;ticker(S.weatherMode?'WEATHER CHANNEL — WX':'WEATHER MODE OFF');log(`Weather ${S.weatherMode?'ON':'OFF'}`,'sys');updateDisplay();});
 $('dw-btn').addEventListener('click',()=>{if(needsPower())return;beep(700,0.07);S.dualWatch=!S.dualWatch;ticker(S.dualWatch?'DUAL WATCH — CH 16 ACTIVE':'DUAL WATCH OFF');log(`Dual Watch ${S.dualWatch?'enabled':'disabled'}`,'sys');updateDisplay();if(S.dualWatch)checkStep('dw_on');});
-$('sk-dsc').addEventListener('click',()=>{if(needsPower())return;beep(700,0.07);ticker('DSC MENU — (SIMULATED)');log('DSC menu accessed','sys');});
-$('sk-scan').addEventListener('click',()=>{if(needsPower())return;beep(700,0.07);ticker('SCANNING CHANNELS...');log('Channel scan started','sys');});
-$('sk-dw').addEventListener('click',()=>{if(needsPower())return;$('dw-btn').click();});
-$('sk-ais').addEventListener('click',()=>{if(needsPower())return;beep(700,0.07);ticker('AIS — NO TARGETS IN RANGE');log('AIS checked — no targets','sys');});
+
+function setScreenView(view){
+  // close current view
+  if(screenView){
+    $('sp-'+screenView).classList.remove('active');
+    $('sk-'+screenView).classList.remove('lit');
+    if(screenView==='scan'&&scanInterval){clearInterval(scanInterval);scanInterval=null;}
+  }
+  // toggle off if same view pressed again
+  if(screenView===view){screenView=null;return;}
+  screenView=view;
+  if(view==='dsc'){
+    $('sp-dsc').classList.add('active');$('sk-dsc').classList.add('lit');
+    dscM={page:'main',mmsi:'',category:'ROUTINE',channel:67};renderDscMenu();
+    log('DSC menu opened','sys');beep(700,0.07);
+  }else if(view==='scan'){
+    $('sp-scan').classList.add('active');$('sk-scan').classList.add('lit');
+    renderScanView();log('Channel scan active','sys');beep(700,0.07);
+  }else if(view==='ais'){
+    $('sp-ais').classList.add('active');$('sk-ais').classList.add('lit');
+    renderAisView();log('AIS display active','sys');beep(700,0.07);
+  }
+}
+
+$('sk-dsc').addEventListener('click',()=>{if(needsPower())return;setScreenView('dsc');});
+$('sk-scan').addEventListener('click',()=>{if(needsPower())return;setScreenView('scan');});
+$('sk-ais').addEventListener('click',()=>{if(needsPower())return;setScreenView('ais');});
 
 // ── DIALS ─────────────────────────────────────────────────────────
 function makeDial(el,valEl,init,min,max,cb){
@@ -678,6 +866,8 @@ if('SpeechRecognition' in window||'webkitSpeechRecognition' in window){
 function startTx(){
   if(!S.powered)return;
   if(S.channel===70){ticker('CH 70 — DSC ONLY · NO VOICE TX');log('TX blocked — CH 70 DSC only','warn');beep(200,0.2);checkStep('tx_ch70');return;}
+  // Dual Watch disables on transmit — radio can only TX on one channel
+  if(S.dualWatch){S.dualWatch=false;log('Dual Watch disabled — PTT active','sys');}
   pttActive=true;S.transmitting=true;lastTranscript='';pttBtn.classList.add('active');
   beep(1100,0.08);log(`PTT OPEN — CH ${String(S.channel).padStart(2,'0')} ${S.highPower?'25W':'5W'}`,'tx');
   updateDisplay();if(recog){try{recog.start();showVoiceBadge('tx','Microphone open — speak now');}catch(e){}}
@@ -837,6 +1027,7 @@ let dscHoldT=null,dscCountT=null;
 function startDSC(e){
   if(e.cancelable)e.preventDefault();
   if(!S.powered||S.dscTriggered||S.dscHolding)return;
+  if(!$('dsc-cover').classList.contains('open')){beep(200,0.15);ticker('LIFT COVER BEFORE PRESSING DSC DISTRESS');log('DSC blocked — lift cover first','warn');return;}
   S.dscHolding=true;const t0=Date.now();let sec=3;
   dscOverlay.classList.add('active');dscCount.textContent=sec;dscBarFill.style.width='0%';beep(800,0.1);
   dscCountT=setInterval(()=>{sec--;dscCount.textContent=Math.max(0,sec);if(sec>0)beep(800,0.08);},1000);
@@ -852,7 +1043,9 @@ function cancelDSC(){
   log('DSC hold released early — cancelled','warn');checkStep('dsc_cancelled');
 }
 function fireDSC(){
-  dscOverlay.classList.remove('active');beepDSC();
+  dscOverlay.classList.remove('active');closeDscCover();
+  if(screenView==='dsc'){$('sp-dsc').classList.remove('active');$('sk-dsc').classList.remove('lit');screenView=null;}
+  beepDSC();
   log('▲ DSC DISTRESS ALERT TRANSMITTED — CH 70','alert');
   log('DSC: MMSI, position (GPS), time — broadcast to all stations','alert');
   ticker('DSC DISTRESS SENT — SWITCHING TO CH 16');
@@ -874,6 +1067,240 @@ function fireDSC(){
 dscBtn.addEventListener('mousedown',startDSC);dscBtn.addEventListener('touchstart',startDSC,{passive:false});
 dscBtn.addEventListener('mouseup',cancelDSC);dscBtn.addEventListener('mouseleave',cancelDSC);dscBtn.addEventListener('touchend',cancelDSC);
 $('log-clr').addEventListener('click',()=>{logLines=[];renderLog();});
+
+// ── DSC COVER ─────────────────────────────────────────────────────
+let coverAutoCloseT=null;
+function openDscCover(){
+  if(!S.powered){beep(200,0.1);return;}
+  $('dsc-cover').classList.add('open');beep(600,0.08);
+  log('DSC distress guard lifted','warn');ticker('DSC DISTRESS ARMED — HOLD 3 SEC TO SEND');
+  clearTimeout(coverAutoCloseT);coverAutoCloseT=setTimeout(closeDscCover,8000);
+}
+function closeDscCover(){$('dsc-cover').classList.remove('open');clearTimeout(coverAutoCloseT);}
+$('dsc-cover').addEventListener('click',openDscCover);
+$('dsc-cover').addEventListener('touchstart',e=>{e.preventDefault();openDscCover();},{passive:false});
+
+// ── DSC MENU ──────────────────────────────────────────────────────
+let dscM={page:'main',mmsi:'',category:'ROUTINE',channel:67};
+function openDscMenu(){if(!S.powered){beep(200,0.1);return;}setScreenView('dsc');}
+function closeDscMenu(){if(screenView==='dsc')setScreenView('dsc');log('DSC menu closed','sys');}
+$('dsc-m-close').addEventListener('click',closeDscMenu);
+
+function renderDscMenu(){
+  switch(dscM.page){
+    case 'main':      renderDscMain();break;
+    case 'individual':renderDscIndividual();break;
+    case 'category':  renderDscCategory();break;
+    case 'channel':   renderDscChannel();break;
+    case 'confirm':   renderDscConfirm();break;
+    case 'sending':   renderDscSending();break;
+    case 'ack':       renderDscAck();break;
+    case 'allships':  renderDscAllShips();break;
+    case 'info':      renderDscInfo();break;
+  }
+}
+
+function renderDscMain(){
+  $('dsc-m-title').textContent='DSC MENU';
+  $('dsc-m-body').innerHTML=`
+    <div class="dsc-m-info">
+      CH 70 — <span class="hl">DSC digital calling only</span><br>
+      OWN MMSI: <span class="hl">503 123 456</span> &nbsp;|&nbsp; <span class="am">CLASS D</span>
+    </div>
+    <div class="dsc-m-item" id="dm-indiv"><span class="dsc-m-num">1</span><span class="dsc-m-lbl">INDIVIDUAL CALL</span><span class="dsc-m-arrow">▶</span></div>
+    <div class="dsc-m-item" id="dm-all"><span class="dsc-m-num">2</span><span class="dsc-m-lbl">ALL SHIPS CALL</span><span class="dsc-m-arrow">▶</span></div>
+    <div class="dsc-m-item" id="dm-info"><span class="dsc-m-num">3</span><span class="dsc-m-lbl">VESSEL INFO</span><span class="dsc-m-arrow">▶</span></div>`;
+  $('dm-indiv').onclick=()=>{dscM.page='individual';renderDscMenu();};
+  $('dm-all').onclick=()=>{dscM.page='allships';renderDscMenu();};
+  $('dm-info').onclick=()=>{dscM.page='info';renderDscMenu();};
+}
+
+function renderDscIndividual(){
+  $('dsc-m-title').textContent='INDIVIDUAL CALL';
+  const raw=dscM.mmsi.padEnd(9,'_');
+  const fmt=raw.slice(0,3)+' '+raw.slice(3,6)+' '+raw.slice(6,9);
+  $('dsc-m-body').innerHTML=`
+    <div class="dsc-field-lbl">DESTINATION MMSI — 9 DIGITS</div>
+    <div class="dsc-mmsi-disp">${fmt}<span class="dsc-mmsi-cur">${dscM.mmsi.length<9?'|':''}</span></div>
+    <div class="dsc-instr">Use the <span class="hl">keypad</span> to enter MMSI<br><span class="hl">CLR</span> = clear &nbsp;·&nbsp; <span class="hl">ENT</span> = confirm</div>
+    <div class="dsc-m-info" style="margin-top:auto">MMSI = 9-digit vessel identifier<br>Australian example: <span class="hl">503 xxx xxx</span></div>
+    <button class="dsc-back-btn" id="dm-back-main">◀ BACK</button>`;
+  $('dm-back-main').onclick=()=>{dscM.page='main';renderDscMenu();};
+}
+
+function renderDscCategory(){
+  $('dsc-m-title').textContent='CALL CATEGORY';
+  $('dsc-m-body').innerHTML=`
+    <div class="dsc-instr">Select the <span class="hl">priority category</span>:</div>
+    <div class="dsc-cat-row">
+      <button class="dsc-cat-btn rc" id="dc-routine">ROUTINE<small>Normal operational call</small></button>
+      <button class="dsc-cat-btn sc" id="dc-safety">SAFETY — SÉCURITÉ<small>Navigational hazard or weather</small></button>
+      <button class="dsc-cat-btn uc" id="dc-urgency">URGENCY — PAN-PAN<small>Urgent — not immediate danger to life</small></button>
+    </div>
+    <button class="dsc-back-btn" id="dm-back-indiv">◀ BACK</button>`;
+  $('dc-routine').onclick=()=>{dscM.category='ROUTINE';dscM.page='channel';renderDscMenu();};
+  $('dc-safety').onclick=()=>{dscM.category='SAFETY';dscM.page='channel';renderDscMenu();};
+  $('dc-urgency').onclick=()=>{dscM.category='URGENCY';dscM.page='channel';renderDscMenu();};
+  $('dm-back-indiv').onclick=()=>{dscM.page='individual';renderDscMenu();};
+}
+
+function renderDscChannel(){
+  $('dsc-m-title').textContent='WORKING CHANNEL';
+  const chs=[6,9,11,12,13,14,16,22,67,68,71,72,73,77];
+  $('dsc-m-body').innerHTML=`
+    <div class="dsc-instr">Select <span class="hl">working channel</span> for voice communication:</div>
+    <div class="dsc-ch-grid">${chs.map(c=>`<button class="dsc-ch-btn${dscM.channel===c?' sel':''}" data-ch="${c}">${String(c).padStart(2,'0')}</button>`).join('')}</div>
+    <button class="dsc-back-btn" id="dm-back-cat">◀ BACK</button>`;
+  $('dsc-m-body').querySelectorAll('.dsc-ch-btn').forEach(b=>{
+    b.onclick=()=>{dscM.channel=parseInt(b.dataset.ch);dscM.page='confirm';renderDscMenu();};
+  });
+  $('dm-back-cat').onclick=()=>{dscM.page='category';renderDscMenu();};
+}
+
+function renderDscConfirm(){
+  $('dsc-m-title').textContent='CONFIRM & SEND';
+  const allShips=dscM.mmsi==='999999999';
+  $('dsc-m-body').innerHTML=`
+    <div class="dsc-confirm-box">
+      <span class="hl">CALL TYPE</span> &nbsp;&nbsp;&nbsp; ${allShips?'ALL SHIPS':'INDIVIDUAL'}<br>
+      <span class="hl">PRIORITY</span> &nbsp;&nbsp;&nbsp;&nbsp; ${dscM.category}<br>
+      ${!allShips?`<span class="hl">TO MMSI</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="val">${dscM.mmsi.slice(0,3)} ${dscM.mmsi.slice(3,6)} ${dscM.mmsi.slice(6,9)}</span><br>`:''}
+      <span class="hl">WORKING CH</span> &nbsp;&nbsp; <span class="val">${String(dscM.channel).padStart(2,'0')}</span><br>
+      <span class="hl">TX FREQ</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CH 70 · 156.525 MHz<br>
+      <span class="hl">FROM MMSI</span> &nbsp;&nbsp;&nbsp; <span class="val">503 123 456</span>
+    </div>
+    <button class="dsc-send-btn" id="dm-send">▲ TRANSMIT DSC CALL ON CH 70</button>
+    <button class="dsc-back-btn" id="dm-back-ch">◀ BACK</button>`;
+  $('dm-send').onclick=()=>{dscM.page='sending';renderDscMenu();executeDscCall();};
+  $('dm-back-ch').onclick=()=>{dscM.page=dscM.mmsi==='999999999'?'allships':'channel';renderDscMenu();};
+}
+
+function renderDscSending(){
+  $('dsc-m-title').textContent='TRANSMITTING';
+  $('dsc-m-body').innerHTML=`
+    <div class="dsc-tx-wrap">
+      <div class="dsc-tx-pulse"></div>
+      <div class="dsc-tx-lbl">TRANSMITTING CH 70</div>
+      <div class="dsc-tx-prog-wrap"><div class="dsc-tx-prog" id="dsc-tx-p"></div></div>
+    </div>`;
+  requestAnimationFrame(()=>{const p=$('dsc-tx-p');if(p)p.style.width='100%';});
+}
+
+function renderDscAck(){
+  $('dsc-m-title').textContent='CALL COMPLETE';
+  const allShips=dscM.mmsi==='999999999';
+  const ackDetail=allShips
+    ?`Broadcast sent to all vessels.<br>Monitor <span style="color:var(--green-dim)">CH ${String(dscM.channel).padStart(2,'0')}</span> for responses.`
+    :`ACK received from <span style="color:var(--green-dim)">${dscM.mmsi.slice(0,3)} ${dscM.mmsi.slice(3,6)} ${dscM.mmsi.slice(6,9)}</span>.<br>Switch to <span style="color:var(--green-dim)">CH ${String(dscM.channel).padStart(2,'0')}</span> to communicate.`;
+  $('dsc-m-body').innerHTML=`
+    <div class="dsc-ack-wrap">
+      <div class="dsc-ack-icon">${allShips?'📡':'✓'}</div>
+      <div class="dsc-ack-title" style="color:var(--green)">${allShips?'BROADCAST SENT':'ACK RECEIVED'}</div>
+      <div class="dsc-ack-detail">${ackDetail}</div>
+      <div class="dsc-ack-ch">CH ${String(dscM.channel).padStart(2,'0')}</div>
+    </div>
+    <button class="dsc-send-btn" id="dm-switch">→ SWITCH TO CH ${String(dscM.channel).padStart(2,'0')}</button>
+    <button class="dsc-back-btn" id="dm-close-ack">CLOSE MENU</button>`;
+  $('dm-switch').onclick=()=>{closeDscMenu();setCh(dscM.channel);ticker(`SWITCHED TO CH ${String(dscM.channel).padStart(2,'0')} — ${dscM.category} CALL`);};
+  $('dm-close-ack').onclick=closeDscMenu;
+}
+
+function renderDscAllShips(){
+  $('dsc-m-title').textContent='ALL SHIPS CALL';
+  $('dsc-m-body').innerHTML=`
+    <div class="dsc-instr">All Ships call broadcasts to all vessels on <span class="hl">CH 70</span>.<br>Used for <span class="hl">Urgency</span> (Pan-Pan) or <span class="hl">Safety</span> (Sécurité).</div>
+    <div class="dsc-cat-row">
+      <button class="dsc-cat-btn uc" id="das-urgency">URGENCY — PAN-PAN<small>Urgent situation — not immediate danger</small></button>
+      <button class="dsc-cat-btn sc" id="das-safety">SAFETY — SÉCURITÉ<small>Navigational hazard or weather warning</small></button>
+    </div>
+    <button class="dsc-back-btn" id="dm-back-all">◀ BACK</button>`;
+  $('das-urgency').onclick=()=>{dscM.mmsi='999999999';dscM.category='URGENCY';dscM.channel=16;dscM.page='confirm';renderDscMenu();};
+  $('das-safety').onclick=()=>{dscM.mmsi='999999999';dscM.category='SAFETY';dscM.channel=16;dscM.page='confirm';renderDscMenu();};
+  $('dm-back-all').onclick=()=>{dscM.page='main';renderDscMenu();};
+}
+
+function renderDscInfo(){
+  $('dsc-m-title').textContent='VESSEL INFO';
+  const pos=S.powered?`${fmtCoord(gps.lat,'N','S',2)}  ${fmtCoord(gps.lon,'E','W',3)}`:'NO FIX';
+  $('dsc-m-body').innerHTML=`
+    <div class="dsc-m-info">
+      <span class="hl">OWN MMSI</span> : <span style="color:var(--green)">503 123 456</span><br>
+      <span class="hl">VESSEL</span> &nbsp;&nbsp;&nbsp; : TRAINING VESSEL<br>
+      <span class="hl">CALL SIGN</span> : VK????<br>
+      <span class="hl">DSC CLASS</span> : D (recreational)<br>
+      <span class="hl">CH 70</span> &nbsp;&nbsp;&nbsp;&nbsp; : WATCH ACTIVE<br>
+      <span class="hl">GPS POS</span> &nbsp;&nbsp; : <span class="am">${pos}</span>
+    </div>
+    <div class="dsc-instr" style="text-align:left;padding:8px 0">MMSI is your vessel's unique 9-digit digital identifier — transmitted automatically with every DSC call. Register at AMSA.</div>
+    <button class="dsc-back-btn" id="dm-back-info">◀ BACK</button>`;
+  $('dm-back-info').onclick=()=>{dscM.page='main';renderDscMenu();};
+}
+
+// ── SCAN VIEW ─────────────────────────────────────────────────────
+let scanInterval=null;
+const SCAN_CHS=[{ch:16,name:'DISTRESS/CALLING'},{ch:67,name:'SMALL CRAFT SAFETY'},{ch:22,name:'COAST GUARD'},{ch:12,name:'PORT OPS'},{ch:72,name:'SHIP-SHIP'},{ch:9,name:'BOAT CALLING'},{ch:69,name:'WORKING'}];
+const SCAN_ACTIVE=[16,67]; // channels showing traffic
+function renderScanView(){
+  if(scanInterval)clearInterval(scanInterval);
+  let idx=0;
+  function draw(){
+    const cur=SCAN_CHS[idx%SCAN_CHS.length];
+    $('scan-status').textContent='SCANNING';
+    $('scan-body').innerHTML=SCAN_CHS.map((c,i)=>{
+      const active=SCAN_ACTIVE.includes(c.ch)||(i===idx%SCAN_CHS.length);
+      return `<div class="scan-item${active?' active':''}">
+        <span class="scan-ch">${String(c.ch).padStart(2,'0')}</span>
+        <span class="scan-name">${c.name}</span>
+        <span class="scan-act">${active?'▶ ACTIVE':''}</span>
+      </div>`;
+    }).join('');
+    idx++;
+  }
+  draw();
+  scanInterval=setInterval(()=>{if(screenView!=='scan'){clearInterval(scanInterval);return;}draw();},900);
+}
+
+// ── AIS VIEW ──────────────────────────────────────────────────────
+function renderAisView(){
+  const pos1=`${fmtCoord(gps.lat+0.08,'N','S',2)}  ${fmtCoord(gps.lon+0.12,'E','W',3)}`;
+  const pos2=`${fmtCoord(gps.lat-0.04,'N','S',2)}  ${fmtCoord(gps.lon+0.21,'E','W',3)}`;
+  $('ais-count').textContent='2 VESSELS';
+  $('ais-body').innerHTML=`
+    <div class="ais-target">
+      <div class="ais-name">MV OSPREY</div>
+      <div class="ais-detail">
+        MMSI: <span class="hl">503 841 200</span><br>
+        BRG: <span class="hl">047°</span> · DST: <span class="hl">4.2 NM</span><br>
+        SOG: <span class="hl">8.4 KT</span> · COG: <span class="hl">312°</span>
+      </div>
+    </div>
+    <div class="ais-target">
+      <div class="ais-name">MV CORAL STAR</div>
+      <div class="ais-detail">
+        MMSI: <span class="hl">503 612 900</span><br>
+        BRG: <span class="hl">183°</span> · DST: <span class="hl">8.7 NM</span><br>
+        SOG: <span class="hl">0.0 KT</span> · COG: <span class="hl">---°</span><br>
+        <span style="color:#cc4444">ENGINE FAIL — PAN PAN</span>
+      </div>
+    </div>`;
+}
+
+function executeDscCall(){
+  const allShips=dscM.mmsi==='999999999';
+  beepDSC();
+  log(`▲ DSC ${dscM.category} CALL TX — CH 70`,'alert');
+  log(`DSC: TO ${allShips?'ALL SHIPS':dscM.mmsi} · CAT: ${dscM.category} · WORK CH: ${String(dscM.channel).padStart(2,'0')}`,'sys');
+  ticker(`DSC ${dscM.category} CALL SENT ON CH 70`);
+  setTimeout(()=>{
+    dscM.page='ack';renderDscMenu();
+    if(allShips){
+      log(`All Ships DSC ${dscM.category} broadcast complete — monitor CH ${String(dscM.channel).padStart(2,'0')}`,'rx');
+    }else{
+      log(`DSC ACK received from ${dscM.mmsi} — switch to CH ${String(dscM.channel).padStart(2,'0')}`,'rx');
+      beepRise();
+    }
+  },2200);
+}
 
 /* ================================================================
    TRAINING SCENARIOS
